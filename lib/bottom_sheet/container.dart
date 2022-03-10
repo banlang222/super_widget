@@ -54,7 +54,9 @@ class BottomSheetContainer extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    header ?? Container(),
+                    Expanded(
+                      child: header?? Container(),
+                    ) ,
                     IconButton(
                       onPressed: () {
                         _fullScreen.value = _fullScreen.value ? false : true;

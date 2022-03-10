@@ -316,7 +316,7 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
             word = word.replaceAll(RegExp(r'\s+'), '.*');
             _options = widget.options
                 .where((element) => RegExp('$word', caseSensitive: false)
-                    .hasMatch(element.text))
+                .hasMatch(element.text))
                 .toList();
             setState(() {});
           } else if (_options.length != widget.options.length) {
@@ -352,6 +352,6 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
             },
             itemCount: _options.length),
       ),
-    );
+    isFullScreen: true,);
   }
 }

@@ -79,9 +79,14 @@ class SelectField<T> implements SuperFormField<T> {
 
   @override
   set value(dynamic v) {
-    _value.value = v;
-    if (readonly) {
-      defaultValue = v;
+    print('v=$v');
+    if(options.map((e) => e.value).contains(v)){
+      _value.value = v;
+      if (readonly) {
+        defaultValue = v;
+      }
+    } else {
+      _value.value = null;
     }
   }
 
