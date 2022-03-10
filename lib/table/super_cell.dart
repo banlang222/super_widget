@@ -71,6 +71,7 @@ class SuperCell extends StatelessWidget {
         child = const Text('');
       } else if (children.length > 1) {
         child = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: children,
         );
         //以下注释掉是因为提示RenderShrinkWrappingViewport does not support returning intrinsic dimensions
