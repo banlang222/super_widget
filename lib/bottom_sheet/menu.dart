@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MenuItem {
-  MenuItem({required this.text, required this.onTap, this.selected = false});
+  MenuItem(
+      {this.leading,
+      required this.text,
+      required this.onTap,
+      this.selected = false});
 
+  final Widget? leading;
   final String text;
   final VoidCallback onTap;
   final bool selected;
@@ -32,6 +37,7 @@ class BottomSheetMenu extends StatelessWidget {
                 shrinkWrap: true,
                 itemBuilder: (context, int index) {
                   return ListTile(
+                    leading: items[index].leading,
                     tileColor: Colors.white,
                     onTap: () {
                       items[index].onTap();

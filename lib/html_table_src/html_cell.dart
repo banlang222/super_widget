@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:html/dom.dart' as dom;
 
-class SuperCell extends StatelessWidget {
-  SuperCell(
+class HtmlCell extends StatelessWidget {
+  HtmlCell(
       {Key? key,
       this.text,
       this.rowSpan = 1,

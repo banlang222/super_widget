@@ -4,8 +4,8 @@ import 'package:flutter/rendering.dart';
 import 'cell_matrix.dart';
 import 'place_holder.dart';
 
-class SuperTableRenderObjectWidget extends MultiChildRenderObjectWidget {
-  SuperTableRenderObjectWidget(
+class HtmlTableRenderObjectWidget extends MultiChildRenderObjectWidget {
+  HtmlTableRenderObjectWidget(
       {Key? key,
       required this.totalRowSpan,
       required this.totalColSpan,
@@ -18,18 +18,18 @@ class SuperTableRenderObjectWidget extends MultiChildRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return RenderSuperTable(
+    return RenderHtmlTable(
         totalRowSpan: totalRowSpan, totalColSpan: totalColSpan, cells: cells);
   }
 }
 
 class SuperCellParentData extends ContainerBoxParentData<RenderBox> {}
 
-class RenderSuperTable extends RenderBox
+class RenderHtmlTable extends RenderBox
     with
         ContainerRenderObjectMixin<RenderBox, SuperCellParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, SuperCellParentData> {
-  RenderSuperTable(
+  RenderHtmlTable(
       {required this.totalRowSpan,
       required this.totalColSpan,
       required this.cells});
@@ -192,7 +192,8 @@ class RenderSuperTable extends RenderBox
             parentUsesSize: false);
       } else {
         child.layout(
-            constraints.copyWith(maxWidth: w, minWidth: 0, maxHeight: h, minHeight: h),
+            constraints.copyWith(
+                maxWidth: w, minWidth: 0, maxHeight: h, minHeight: h),
             parentUsesSize: true);
       }
 

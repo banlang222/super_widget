@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'super_cell.dart';
+import 'html_cell.dart';
 
-class PlaceHolder extends SuperCell {
+class PlaceHolder extends HtmlCell {
   PlaceHolder({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {

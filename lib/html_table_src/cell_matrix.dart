@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'super_cell.dart';
+import 'html_cell.dart';
 import 'place_holder.dart';
 
 class CellMatrix extends StatelessWidget {
@@ -14,7 +14,7 @@ class CellMatrix extends StatelessWidget {
 
   final int colIndex;
   final int rowIndex;
-  SuperCell? cell;
+  HtmlCell? cell;
   double? height;
   double? width;
 

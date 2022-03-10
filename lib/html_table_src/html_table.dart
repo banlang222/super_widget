@@ -4,12 +4,12 @@ import 'package:html/dom.dart' as dom;
 import 'package:get/get.dart';
 
 import 'cell_matrix.dart';
-import 'super_cell.dart';
+import 'html_cell.dart';
 import 'place_holder.dart';
 import 'renderBox.dart';
 
-class SuperTable extends StatelessWidget {
-  SuperTable(
+class HtmlTable extends StatelessWidget {
+  HtmlTable(
       {Key? key,
       required this.table,
       this.showTools = true,
@@ -115,7 +115,7 @@ class SuperTable extends StatelessWidget {
               controller: ScrollController(),
               child: Obx(() => Container(
                     constraints: BoxConstraints(maxWidth: width.value),
-                    child: SuperTableRenderObjectWidget(
+                    child: HtmlTableRenderObjectWidget(
                       totalColSpan: totalColSpan,
                       totalRowSpan: totalRowSpan,
                       cells: tableMatrix,
@@ -193,7 +193,7 @@ class SuperTable extends StatelessWidget {
         int rowSpan = 1;
         int colSpan = 1;
         //填充本位
-        self.cell = SuperCell(
+        self.cell = HtmlCell(
           text: td.nodes, //td.text.replaceAll(RegExp(r'\s'), ''),
           padding: cellPadding,
           decoration: y.isEven ? evenRowDecoration : cellDecoration,
@@ -234,7 +234,7 @@ class SuperTable extends StatelessWidget {
     }
     //填充非法单元格
     tableMatrix.where((element) => element.cell == null).forEach((element) {
-      element.cell = SuperCell(
+      element.cell = HtmlCell(
         padding: cellPadding,
         decoration: cellDecoration,
         text: '',
