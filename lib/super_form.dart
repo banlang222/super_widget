@@ -9,3 +9,4 @@ export 'form/select_option.dart';
 export 'form/upload.dart';
 export 'form/date.dart';
 export 'form/field_group.dart';
+export 'form/super_form.dart';

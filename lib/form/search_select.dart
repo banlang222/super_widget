@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:extension/extension.dart';
 import 'super_form_field.dart';
 import 'select_option.dart';
-import 'bottom_sheet_container.dart';
+import '../bottom_sheet/container.dart';
 
 class SearchSelectField<T> implements SuperFormField<T> {
   SearchSelectField(
