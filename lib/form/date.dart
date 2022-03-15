@@ -229,7 +229,7 @@ class DateField implements SuperFormField<DateTime> {
                         },
                       ),
                     ),
-                  ));
+                  ), isScrollControlled: true);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -317,7 +317,7 @@ class DateField implements SuperFormField<DateTime> {
                         },
                       ),
                     ),
-                  ));
+                  ), isScrollControlled: true);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -325,9 +325,8 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
           }
         },
       ),
-      content: Expanded(
-        child: ListView.separated(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+      content: ListView.separated(
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
                 title: Text(_options[index].text),
@@ -351,7 +350,7 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
               );
             },
             itemCount: _options.length),
-      ),
+
     isFullScreen: true,);
   }
 }

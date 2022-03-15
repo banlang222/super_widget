@@ -71,7 +71,12 @@ class BottomSheetContainer extends StatelessWidget {
                   ],
                 ),
               ),
-              content,
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: content,
+                ),
+              ),
               Container(
                 padding: const EdgeInsets.only(bottom: 10, top: 10),
                 child: footer,
