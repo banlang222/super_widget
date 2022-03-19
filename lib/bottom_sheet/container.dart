@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+///expanded content是否占用尽可能大的区域，默认为true, expanded = true时将显示全屏按钮
+///header仅控制内容
 class BottomSheetContainer extends StatelessWidget {
   BottomSheetContainer(
       {Key? key,
       this.header,
       required this.content,
       this.footer,
-      this.isFullScreen = false})
+      this.isFullScreen = false, this.expanded = true})
       : super(key: key);
 
   final Widget? header;
   final Widget content;
   final Widget? footer;
   final bool isFullScreen;
+  final bool expanded;
 
   final RxBool _fullScreen = RxBool(false);
 
@@ -55,9 +58,9 @@ class BottomSheetContainer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: header?? Container(),
+                      child: header ?? Container(),
                     ) ,
-                    IconButton(
+                    expanded ? IconButton(
                       onPressed: () {
                         _fullScreen.value = _fullScreen.value ? false : true;
                       },
@@ -67,16 +70,17 @@ class BottomSheetContainer extends StatelessWidget {
                             : Icons.fullscreen,
                         color: Colors.black54,
                       ),
-                    )
+                    ) : Container()
                   ],
                 ),
               ),
+              expanded ?
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(left: 10, right: 10),
                   child: content,
                 ),
-              ),
+              ) : content,
               Container(
                 padding: const EdgeInsets.only(bottom: 10, top: 10),
                 child: footer,
