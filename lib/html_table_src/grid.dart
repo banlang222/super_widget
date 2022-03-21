@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'html_cell.dart';
+import 'td.dart';
 import 'place_holder.dart';
 
-class CellMatrix extends StatelessWidget {
-  CellMatrix(
+///基础网格，标记行列位置以及根据单元格计算出的实际高宽数据
+class Grid extends StatelessWidget {
+  Grid(
       {Key? key,
       required this.colIndex,
       required this.rowIndex,
@@ -14,7 +15,7 @@ class CellMatrix extends StatelessWidget {
 
   final int colIndex;
   final int rowIndex;
-  HtmlCell? cell;
+  TD? cell;
   double? height;
   double? width;
 

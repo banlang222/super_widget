@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 
 import 'package:html/dom.dart' as dom;
 
-class HtmlCell extends StatelessWidget {
-  HtmlCell(
+class TD extends StatelessWidget {
+  TD(
       {Key? key,
       this.text,
       this.rowSpan = 1,
       this.colSpan = 1,
-      this.padding,
       this.alignment = Alignment.centerLeft,
+      this.padding,
       this.decoration})
       : super(key: key);
 
-  dynamic text;
+  //String or dom.NodeList
+  final dynamic text;
   int rowSpan;
   int colSpan;
+  final Alignment alignment;
   EdgeInsets? padding;
   BoxDecoration? decoration;
-  Alignment alignment;
 
   @override
   Widget build(BuildContext context) {

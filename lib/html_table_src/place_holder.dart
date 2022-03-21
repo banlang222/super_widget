@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'html_cell.dart';
+import 'td.dart';
 
-class PlaceHolder extends HtmlCell {
-  PlaceHolder({Key? key}) : super(key: key);
+class PlaceHolder extends TD {
+  PlaceHolder({Key? key})
+      : super(
+            key: key,
+            decoration: const BoxDecoration(),
+            padding: EdgeInsets.zero);
   @override
   Widget build(BuildContext context) {
     return Container(

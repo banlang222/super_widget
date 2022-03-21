@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'cell_matrix.dart';
+import 'grid.dart';
 import 'place_holder.dart';
 
 class HtmlTableRenderObjectWidget extends MultiChildRenderObjectWidget {
@@ -9,17 +9,17 @@ class HtmlTableRenderObjectWidget extends MultiChildRenderObjectWidget {
       {Key? key,
       required this.totalRowSpan,
       required this.totalColSpan,
-      required this.cells})
-      : super(key: key, children: cells);
+      required this.grids})
+      : super(key: key, children: grids);
 
   final int totalRowSpan;
   final int totalColSpan;
-  final List<CellMatrix> cells;
+  final List<Grid> grids;
 
   @override
   RenderObject createRenderObject(BuildContext context) {
     return RenderHtmlTable(
-        totalRowSpan: totalRowSpan, totalColSpan: totalColSpan, cells: cells);
+        totalRowSpan: totalRowSpan, totalColSpan: totalColSpan, grids: grids);
   }
 }
 
@@ -32,11 +32,11 @@ class RenderHtmlTable extends RenderBox
   RenderHtmlTable(
       {required this.totalRowSpan,
       required this.totalColSpan,
-      required this.cells});
+      required this.grids});
 
   int totalRowSpan;
   int totalColSpan;
-  List<CellMatrix> cells;
+  List<Grid> grids;
 
   @override
   void setupParentData(covariant RenderObject child) {
@@ -54,10 +54,10 @@ class RenderHtmlTable extends RenderBox
     //计算单元格最小宽度，跨行的除以行数
     while (child != null) {
       SuperCellParentData parentData = child.parentData as SuperCellParentData;
-      if (cells[i].cell != null && cells[i].cell is! PlaceHolder) {
-        cells[i].width = (child.getMinIntrinsicWidth(0) +
-                (cells[i].cell?.padding?.horizontal ?? 0)) /
-            cells[i].cell!.rowSpan;
+      if (grids[i].cell != null && grids[i].cell is! PlaceHolder) {
+        grids[i].width = (child.getMinIntrinsicWidth(0) +
+                (grids[i].cell?.padding?.horizontal ?? 0)) /
+            grids[i].cell!.rowSpan;
       }
       child = parentData.nextSibling;
       i += 1;
@@ -65,7 +65,7 @@ class RenderHtmlTable extends RenderBox
     //统计每列最大宽度
     List<double> colWidthList = List.generate(totalColSpan, (index) => 0.0);
     //处理不跨列的单元格
-    cells
+    grids
         .where((element) =>
             element.cell is! PlaceHolder && element.cell!.colSpan == 1)
         .forEach((element) {
@@ -73,7 +73,7 @@ class RenderHtmlTable extends RenderBox
           math.max(colWidthList[element.colIndex], element.width!);
     });
     //处理跨列的单元格
-    cells
+    grids
         .where((element) =>
             element.cell is! PlaceHolder && element.cell!.colSpan > 1)
         .forEach((element) {
@@ -114,9 +114,9 @@ class RenderHtmlTable extends RenderBox
     //按照列均分宽度计算高度
     while (child != null) {
       SuperCellParentData parentData = child.parentData as SuperCellParentData;
-      if (cells[i].cell != null && cells[i].cell is! PlaceHolder) {
-        cells[i].height =
-            child.getMinIntrinsicHeight(colWidthFinalList[cells[i].colIndex]);
+      if (grids[i].cell != null && grids[i].cell is! PlaceHolder) {
+        grids[i].height =
+            child.getMinIntrinsicHeight(colWidthFinalList[grids[i].colIndex]);
       }
       child = parentData.nextSibling;
       i += 1;
@@ -125,7 +125,7 @@ class RenderHtmlTable extends RenderBox
     //统计每行最大高度，初始值为0
     List<double> rowHeightList = List.generate(totalRowSpan, (index) => 0.0);
     //处理不跨行的单元格
-    cells
+    grids
         .where((element) =>
             element.cell is! PlaceHolder && element.cell!.rowSpan == 1)
         .forEach((element) {
@@ -133,7 +133,7 @@ class RenderHtmlTable extends RenderBox
           math.max(rowHeightList[element.rowIndex], element.height!);
     });
     //处理跨行的单元格
-    cells
+    grids
         .where((element) =>
             element.cell is! PlaceHolder && element.cell!.rowSpan > 1)
         .forEach((element) {
@@ -160,15 +160,15 @@ class RenderHtmlTable extends RenderBox
     double dy = 0;
     while (child != null) {
       SuperCellParentData parentData = child.parentData as SuperCellParentData;
-      //cells[i].cell已经填充过，没有null值
+      //grids[i].cell已经填充过，没有null值
       //更新到下一行
-      if (cells[i].rowIndex != rowIndex) {
-        rowIndex = cells[i].rowIndex;
+      if (grids[i].rowIndex != rowIndex) {
+        rowIndex = grids[i].rowIndex;
         dy = rowHeightList
             .getRange(0, rowIndex)
             .reduce((value, element) => value + element);
       }
-      int colIndex = cells[i].colIndex;
+      int colIndex = grids[i].colIndex;
       double dx = colIndex == 0
           ? 0
           : colWidthFinalList
@@ -176,18 +176,18 @@ class RenderHtmlTable extends RenderBox
               .reduce((value, element) => value + element);
       parentData.offset = Offset(dx, dy);
 
-      double w = cells[i].cell!.colSpan == 1
+      double w = grids[i].cell!.colSpan == 1
           ? colWidthFinalList[colIndex]
           : colWidthFinalList
-              .getRange(colIndex, colIndex + cells[i].cell!.colSpan)
+              .getRange(colIndex, colIndex + grids[i].cell!.colSpan)
               .reduce((value, element) => value + element);
-      double h = cells[i].cell!.rowSpan == 1
+      double h = grids[i].cell!.rowSpan == 1
           ? rowHeightList[rowIndex]
           : rowHeightList
-              .getRange(rowIndex, rowIndex + cells[i].cell!.rowSpan)
+              .getRange(rowIndex, rowIndex + grids[i].cell!.rowSpan)
               .reduce((value, element) => value + element);
       //PlaceHolder，不显示
-      if (cells[i].cell is PlaceHolder) {
+      if (grids[i].cell is PlaceHolder) {
         child.layout(constraints.copyWith(maxWidth: 0, maxHeight: 0),
             parentUsesSize: false);
       } else {
