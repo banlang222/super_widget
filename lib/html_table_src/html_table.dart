@@ -117,16 +117,18 @@ class HtmlTable extends StatelessWidget {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               controller: ScrollController(),
+              physics: BouncingScrollPhysics(), //目前仅可用这个，当SingleChildScrollView嵌套在ListView中时，使用其他physics会导致pverscroll_indicator.dart _handleScrollNotification时assert(notification.metrics.axis == widget.axis);不成立
               child: Obx(() => Container(
-                    constraints: BoxConstraints(maxWidth: _width.value),
-                    child: HtmlTableRenderObjectWidget(
-                      totalColSpan: _totalColSpan,
-                      totalRowSpan: _totalRowSpan,
-                      grids: _tableGrids,
-                    ),
-                    decoration: decoration,
-                  )),
+                constraints: BoxConstraints(maxWidth: _width.value),
+                child: HtmlTableRenderObjectWidget(
+                  totalColSpan: _totalColSpan,
+                  totalRowSpan: _totalRowSpan,
+                  grids: _tableGrids,
+                ),
+                decoration: decoration,
+              )),
             )
+
           ],
         );
       }),

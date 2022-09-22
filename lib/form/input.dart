@@ -18,7 +18,7 @@ class ValueType {
   static const ValueType password = ValueType._('password', '');
   static const ValueType search = ValueType._('search', '');
 
-  static ValueType? fromName(String name) {
+  static ValueType? fromName(String? name) {
     switch (name) {
       case 'text':
         return text;

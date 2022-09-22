@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class MenuItem {
-  MenuItem(
+class BSMenuItem {
+  BSMenuItem(
       {this.leading,
       required this.text,
       required this.onTap,
@@ -16,7 +16,7 @@ class MenuItem {
 
 class BottomSheetMenu extends StatelessWidget {
   const BottomSheetMenu({Key? key, required this.items}) : super(key: key);
-  final List<MenuItem> items;
+  final List<BSMenuItem> items;
 
   @override
   Widget build(BuildContext context) {

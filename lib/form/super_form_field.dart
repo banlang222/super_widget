@@ -35,7 +35,7 @@ class FieldType {
   static const FieldType date = FieldType._('date');
   static const FieldType group = FieldType._('group');
 
-  static FieldType? fromName(String name) {
+  static FieldType? fromName(String? name) {
     switch (name) {
       case 'input':
         return input;

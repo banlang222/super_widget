@@ -284,7 +284,7 @@ class FileType {
     return fromExt(ext);
   }
 
-  static FileType? fromExt(String ext) {
+  static FileType? fromExt(String? ext) {
     switch (ext) {
       case 'png':
         return png;
@@ -318,8 +318,9 @@ class FileType {
         return txt;
       case 'mp4':
         return mp4;
+      default:
+        return null;
     }
-    return null;
   }
 
   static List<FileType> get extAllowed {

@@ -16,7 +16,7 @@ class DateMode {
   static const DateMode time = DateMode._('time', 1, '时间');
   static const DateMode dateTime = DateMode._('dateTime', 2, '日期时间');
 
-  static DateMode? fromValue(int value) {
+  static DateMode? fromValue(int? value) {
     switch (value) {
       case 0:
         return date;
@@ -45,8 +45,7 @@ class DateField implements SuperFormField<DateTime> {
   DateField.fromMap(Map<String, dynamic> map) {
     name = map['name'];
     text = map['text'];
-    defaultValue =
-        (map['defaultValue'] as String).toDateTime() ?? DateTime.now();
+    defaultValue = map['defaultValue'] == null ? DateTime.now() : (map['defaultValue'] as String).toDateTime() ?? DateTime.now();
     dateMode = DateMode.fromValue(map['dateMode']) ?? DateMode.date;
     helperText = map['helperText'];
     isRequired = map['isRequired'] ?? false;
