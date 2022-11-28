@@ -6,6 +6,7 @@ class SuperForm {
 
   String? formName;
   late List<FormFieldGroup> items;
+  bool _editMode = true;
 
   SuperForm.fromMap(Map<String, dynamic> map) {
     formName = map['formName'];
@@ -49,9 +50,15 @@ class SuperForm {
     return _check;
   }
 
-  void setEditMode(bool editable) {
+  bool get editMode {
+    return _editMode;
+  }
+
+  void set editMode(bool editable) {
+    _editMode = editable;
     for (var item in items) {
-      item.setEditMode(editable);
+      item.setEditMode(_editMode);
     }
   }
+
 }
