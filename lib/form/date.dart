@@ -37,7 +37,8 @@ class DateField implements SuperFormField<DateTime> {
       this.dateMode = DateMode.date,
       this.helperText,
       this.isRequired = false,
-      this.readonly = false}) {
+      this.readonly = false,
+      this.editMode = true}) {
     defaultValue ??= DateTime.now();
     _value.value = defaultValue;
   }
@@ -45,11 +46,14 @@ class DateField implements SuperFormField<DateTime> {
   DateField.fromMap(Map<String, dynamic> map) {
     name = map['name'];
     text = map['text'];
-    defaultValue = map['defaultValue'] == null ? DateTime.now() : (map['defaultValue'] as String).toDateTime() ?? DateTime.now();
+    defaultValue = map['defaultValue'] == null
+        ? DateTime.now()
+        : (map['defaultValue'] as String).toDateTime() ?? DateTime.now();
     dateMode = DateMode.fromValue(map['dateMode']) ?? DateMode.date;
     helperText = map['helperText'];
     isRequired = map['isRequired'] ?? false;
     readonly = map['readonly'] ?? false;
+    editMode = map['editMode'] ?? true;
     _value.value = defaultValue;
   }
 
@@ -67,6 +71,9 @@ class DateField implements SuperFormField<DateTime> {
 
   @override
   late bool readonly;
+
+  @override
+  late bool editMode;
 
   @override
   String? text;
@@ -119,6 +126,7 @@ class DateField implements SuperFormField<DateTime> {
         name: name,
         text: text,
         readonly: readonly,
+        editMode: editMode,
         defaultValue: defaultValue,
         dateMode: dateMode,
         isRequired: isRequired,
@@ -137,6 +145,7 @@ class DateField implements SuperFormField<DateTime> {
       'text': text,
       'type': type?.name,
       'readonly': readonly,
+      'editMode': editMode,
       'defaultValue': defaultValue,
       'dateMode': dateMode.value,
       'isRequired': isRequired,
@@ -182,53 +191,55 @@ class DateField implements SuperFormField<DateTime> {
               isEmpty: false,
               child: InkWell(
                 onTap: () async {
-                  Get.bottomSheet(BottomSheetContainer(
-                    header: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton.icon(
-                            onPressed: () {
-                              Get.back();
-                            },
-                            label: const Text('取消'),
-                            icon: const Icon(
-                              Icons.close,
-                              size: 20,
-                            )),
-                        const Text('请选择日期'),
-                        TextButton.icon(
-                            onPressed: () {
+                  Get.bottomSheet(
+                      BottomSheetContainer(
+                        header: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton.icon(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                label: const Text('取消'),
+                                icon: const Icon(
+                                  Icons.close,
+                                  size: 20,
+                                )),
+                            const Text('请选择日期'),
+                            TextButton.icon(
+                                onPressed: () {
+                                  _errorText.clear();
+                                  //dateKey.currentState.setState(() {});
+                                  Get.back();
+                                },
+                                label: const Text('确定'),
+                                icon: const Icon(
+                                  Icons.check,
+                                  size: 20,
+                                ))
+                          ],
+                        ),
+                        content: Container(
+                          height: 150,
+                          color: Colors.white,
+                          child: CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.date,
+                            initialDateTime: _value.value,
+                            onDateTimeChanged: (DateTime date) {
+                              _value.value = DateTime(
+                                  date.year,
+                                  date.month,
+                                  date.day,
+                                  _value.value!.hour,
+                                  _value.value!.minute,
+                                  _value.value!.second);
                               _errorText.clear();
                               //dateKey.currentState.setState(() {});
-                              Get.back();
                             },
-                            label: const Text('确定'),
-                            icon: const Icon(
-                              Icons.check,
-                              size: 20,
-                            ))
-                      ],
-                    ),
-                    content: Container(
-                      height: 150,
-                      color: Colors.white,
-                      child: CupertinoDatePicker(
-                        mode: CupertinoDatePickerMode.date,
-                        initialDateTime: _value.value,
-                        onDateTimeChanged: (DateTime date) {
-                          _value.value = DateTime(
-                              date.year,
-                              date.month,
-                              date.day,
-                              _value.value!.hour,
-                              _value.value!.minute,
-                              _value.value!.second);
-                          _errorText.clear();
-                          //dateKey.currentState.setState(() {});
-                        },
+                          ),
+                        ),
                       ),
-                    ),
-                  ), isScrollControlled: true);
+                      isScrollControlled: true);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -238,7 +249,9 @@ class DateField implements SuperFormField<DateTime> {
                       child: Obx(
                           () => Text(Utils.dateFormat(_value.value!, true))),
                     ),
-                    readonly ? Container() : const Icon(Icons.date_range)
+                    (readonly || !editMode)
+                        ? Container()
+                        : const Icon(Icons.date_range)
                   ],
                 ),
               ),
@@ -270,53 +283,55 @@ class DateField implements SuperFormField<DateTime> {
               isEmpty: false,
               child: InkWell(
                 onTap: () async {
-                  Get.bottomSheet(BottomSheetContainer(
-                    header: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton.icon(
-                            onPressed: () {
-                              Get.back();
-                            },
-                            label: const Text('取消'),
-                            icon: const Icon(
-                              Icons.close,
-                              size: 20,
-                            )),
-                        const Text('请选择时间'),
-                        TextButton.icon(
-                            onPressed: () {
-                              _value.value ??= DateTime.now();
+                  Get.bottomSheet(
+                      BottomSheetContainer(
+                        header: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton.icon(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                label: const Text('取消'),
+                                icon: const Icon(
+                                  Icons.close,
+                                  size: 20,
+                                )),
+                            const Text('请选择时间'),
+                            TextButton.icon(
+                                onPressed: () {
+                                  _value.value ??= DateTime.now();
+                                  _errorText.clear();
+                                  Get.back();
+                                },
+                                label: const Text('确定'),
+                                icon: const Icon(
+                                  Icons.check,
+                                  size: 20,
+                                ))
+                          ],
+                        ),
+                        content: Container(
+                          height: 150,
+                          color: Colors.white,
+                          child: CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.time,
+                            initialDateTime: _value.value ?? DateTime.now(),
+                            onDateTimeChanged: (DateTime date) {
+                              _value.value = DateTime(
+                                  _value.value!.year,
+                                  _value.value!.month,
+                                  _value.value!.day,
+                                  date.hour,
+                                  date.minute,
+                                  date.second);
                               _errorText.clear();
-                              Get.back();
+                              //timeKey.currentState.setState(() {});
                             },
-                            label: const Text('确定'),
-                            icon: const Icon(
-                              Icons.check,
-                              size: 20,
-                            ))
-                      ],
-                    ),
-                    content: Container(
-                      height: 150,
-                      color: Colors.white,
-                      child: CupertinoDatePicker(
-                        mode: CupertinoDatePickerMode.time,
-                        initialDateTime: _value.value ?? DateTime.now(),
-                        onDateTimeChanged: (DateTime date) {
-                          _value.value = DateTime(
-                              _value.value!.year,
-                              _value.value!.month,
-                              _value.value!.day,
-                              date.hour,
-                              date.minute,
-                              date.second);
-                          _errorText.clear();
-                          //timeKey.currentState.setState(() {});
-                        },
+                          ),
+                        ),
                       ),
-                    ),
-                  ), isScrollControlled: true);
+                      isScrollControlled: true);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -325,7 +340,9 @@ class DateField implements SuperFormField<DateTime> {
                       padding: const EdgeInsets.only(top: 15, bottom: 15),
                       child: Text(Utils.timeFormat(_value.value!)),
                     ),
-                    readonly ? Container() : const Icon(Icons.date_range)
+                    (readonly || !editMode)
+                        ? Container()
+                        : const Icon(Icons.date_range)
                   ],
                 ),
               ),

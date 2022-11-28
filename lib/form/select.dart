@@ -10,6 +10,7 @@ class SelectField<T> implements SuperFormField<T> {
       {required this.name,
       this.text,
       this.readonly = false,
+      this.editMode = true,
       this.defaultValue,
       this.options = const [],
       this.isRequired = false,
@@ -26,7 +27,7 @@ class SelectField<T> implements SuperFormField<T> {
     name = map['name'];
     text = map['text'];
     readonly = map['readonly'] ?? false;
-
+    editMode = map['editMode'] ?? true;
     options = List<Map<String, dynamic>>.from(map['options'])
         .map((e) => SelectOption.fromMap(e))
         .toList();
@@ -51,6 +52,9 @@ class SelectField<T> implements SuperFormField<T> {
 
   @override
   late bool readonly;
+
+  @override
+  late bool editMode;
 
   @override
   T? defaultValue;
@@ -79,8 +83,7 @@ class SelectField<T> implements SuperFormField<T> {
 
   @override
   set value(dynamic v) {
-    print('v=$v');
-    if(options.map((e) => e.value).contains(v)){
+    if (options.map((e) => e.value).contains(v)) {
       _value.value = v;
       if (readonly) {
         defaultValue = v;
@@ -110,6 +113,7 @@ class SelectField<T> implements SuperFormField<T> {
       'text': text,
       'type': type?.name,
       'readonly': readonly,
+      'editMode': editMode,
       'defaultValue': defaultValue,
       'options': options.map((element) => element.toMap()).toList(),
       'isRequired': isRequired,
@@ -128,6 +132,7 @@ class SelectField<T> implements SuperFormField<T> {
         name: name,
         text: text,
         readonly: readonly,
+        editMode: editMode,
         defaultValue: defaultValue,
         options: options,
         isRequired: isRequired,
@@ -165,17 +170,15 @@ class SelectField<T> implements SuperFormField<T> {
                 underline: Container(),
                 value: _value.value,
                 items: options.map((e) => e.toWidget()).toList(),
-                onChanged: readonly
+                onChanged: (readonly || !editMode)
                     ? null
                     : (dynamic a) {
-                        if (a != null) {
-                          _errorText.clear();
-                          //更新选择的值
-                          _value.value = a;
-                          //联动回调
-                          if (callback != null) {
-                            callback!(a);
-                          }
+                        _errorText.clear();
+                        //更新选择的值
+                        _value.value = a;
+                        //联动回调
+                        if (callback != null) {
+                          callback!(a);
                         }
                       },
                 focusColor: Colors.white,
@@ -214,16 +217,14 @@ class SelectField<T> implements SuperFormField<T> {
                 underline: Container(),
                 value: _value.value,
                 items: options.map((e) => e.toWidget()).toList(),
-                onChanged: readonly
+                onChanged: (readonly || !editMode)
                     ? null
                     : (dynamic a) {
-                        if (a != null) {
-                          _errorText.clear();
-                          _value.value = a;
-                          //联动回调
-                          if (callback != null) {
-                            callback!(a);
-                          }
+                        _errorText.clear();
+                        _value.value = a;
+                        //联动回调
+                        if (callback != null) {
+                          callback!(a);
                         }
                       },
               ),

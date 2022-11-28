@@ -7,6 +7,7 @@ abstract class SuperFormField<T> {
   String? text;
   FieldType? type;
   late bool readonly;
+  late bool editMode;
   T? defaultValue;
   Map<String, dynamic> toMap();
   @override

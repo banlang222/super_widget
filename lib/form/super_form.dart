@@ -48,4 +48,10 @@ class SuperForm {
     }
     return _check;
   }
+
+  void setEditMode(bool editable) {
+    for (var item in items) {
+      item.setEditMode(editable);
+    }
+  }
 }

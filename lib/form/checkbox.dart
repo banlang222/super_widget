@@ -8,6 +8,7 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
       {this.defaultValue,
       this.options = const [],
       this.readonly = false,
+      this.editMode = true,
       required this.name,
       this.text,
       this.isRequired = false,
@@ -24,12 +25,12 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
   CheckBoxField.fromMap(Map<String, dynamic> map) {
     name = map['name'];
     readonly = map['readonly'] ?? false;
+    editMode = map['editMode'] ?? true;
     text = map['text'];
     options = List<Map<String, dynamic>>.from(map['options'] ?? [])
         .map((e) => CheckBoxOption.fromMap(e))
         .toList();
     isRequired = map['isRequired'] ?? false;
-    print(map['defaultValue'].runtimeType);
     defaultValue = map['defaultValue'] ?? <String, bool>{};
     _value.value = Map.from(defaultValue!);
     if (_value.value.isEmpty) {
@@ -49,6 +50,9 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
 
   @override
   late bool readonly;
+
+  @override
+  late bool editMode;
 
   @override
   String? text;
@@ -97,6 +101,7 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
         name: name,
         text: text,
         readonly: readonly,
+        editMode: editMode,
         options: options,
         defaultValue: defaultValue,
         helperText: helperText);
@@ -109,6 +114,7 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
       'text': text,
       'type': type?.name,
       'readonly': readonly,
+      'editMode': editMode,
       'options': options.map((e) => e.toMap()).toList(),
       'defaultValue': defaultValue,
       'isRequired': isRequired,

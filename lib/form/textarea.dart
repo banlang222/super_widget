@@ -10,6 +10,7 @@ class TextareaField implements SuperFormField<String> {
       {required this.name,
       this.text,
       this.readonly = false,
+      this.editMode = true,
       this.defaultValue,
       this.maxLength = 500,
       this.minLength = 0,
@@ -21,6 +22,7 @@ class TextareaField implements SuperFormField<String> {
     defaultValue = map['defaultValue'];
     name = map['name'];
     readonly = map['readonly'] ?? false;
+    editMode = map['editMode'] ?? true;
     text = map['text'];
     _controller.text = defaultValue ?? '';
     maxLength = map['maxLength'] ?? 500;
@@ -38,6 +40,9 @@ class TextareaField implements SuperFormField<String> {
 
   @override
   late bool readonly;
+
+  @override
+  late bool editMode;
 
   @override
   String? text;
@@ -104,6 +109,7 @@ class TextareaField implements SuperFormField<String> {
       'type': type?.name,
       'defaultValue': defaultValue,
       'readonly': readonly,
+      'editMode': editMode,
       'maxLength': maxLength,
       'minLength': minLength,
       'isRequired': isRequired,
@@ -123,6 +129,7 @@ class TextareaField implements SuperFormField<String> {
         name: name,
         text: text,
         readonly: readonly,
+        editMode: editMode,
         defaultValue: defaultValue,
         maxLength: maxLength,
         minLength: minLength,
@@ -141,8 +148,9 @@ class TextareaField implements SuperFormField<String> {
             maxLines: 5,
             maxLength: maxLength,
             controller: _controller,
-            readOnly: readonly,
-            style: TextStyle(color: readonly ? Colors.black54 : Colors.black),
+            readOnly: (readonly || !editMode),
+            style: TextStyle(
+                color: (readonly || !editMode) ? Colors.black54 : Colors.black),
             textInputAction: TextInputAction.newline,
             onChanged: (String t) {
               _check(t.supperTrim());
@@ -159,7 +167,9 @@ class TextareaField implements SuperFormField<String> {
                   borderRadius: BorderRadius.all(Radius.circular(8))),
               focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: readonly ? Colors.black12 : Colors.yellow[700]!),
+                      color: (readonly || !editMode)
+                          ? Colors.black12
+                          : Colors.yellow[700]!),
                   borderRadius: const BorderRadius.all(Radius.circular(8))),
               suffix: showCopyBtn!
                   ? InkWell(

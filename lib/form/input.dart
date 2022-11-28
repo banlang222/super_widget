@@ -42,6 +42,7 @@ class InputField<T> implements SuperFormField<T> {
       {required this.name,
       this.text,
       this.readonly = false,
+      this.editMode = true,
       this.defaultValue,
       this.valueType = ValueType.text,
       this.maxLength,
@@ -57,6 +58,7 @@ class InputField<T> implements SuperFormField<T> {
     defaultValue = map['defaultValue'];
     name = map['name'];
     readonly = map['readonly'] ?? false;
+    editMode = map['editMode'] ?? true;
     text = map['text'];
     valueType = ValueType.fromName(map['valueType']);
     maxLength = map['maxLength'];
@@ -78,6 +80,9 @@ class InputField<T> implements SuperFormField<T> {
 
   @override
   late bool readonly;
+
+  @override
+  late bool editMode;
 
   @override
   String? text;
@@ -203,6 +208,7 @@ class InputField<T> implements SuperFormField<T> {
       'valueType': valueType?.name,
       'defaultValue': defaultValue,
       'readonly': readonly,
+      'editMode': editMode,
       'maxLength': maxLength,
       'minLength': minLength,
       'minValue': minValue,
@@ -224,6 +230,7 @@ class InputField<T> implements SuperFormField<T> {
         name: name,
         text: text,
         readonly: readonly,
+        editMode: editMode,
         defaultValue: defaultValue,
         valueType: valueType,
         minLength: minLength,
@@ -252,8 +259,9 @@ class InputField<T> implements SuperFormField<T> {
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: Obx(() => TextField(
             controller: _controller,
-            readOnly: readonly,
-            style: TextStyle(color: readonly ? Colors.black54 : Colors.black),
+            readOnly: (readonly || !editMode),
+            style: TextStyle(
+                color: (readonly || !editMode) ? Colors.black54 : Colors.black),
             keyboardType: valueType == ValueType.int
                 ? const TextInputType.numberWithOptions(
                     signed: true, decimal: false)
@@ -295,7 +303,9 @@ class InputField<T> implements SuperFormField<T> {
                   borderRadius: BorderRadius.all(Radius.circular(8))),
               focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: readonly ? Colors.black12 : Colors.yellow[700]!),
+                      color: (readonly || !editMode)
+                          ? Colors.black12
+                          : Colors.yellow[700]!),
                   borderRadius: const BorderRadius.all(Radius.circular(8))),
               suffix: valueType == ValueType.password
                   ? InkWell(
@@ -342,8 +352,9 @@ class InputField<T> implements SuperFormField<T> {
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Obx(() => TextField(
             controller: _controller,
-            readOnly: readonly,
-            style: TextStyle(color: readonly ? Colors.black54 : Colors.black),
+            readOnly: (readonly || !editMode),
+            style: TextStyle(
+                color: (readonly || !editMode) ? Colors.black54 : Colors.black),
             keyboardType: valueType == ValueType.int
                 ? const TextInputType.numberWithOptions(
                     signed: true, decimal: false)
@@ -383,7 +394,9 @@ class InputField<T> implements SuperFormField<T> {
                   borderRadius: BorderRadius.all(Radius.circular(8))),
               focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: readonly ? Colors.black12 : Colors.yellow[700]!),
+                      color: (readonly || !editMode)
+                          ? Colors.black12
+                          : Colors.yellow[700]!),
                   borderRadius: const BorderRadius.all(Radius.circular(8))),
               suffix: valueType == ValueType.search
                   ? InkWell(

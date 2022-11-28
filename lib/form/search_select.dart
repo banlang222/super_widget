@@ -11,6 +11,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
       {required this.name,
       this.text,
       this.readonly = false,
+      this.editMode = true,
       this.defaultValue,
       this.options = const [],
       this.isRequired = false,
@@ -27,6 +28,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
     name = map['name'];
     text = map['text'];
     readonly = map['readonly'] ?? false;
+    editMode = map['editMode'] ?? true;
     options = List<Map<String, dynamic>>.from(map['options'])
         .map((e) => SelectOption.fromMap(e))
         .toList();
@@ -51,6 +53,9 @@ class SearchSelectField<T> implements SuperFormField<T> {
 
   @override
   late bool readonly;
+
+  @override
+  late bool editMode;
 
   @override
   T? defaultValue;
@@ -105,6 +110,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
       'text': text,
       'type': type?.name,
       'readonly': readonly,
+      'editMode': editMode,
       'defaultValue': defaultValue,
       'options': options.map((element) => element.toMap()).toList(),
       'isRequired': isRequired,
@@ -123,6 +129,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
         name: name,
         text: text,
         readonly: readonly,
+        editMode: editMode,
         defaultValue: defaultValue,
         options: options,
         isRequired: isRequired,
@@ -139,7 +146,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
     }
 
     return GestureDetector(
-      onTap: readonly
+      onTap: (readonly || !editMode)
           ? null
           : () async {
               SelectOption? _selected =
@@ -188,7 +195,9 @@ class SearchSelectField<T> implements SuperFormField<T> {
                                   .text
                               : '',
                           style: TextStyle(
-                              color: readonly ? Colors.black54 : Colors.black)),
+                              color: (readonly || !editMode)
+                                  ? Colors.black54
+                                  : Colors.black)),
                     ),
                     const Icon(Icons.arrow_drop_down_sharp)
                   ],
@@ -200,7 +209,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
   @override
   Widget toFilterWidget() {
     return GestureDetector(
-      onTap: readonly
+      onTap: (readonly || !editMode)
           ? null
           : () async {
               print('tap1');
@@ -247,7 +256,9 @@ class SearchSelectField<T> implements SuperFormField<T> {
                             .text
                         : '',
                     style: TextStyle(
-                        color: readonly ? Colors.black54 : Colors.black),
+                        color: (readonly || !editMode)
+                            ? Colors.black54
+                            : Colors.black),
                   ),
                 ),
                 const Icon(Icons.arrow_drop_down_sharp)
@@ -300,7 +311,7 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
                 borderSide: BorderSide(color: Colors.yellow[700]!),
                 borderRadius: const BorderRadius.all(Radius.circular(8))),
             suffixIcon: IconButton(
-              icon: Icon(Icons.close),
+              icon: const Icon(Icons.close),
               onPressed: () {
                 _controller.text = '';
                 if (_options.length != widget.options.length) {
@@ -316,7 +327,7 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
             word = word.replaceAll(RegExp(r'\s+'), '.*');
             _options = widget.options
                 .where((element) => RegExp('$word', caseSensitive: false)
-                .hasMatch(element.text))
+                    .hasMatch(element.text))
                 .toList();
             setState(() {});
           } else if (_options.length != widget.options.length) {
@@ -326,31 +337,31 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
         },
       ),
       content: ListView.separated(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text(_options[index].text),
-                selected: widget.value != null &&
-                    _options[index].value == widget.value,
-                selectedTileColor: Colors.grey[100],
-                leading: widget.value != null &&
-                        _options[index].value == widget.value
-                    ? const Icon(Icons.check)
-                    : null,
-                onTap: () {
-                  Get.back(result: _options[index]);
-                },
-                hoverColor: Colors.grey[100],
-                focusColor: Colors.grey[100],
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return const Divider(
-                height: 1,
-              );
-            },
-            itemCount: _options.length),
-
-    isFullScreen: true,);
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(_options[index].text),
+              selected:
+                  widget.value != null && _options[index].value == widget.value,
+              selectedTileColor: Colors.grey[100],
+              leading:
+                  widget.value != null && _options[index].value == widget.value
+                      ? const Icon(Icons.check)
+                      : null,
+              onTap: () {
+                Get.back(result: _options[index]);
+              },
+              hoverColor: Colors.grey[100],
+              focusColor: Colors.grey[100],
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return const Divider(
+              height: 1,
+            );
+          },
+          itemCount: _options.length),
+      isFullScreen: true,
+    );
   }
 }

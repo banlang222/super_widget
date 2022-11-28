@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:extension/extension.dart';
 import 'field_group.dart';
 import 'super_form_field.dart';
 import 'input.dart';
@@ -88,7 +87,11 @@ class FormFieldGroup {
     }
   }
 
-  void setReadonly() {}
+  void setEditMode(bool editable) {
+    for (var element in items) {
+      element.editMode = editable;
+    }
+  }
 
   bool check() {
     bool _check = true;

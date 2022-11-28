@@ -9,6 +9,7 @@ class RadioBoxField implements SuperFormField<Map<String, bool>> {
       this.options = const [],
       this.text,
       this.readonly = false,
+      this.editMode = true,
       required this.name,
       this.isRequired = false,
       this.helperText}) {
@@ -25,6 +26,7 @@ class RadioBoxField implements SuperFormField<Map<String, bool>> {
     defaultValue = map['defaultValue'] ?? <String, bool>{};
     name = map['name'];
     readonly = map['readonly'] ?? false;
+    editMode = map['editMode'] ?? true;
     text = map['text'];
     options = List<Map<String, dynamic>>.from(map['options'] ?? [])
         .map((e) => RadioOption.fromMap(e))
@@ -43,6 +45,9 @@ class RadioBoxField implements SuperFormField<Map<String, bool>> {
 
   @override
   late bool readonly;
+
+  @override
+  late bool editMode;
 
   @override
   String? text;
@@ -85,6 +90,7 @@ class RadioBoxField implements SuperFormField<Map<String, bool>> {
     return RadioBoxField(
         name: name,
         readonly: readonly,
+        editMode: editMode,
         text: text,
         options: options,
         defaultValue: defaultValue,
@@ -99,6 +105,7 @@ class RadioBoxField implements SuperFormField<Map<String, bool>> {
       'text': text,
       'type': type?.name,
       'readonly': readonly,
+      'editMode': editMode,
       'options': options.map((e) => e.toMap()).toList(),
       'defaultValue': defaultValue,
       'isRequired': isRequired,

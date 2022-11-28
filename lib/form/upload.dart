@@ -17,6 +17,7 @@ class UploadField implements SuperFormField<List<String>> {
       this.helperText,
       this.isRequired = false,
       this.readonly = false,
+      this.editMode = true,
       this.uploadUrl,
       this.doUpload}) {
     _value.value = defaultValue?.map((e) => {'url': e}).toList() ?? [];
@@ -26,6 +27,7 @@ class UploadField implements SuperFormField<List<String>> {
     defaultValue = map['defaultValue'];
     name = map['name'];
     readonly = map['readonly'] ?? false;
+    editMode = map['editMode'] ?? true;
     text = map['text'];
     isRequired = map['isRequired'] ?? false;
     uploadUrl = map['uploadUrl'];
@@ -46,6 +48,9 @@ class UploadField implements SuperFormField<List<String>> {
 
   @override
   late bool readonly = false;
+
+  @override
+  late bool editMode;
 
   @override
   String? text;
@@ -86,6 +91,7 @@ class UploadField implements SuperFormField<List<String>> {
         name: name,
         text: text,
         readonly: readonly,
+        editMode: editMode,
         defaultValue: defaultValue,
         isRequired: isRequired,
         helperText: helperText,
@@ -105,6 +111,7 @@ class UploadField implements SuperFormField<List<String>> {
       'type': type?.name,
       'defaultValue': defaultValue,
       'readonly': readonly,
+      'editMode': editMode,
       'isRequired': isRequired,
       'helperText': helperText
     };
@@ -139,7 +146,7 @@ class UploadField implements SuperFormField<List<String>> {
         isEmpty: false,
         child: Column(
           children: [
-            readonly
+            (readonly || !editMode)
                 ? Container()
                 : Container(
                     padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
