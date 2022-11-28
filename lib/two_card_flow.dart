@@ -1,4 +1,4 @@
 library two_card_flow;
 
-export 'flow/renderBox.dart';
+export 'flow/render_box.dart';
 export 'flow/two_card_flow.dart';

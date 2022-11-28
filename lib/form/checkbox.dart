@@ -15,7 +15,7 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
       this.helperText}) {
     defaultValue ??= <String, bool>{};
     _value.value = Map<String, bool>.from(defaultValue!);
-    if (_value.value.isEmpty) {
+    if (_value.isEmpty) {
       for (var element in options) {
         _value.update(element.name, (value) => false);
       }
@@ -33,9 +33,9 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
     isRequired = map['isRequired'] ?? false;
     defaultValue = map['defaultValue'] ?? <String, bool>{};
     _value.value = Map.from(defaultValue!);
-    if (_value.value.isEmpty) {
+    if (_value.isEmpty) {
       for (var element in options) {
-        _value.value[element.name] = false;
+        _value[element.name] = false;
       }
       _value.refresh();
     }
@@ -181,7 +181,6 @@ class CheckBoxOption {
         Checkbox(
             value: value,
             onChanged: (bool? checked) {
-              print('change to ${checked}');
               callback(checked);
             }),
         Text(text)

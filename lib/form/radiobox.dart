@@ -15,10 +15,10 @@ class RadioBoxField implements SuperFormField<Map<String, bool>> {
       this.helperText}) {
     defaultValue ??= <String, bool>{};
     _value.value = Map<String, bool>.from(defaultValue!);
-    if (_value.value.isEmpty) {
-      options.forEach((element) {
+    if (_value.isEmpty) {
+      for (var element in options) {
         _value.update(element.name, (value) => false);
-      });
+      }
     }
   }
 
@@ -175,7 +175,6 @@ class RadioOption {
             value: value,
             groupValue: group,
             onChanged: (Object? ob) {
-              print('change to ${ob}');
               callback(ob);
             }),
         Text(text)

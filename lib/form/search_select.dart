@@ -138,13 +138,6 @@ class SearchSelectField<T> implements SuperFormField<T> {
 
   @override
   Widget toWidget() {
-    SelectOption selected;
-    try {
-      selected = options.firstWhere((element) => element.value == _value.value);
-    } catch (e) {
-      print('非法值');
-    }
-
     return GestureDetector(
       onTap: (readonly || !editMode)
           ? null
@@ -212,7 +205,6 @@ class SearchSelectField<T> implements SuperFormField<T> {
       onTap: (readonly || !editMode)
           ? null
           : () async {
-              print('tap1');
               SelectOption? _selected =
                   await Get.bottomSheet<SelectOption>(BottomSearchSelect(
                 options: options,
@@ -326,8 +318,8 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
           if (word.isNotEmpty) {
             word = word.replaceAll(RegExp(r'\s+'), '.*');
             _options = widget.options
-                .where((element) => RegExp('$word', caseSensitive: false)
-                    .hasMatch(element.text))
+                .where((element) =>
+                    RegExp(word, caseSensitive: false).hasMatch(element.text))
                 .toList();
             setState(() {});
           } else if (_options.length != widget.options.length) {

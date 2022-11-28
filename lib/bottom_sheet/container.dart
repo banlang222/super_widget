@@ -9,7 +9,8 @@ class BottomSheetContainer extends StatelessWidget {
       this.header,
       required this.content,
       this.footer,
-      this.isFullScreen = false, this.expanded = true})
+      this.isFullScreen = false,
+      this.expanded = true})
       : super(key: key);
 
   final Widget? header;
@@ -59,28 +60,32 @@ class BottomSheetContainer extends StatelessWidget {
                   children: [
                     Expanded(
                       child: header ?? Container(),
-                    ) ,
-                    expanded ? IconButton(
-                      onPressed: () {
-                        _fullScreen.value = _fullScreen.value ? false : true;
-                      },
-                      icon: Icon(
-                        _fullScreen.value
-                            ? Icons.fullscreen_exit
-                            : Icons.fullscreen,
-                        color: Colors.black54,
-                      ),
-                    ) : Container()
+                    ),
+                    expanded
+                        ? IconButton(
+                            onPressed: () {
+                              _fullScreen.value =
+                                  _fullScreen.value ? false : true;
+                            },
+                            icon: Icon(
+                              _fullScreen.value
+                                  ? Icons.fullscreen_exit
+                                  : Icons.fullscreen,
+                              color: Colors.black54,
+                            ),
+                          )
+                        : Container()
                   ],
                 ),
               ),
-              expanded ?
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 10, right: 10),
-                  child: content,
-                ),
-              ) : content,
+              expanded
+                  ? Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: content,
+                      ),
+                    )
+                  : content,
               Container(
                 padding: const EdgeInsets.only(bottom: 10, top: 10),
                 child: footer,
