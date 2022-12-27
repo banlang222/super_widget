@@ -159,15 +159,6 @@ class SearchSelectField<T> implements SuperFormField<T> {
                     isDense: true,
                     isCollapsed: true,
                     contentPadding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                    border: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black12),
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
-                    enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black12),
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
-                    focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black12),
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
                     errorText: _errorText['error'],
                     helperText: isRequired
                         ? '* ${helperText ?? ''}'
@@ -220,15 +211,6 @@ class SearchSelectField<T> implements SuperFormField<T> {
                 isDense: true,
                 isCollapsed: true,
                 contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 0),
-                border: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black12),
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black12),
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black12),
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
                 errorText: _errorText['error'],
                 helperText:
                     isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),
@@ -293,15 +275,6 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
         decoration: InputDecoration(
             labelText: '关键词',
             isDense: true,
-            border: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black12),
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black12),
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.yellow[700]!),
-                borderRadius: const BorderRadius.all(Radius.circular(8))),
             suffixIcon: IconButton(
               icon: const Icon(Icons.close),
               onPressed: () {

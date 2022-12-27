@@ -149,15 +149,6 @@ class SelectField<T> implements SuperFormField<T> {
                 isDense: true,
                 isCollapsed: true,
                 contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 0),
-                border: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black12),
-                    borderRadius: BorderRadius.all(Radius.circular(8))),
-                enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black12),
-                    borderRadius: BorderRadius.all(Radius.circular(8))),
-                focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black12),
-                    borderRadius: BorderRadius.all(Radius.circular(8))),
                 errorText: _errorText['error'],
                 helperText:
                     isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),
@@ -198,15 +189,6 @@ class SelectField<T> implements SuperFormField<T> {
                   isDense: true,
                   isCollapsed: true,
                   contentPadding: const EdgeInsets.fromLTRB(15, 3, 15, 3),
-                  border: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12),
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12),
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12),
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
                   errorText: _errorText['error'],
                   helperText:
                       isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),

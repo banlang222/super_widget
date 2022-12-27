@@ -131,15 +131,6 @@ class UploadField implements SuperFormField<List<String>> {
           isDense: true,
           isCollapsed: true,
           contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 0),
-          border: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black12),
-              borderRadius: BorderRadius.all(Radius.circular(8))),
-          enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black12),
-              borderRadius: BorderRadius.all(Radius.circular(8))),
-          focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black12),
-              borderRadius: BorderRadius.all(Radius.circular(8))),
           helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
         ),
         isFocused: true,

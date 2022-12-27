@@ -168,23 +168,13 @@ class DateField implements SuperFormField<DateTime> {
 
   Widget buildDateWidget() {
     return Container(
-        color: Colors.white,
         padding: const EdgeInsets.only(top: 5, bottom: 5),
         child: Obx(() => InputDecorator(
               decoration: InputDecoration(
                   labelText: '$text（日期）',
                   isDense: true,
                   isCollapsed: true,
-                  contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 3),
-                  border: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
-                  enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
-                  focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 3),
                   helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
                   errorText: _errorText['error']),
               isFocused: false,
@@ -193,6 +183,7 @@ class DateField implements SuperFormField<DateTime> {
                 onTap: () async {
                   Get.bottomSheet(
                       BottomSheetContainer(
+                        backGroundColor: Get.theme.backgroundColor,
                         header: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -221,7 +212,6 @@ class DateField implements SuperFormField<DateTime> {
                         ),
                         content: Container(
                           height: 150,
-                          color: Colors.white,
                           child: CupertinoDatePicker(
                             mode: CupertinoDatePickerMode.date,
                             initialDateTime: _value.value,
@@ -260,7 +250,6 @@ class DateField implements SuperFormField<DateTime> {
 
   Widget buildTimeWidget() {
     return Container(
-        color: Colors.white,
         padding: const EdgeInsets.only(top: 5, bottom: 5),
         child: Obx(() => InputDecorator(
               decoration: InputDecoration(
@@ -268,15 +257,6 @@ class DateField implements SuperFormField<DateTime> {
                   isDense: true,
                   isCollapsed: true,
                   contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 3),
-                  border: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
-                  enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
-                  focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
                   helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
                   errorText: _errorText['error']),
               isFocused: false,
@@ -285,6 +265,7 @@ class DateField implements SuperFormField<DateTime> {
                 onTap: () async {
                   Get.bottomSheet(
                       BottomSheetContainer(
+                        backGroundColor: Get.theme.backgroundColor,
                         header: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -313,7 +294,6 @@ class DateField implements SuperFormField<DateTime> {
                         ),
                         content: Container(
                           height: 150,
-                          color: Colors.white,
                           child: CupertinoDatePicker(
                             mode: CupertinoDatePickerMode.time,
                             initialDateTime: _value.value ?? DateTime.now(),

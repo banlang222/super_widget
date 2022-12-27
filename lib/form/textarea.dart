@@ -160,17 +160,8 @@ class TextareaField implements SuperFormField<String> {
               helperText: isRequired ? ' * ${helperText ?? ''}' : helperText,
               errorText: _errorText['error'],
               isDense: true,
-              border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8))),
-              enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black12),
-                  borderRadius: BorderRadius.all(Radius.circular(8))),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: (readonly || !editMode)
-                          ? Colors.black12
-                          : Colors.yellow[700]!),
-                  borderRadius: const BorderRadius.all(Radius.circular(8))),
+              focusedBorder: (readonly || !editMode) ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(borderSide: BorderSide(
+                  color: Get.theme.inputDecorationTheme.disabledBorder?.borderSide.color ?? Colors.grey)) : null,
               suffix: showCopyBtn!
                   ? InkWell(
                       child: const Icon(

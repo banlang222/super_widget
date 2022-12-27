@@ -126,7 +126,6 @@ class FormFieldGroup {
     if (showName) {
       return Container(
         margin: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-        color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
@@ -148,7 +147,6 @@ class FormFieldGroup {
     }
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -161,7 +159,6 @@ class FormFieldGroup {
   Widget toFilterWidget([bool showName = true]) {
     if (showName) {
       return Container(
-        color: Colors.white,
         padding: const EdgeInsets.only(left: 10, right: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,

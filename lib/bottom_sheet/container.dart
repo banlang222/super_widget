@@ -10,7 +10,7 @@ class BottomSheetContainer extends StatelessWidget {
       required this.content,
       this.footer,
       this.isFullScreen = false,
-      this.expanded = true})
+      this.expanded = true, this.backGroundColor})
       : super(key: key);
 
   final Widget? header;
@@ -18,6 +18,7 @@ class BottomSheetContainer extends StatelessWidget {
   final Widget? footer;
   final bool isFullScreen;
   final bool expanded;
+  final Color? backGroundColor;
 
   final RxBool _fullScreen = RxBool(false);
 
@@ -28,8 +29,8 @@ class BottomSheetContainer extends StatelessWidget {
           constraints: BoxConstraints(
             maxHeight: _fullScreen.value ? Get.height : Get.height * .4,
           ),
-          decoration: const BoxDecoration(
-              color: Colors.white,
+          decoration: BoxDecoration(
+              color: backGroundColor ?? Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -42,16 +43,14 @@ class BottomSheetContainer extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.grey[300]!,
-                          Colors.white70,
-                          Colors.grey[100]!,
-                          Colors.white
+                          Colors.grey.withAlpha(50),
+                          (backGroundColor ?? Colors.white).withAlpha(100),
+                          Colors.grey!.withAlpha(1),
                         ],
                         stops: const [
                           0,
-                          .1,
-                          .7,
-                          1
+                          .3,
+                          1,
                         ])),
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                 child: Row(
@@ -71,7 +70,6 @@ class BottomSheetContainer extends StatelessWidget {
                               _fullScreen.value
                                   ? Icons.fullscreen_exit
                                   : Icons.fullscreen,
-                              color: Colors.black54,
                             ),
                           )
                         : Container()

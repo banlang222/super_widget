@@ -295,18 +295,8 @@ class InputField<T> implements SuperFormField<T> {
                   ? ' * ${helperText ?? ''} ${valueType!.info}'
                   : helperText ?? '',
               errorText: _errorText['error'],
-              border: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black12),
-                  borderRadius: BorderRadius.all(Radius.circular(8))),
-              enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black12),
-                  borderRadius: BorderRadius.all(Radius.circular(8))),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: (readonly || !editMode)
-                          ? Colors.black12
-                          : Colors.yellow[700]!),
-                  borderRadius: const BorderRadius.all(Radius.circular(8))),
+              focusedBorder: (readonly || !editMode) ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(borderSide: BorderSide(
+                  color: Get.theme.inputDecorationTheme.disabledBorder?.borderSide.color ?? Colors.grey)) : null,
               suffix: valueType == ValueType.password
                   ? InkWell(
                       child: Icon(
@@ -389,15 +379,8 @@ class InputField<T> implements SuperFormField<T> {
               fillColor: Colors.grey[100],
               focusColor: Colors.white,
               contentPadding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-              enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black12),
-                  borderRadius: BorderRadius.all(Radius.circular(8))),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: (readonly || !editMode)
-                          ? Colors.black12
-                          : Colors.yellow[700]!),
-                  borderRadius: const BorderRadius.all(Radius.circular(8))),
+              focusedBorder: (readonly || !editMode) ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(borderSide: BorderSide(
+                  color: Get.theme.inputDecorationTheme.disabledBorder?.borderSide.color ?? Colors.grey)) : null,
               suffix: valueType == ValueType.search
                   ? InkWell(
                       child: const Icon(

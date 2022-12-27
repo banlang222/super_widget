@@ -15,8 +15,9 @@ class BSMenuItem {
 }
 
 class BottomSheetMenu extends StatelessWidget {
-  const BottomSheetMenu({Key? key, required this.items}) : super(key: key);
+  const BottomSheetMenu({Key? key, required this.items, this.backgroundColor}) : super(key: key);
   final List<BSMenuItem> items;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +31,14 @@ class BottomSheetMenu extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             width: double.infinity,
             alignment: Alignment.center,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
-                color: Colors.white),
+                color: backgroundColor ?? Colors.white),
             child: ListView.separated(
                 shrinkWrap: true,
                 itemBuilder: (context, int index) {
                   return ListTile(
                     leading: items[index].leading,
-                    tileColor: Colors.white,
                     onTap: () {
                       items[index].onTap();
                       Get.back();
@@ -49,7 +49,7 @@ class BottomSheetMenu extends StatelessWidget {
                         style: TextStyle(
                             color: items[index].selected
                                 ? Colors.green
-                                : Colors.black),
+                                : null),
                       ),
                     ),
                     trailing: items[index].selected
@@ -83,7 +83,7 @@ class BottomSheetMenu extends StatelessWidget {
             ),
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
-                color: Colors.grey[50]),
+                color: backgroundColor ?? Colors.white),
           )
         ],
       ),
