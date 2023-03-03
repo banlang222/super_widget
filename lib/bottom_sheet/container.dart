@@ -45,7 +45,7 @@ class BottomSheetContainer extends StatelessWidget {
                         colors: [
                           Colors.grey.withAlpha(50),
                           (backGroundColor ?? Colors.white).withAlpha(100),
-                          Colors.grey!.withAlpha(1),
+                          Colors.grey.withAlpha(1),
                         ],
                         stops: const [
                           0,

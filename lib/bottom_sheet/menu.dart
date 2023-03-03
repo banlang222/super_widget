@@ -14,6 +14,7 @@ class BSMenuItem {
   final bool selected;
 }
 
+///bottomSheetMenu按钮点击后自动关闭，无需再处理关闭动作
 class BottomSheetMenu extends StatelessWidget {
   const BottomSheetMenu({Key? key, required this.items, this.backgroundColor}) : super(key: key);
   final List<BSMenuItem> items;
@@ -38,6 +39,7 @@ class BottomSheetMenu extends StatelessWidget {
                 shrinkWrap: true,
                 itemBuilder: (context, int index) {
                   return ListTile(
+                    tileColor: Colors.transparent,
                     leading: items[index].leading,
                     onTap: () {
                       items[index].onTap();
@@ -74,6 +76,7 @@ class BottomSheetMenu extends StatelessWidget {
             width: double.infinity,
             alignment: Alignment.center,
             child: ListTile(
+              tileColor: Colors.transparent,
               title: const Center(
                 child: Text('取消'),
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:extension/extension.dart';
 import 'super_form_field.dart';
 import 'utils.dart';
@@ -181,55 +182,69 @@ class DateField implements SuperFormField<DateTime> {
               isEmpty: false,
               child: InkWell(
                 onTap: () async {
-                  Get.bottomSheet(
-                      BottomSheetContainer(
-                        backGroundColor: Get.theme.backgroundColor,
-                        header: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextButton.icon(
-                                onPressed: () {
-                                  Get.back();
-                                },
-                                label: const Text('取消'),
-                                icon: const Icon(
-                                  Icons.close,
-                                  size: 20,
-                                )),
-                            const Text('请选择日期'),
-                            TextButton.icon(
-                                onPressed: () {
-                                  _errorText.clear();
-                                  //dateKey.currentState.setState(() {});
-                                  Get.back();
-                                },
-                                label: const Text('确定'),
-                                icon: const Icon(
-                                  Icons.check,
-                                  size: 20,
-                                ))
-                          ],
-                        ),
-                        content: Container(
-                          height: 150,
-                          child: CupertinoDatePicker(
-                            mode: CupertinoDatePickerMode.date,
-                            initialDateTime: _value.value,
-                            onDateTimeChanged: (DateTime date) {
-                              _value.value = DateTime(
-                                  date.year,
-                                  date.month,
-                                  date.day,
-                                  _value.value!.hour,
-                                  _value.value!.minute,
-                                  _value.value!.second);
-                              _errorText.clear();
-                              //dateKey.currentState.setState(() {});
-                            },
-                          ),
-                        ),
-                      ),
-                      isScrollControlled: true);
+                  DatePicker.showDatePicker(Get.context!,
+                      initialDateTime: _value.value,
+                      locale: DateTimePickerLocale.zh_cn,
+                      pickerMode: DateTimePickerMode.date,
+                      onConfirm: (DateTime date, List<int> selected) {
+                    _value.value = DateTime(
+                        date.year,
+                        date.month,
+                        date.day,
+                        _value.value!.hour,
+                        _value.value!.minute,
+                        _value.value!.second);
+                    _errorText.clear();
+                  });
+                  // Get.bottomSheet(
+                  //     BottomSheetContainer(
+                  //       backGroundColor: Get.theme.backgroundColor,
+                  //       header: Row(
+                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //         children: [
+                  //           TextButton.icon(
+                  //               onPressed: () {
+                  //                 Get.back();
+                  //               },
+                  //               label: const Text('取消'),
+                  //               icon: const Icon(
+                  //                 Icons.close,
+                  //                 size: 20,
+                  //               )),
+                  //           const Text('请选择日期'),
+                  //           TextButton.icon(
+                  //               onPressed: () {
+                  //                 _errorText.clear();
+                  //                 //dateKey.currentState.setState(() {});
+                  //                 Get.back();
+                  //               },
+                  //               label: const Text('确定'),
+                  //               icon: const Icon(
+                  //                 Icons.check,
+                  //                 size: 20,
+                  //               ))
+                  //         ],
+                  //       ),
+                  //       content: Container(
+                  //         height: 150,
+                  //         child: CupertinoDatePicker(
+                  //           mode: CupertinoDatePickerMode.date,
+                  //           initialDateTime: _value.value,
+                  //           onDateTimeChanged: (DateTime date) {
+                  //             _value.value = DateTime(
+                  //                 date.year,
+                  //                 date.month,
+                  //                 date.day,
+                  //                 _value.value!.hour,
+                  //                 _value.value!.minute,
+                  //                 _value.value!.second);
+                  //             _errorText.clear();
+                  //             //dateKey.currentState.setState(() {});
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     isScrollControlled: true);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -263,55 +278,69 @@ class DateField implements SuperFormField<DateTime> {
               isEmpty: false,
               child: InkWell(
                 onTap: () async {
-                  Get.bottomSheet(
-                      BottomSheetContainer(
-                        backGroundColor: Get.theme.backgroundColor,
-                        header: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextButton.icon(
-                                onPressed: () {
-                                  Get.back();
-                                },
-                                label: const Text('取消'),
-                                icon: const Icon(
-                                  Icons.close,
-                                  size: 20,
-                                )),
-                            const Text('请选择时间'),
-                            TextButton.icon(
-                                onPressed: () {
-                                  _value.value ??= DateTime.now();
-                                  _errorText.clear();
-                                  Get.back();
-                                },
-                                label: const Text('确定'),
-                                icon: const Icon(
-                                  Icons.check,
-                                  size: 20,
-                                ))
-                          ],
-                        ),
-                        content: Container(
-                          height: 150,
-                          child: CupertinoDatePicker(
-                            mode: CupertinoDatePickerMode.time,
-                            initialDateTime: _value.value ?? DateTime.now(),
-                            onDateTimeChanged: (DateTime date) {
-                              _value.value = DateTime(
-                                  _value.value!.year,
-                                  _value.value!.month,
-                                  _value.value!.day,
-                                  date.hour,
-                                  date.minute,
-                                  date.second);
-                              _errorText.clear();
-                              //timeKey.currentState.setState(() {});
-                            },
-                          ),
-                        ),
-                      ),
-                      isScrollControlled: true);
+                  DatePicker.showDatePicker(Get.context!,
+                      initialDateTime: _value.value ?? DateTime.now(),
+                      locale: DateTimePickerLocale.zh_cn,
+                      pickerMode: DateTimePickerMode.time,
+                      onConfirm: (DateTime date, List<int> selected) {
+                    _value.value = DateTime(
+                        _value.value!.year,
+                        _value.value!.month,
+                        _value.value!.day,
+                        date.hour,
+                        date.minute,
+                        date.second);
+                    _errorText.clear();
+                  });
+                  // Get.bottomSheet(
+                  //     BottomSheetContainer(
+                  //       backGroundColor: Get.theme.backgroundColor,
+                  //       header: Row(
+                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //         children: [
+                  //           TextButton.icon(
+                  //               onPressed: () {
+                  //                 Get.back();
+                  //               },
+                  //               label: const Text('取消'),
+                  //               icon: const Icon(
+                  //                 Icons.close,
+                  //                 size: 20,
+                  //               )),
+                  //           const Text('请选择时间'),
+                  //           TextButton.icon(
+                  //               onPressed: () {
+                  //                 _value.value ??= DateTime.now();
+                  //                 _errorText.clear();
+                  //                 Get.back();
+                  //               },
+                  //               label: const Text('确定'),
+                  //               icon: const Icon(
+                  //                 Icons.check,
+                  //                 size: 20,
+                  //               ))
+                  //         ],
+                  //       ),
+                  //       content: SizedBox(
+                  //         height: 150,
+                  //         child: CupertinoDatePicker(
+                  //           mode: CupertinoDatePickerMode.time,
+                  //           initialDateTime: _value.value ?? DateTime.now(),
+                  //           onDateTimeChanged: (DateTime date) {
+                  //             _value.value = DateTime(
+                  //                 _value.value!.year,
+                  //                 _value.value!.month,
+                  //                 _value.value!.day,
+                  //                 date.hour,
+                  //                 date.minute,
+                  //                 date.second);
+                  //             _errorText.clear();
+                  //             //timeKey.currentState.setState(() {});
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     isScrollControlled: true);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

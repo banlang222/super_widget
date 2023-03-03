@@ -125,9 +125,8 @@ class FormFieldGroup {
   Widget toWidget([bool showName = true]) {
     if (showName) {
       return Container(
-        margin: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-        child: Padding(
-          padding: const EdgeInsets.all(10),
+        margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+        padding: const EdgeInsets.all(10),
           child: Column(
             children: [
               Container(
@@ -142,17 +141,15 @@ class FormFieldGroup {
               )
             ],
           ),
-        ),
       );
     }
     return Container(
-      margin: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
+      margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+      padding: const EdgeInsets.all(10),
+      child:Column(
           children: items.map((e) => e.toWidget()).toList(),
         ),
-      ),
+
     );
   }
 
