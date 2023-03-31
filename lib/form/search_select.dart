@@ -326,7 +326,7 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
             );
           },
           itemCount: _options.length),
-      isFullScreen: true,
+      containerSize: ContainerSize.big,
     );
   }
 }

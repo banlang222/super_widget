@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+enum ContainerSize {
+  max(1.0),
+  big(.8),
+  medium(.5),
+  small(.3);
+
+  final double value;
+  const ContainerSize(this.value);
+}
+
 ///expanded content是否占用尽可能大的区域，默认为true, expanded = true时将显示全屏按钮
 ///header仅控制内容
 class BottomSheetContainer extends StatelessWidget {
@@ -9,14 +19,15 @@ class BottomSheetContainer extends StatelessWidget {
       this.header,
       required this.content,
       this.footer,
-      this.isFullScreen = false,
-      this.expanded = true, this.backGroundColor})
+      this.containerSize = ContainerSize.medium,
+      this.expanded = true,
+      this.backGroundColor})
       : super(key: key);
 
   final Widget? header;
   final Widget content;
   final Widget? footer;
-  final bool isFullScreen;
+  final ContainerSize containerSize;
   final bool expanded;
   final Color? backGroundColor;
 
@@ -24,10 +35,14 @@ class BottomSheetContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _fullScreen.value = isFullScreen;
+    if (containerSize == ContainerSize.max) {
+      _fullScreen.value = true;
+    }
     return Obx(() => Container(
           constraints: BoxConstraints(
-            maxHeight: _fullScreen.value ? Get.height : Get.height * .4,
+            maxHeight: _fullScreen.value
+                ? Get.height
+                : Get.height * containerSize.value,
           ),
           decoration: BoxDecoration(
               color: backGroundColor ?? Colors.white,
