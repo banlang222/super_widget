@@ -33,7 +33,7 @@ class BottomSheetMenu extends StatelessWidget {
             width: double.infinity,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
                 color: backgroundColor ?? Colors.white),
             child: ListView.separated(
                 shrinkWrap: true,

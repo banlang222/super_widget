@@ -142,20 +142,20 @@ class SelectField<T> implements SuperFormField<T> {
   @override
   Widget toWidget() {
     return Container(
-      padding: const EdgeInsets.only(top: 5, bottom: 5),
+      padding: const EdgeInsets.only(top: 10, bottom: 5),
       child: Obx(() => InputDecorator(
             decoration: InputDecoration(
                 labelText: '$text',
                 isDense: true,
                 isCollapsed: true,
-                contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 0),
+                contentPadding: const EdgeInsets.fromLTRB(15, 4, 15, 0),
                 errorText: _errorText['error'],
                 helperText:
                     isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),
             isFocused: false,
             isEmpty: !hasValue,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 5),
+              padding: EdgeInsets.all(0),
               child: DropdownButton(
                 isExpanded: true,
                 underline: Container(),

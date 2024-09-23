@@ -52,7 +52,12 @@ class InputField<T> implements SuperFormField<T> {
       this.isRequired = false,
       this.helperText,
       this.showCopyBtn = true,
-      this.callback});
+      this.callback}) {
+    if(defaultValue != null) {
+      _controller.text = defaultValue.toString();
+    }
+
+  }
 
   InputField.fromMap(Map<String, dynamic> map) {
     defaultValue = map['defaultValue'];

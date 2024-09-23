@@ -11,8 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  html: ^0.15.0
-  get: ^4.1.4
+  html: ^0.15.4
+  get: ^4.6.5
   extension:
     path: ../../dartServer/extension
   file_picker: ^5.2.0

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 ThemeData themeData = ThemeData(
-  textTheme: const TextTheme(subtitle1: TextStyle(color: Colors.black)),
+  textTheme: const TextTheme(titleMedium: TextStyle(color: Colors.black)),
   inputDecorationTheme: InputDecorationTheme(
     border: OutlineInputBorder(
         borderSide: BorderSide(color: Colors.grey[700]!),

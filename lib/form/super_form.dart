@@ -54,7 +54,7 @@ class SuperForm {
     return _editMode;
   }
 
-  void set editMode(bool editable) {
+  set editMode(bool editable) {
     _editMode = editable;
     for (var item in items) {
       item.setEditMode(_editMode);

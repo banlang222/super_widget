@@ -27,6 +27,7 @@ class BottomSheetContainer extends StatelessWidget {
   final Widget? header;
   final Widget content;
   final Widget? footer;
+  /// 需要配合isScrollControlled=true 使用
   final ContainerSize containerSize;
   final bool expanded;
   final Color? backGroundColor;
@@ -46,7 +47,7 @@ class BottomSheetContainer extends StatelessWidget {
           ),
           decoration: BoxDecoration(
               color: backGroundColor ?? Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(30))),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -54,19 +55,7 @@ class BottomSheetContainer extends StatelessWidget {
                 decoration: BoxDecoration(
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(30)),
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.grey.withAlpha(50),
-                          (backGroundColor ?? Colors.white).withAlpha(100),
-                          Colors.grey.withAlpha(1),
-                        ],
-                        stops: const [
-                          0,
-                          .3,
-                          1,
-                        ])),
+                    color: backGroundColor ?? Colors.white),
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
