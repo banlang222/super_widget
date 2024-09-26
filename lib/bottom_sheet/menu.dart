@@ -16,7 +16,8 @@ class BSMenuItem {
 
 ///bottomSheetMenu按钮点击后自动关闭，无需再处理关闭动作
 class BottomSheetMenu extends StatelessWidget {
-  const BottomSheetMenu({Key? key, required this.items, this.backgroundColor}) : super(key: key);
+  const BottomSheetMenu({Key? key, required this.items, this.backgroundColor})
+      : super(key: key);
   final List<BSMenuItem> items;
   final Color? backgroundColor;
 
@@ -49,9 +50,7 @@ class BottomSheetMenu extends StatelessWidget {
                       child: Text(
                         items[index].text,
                         style: TextStyle(
-                            color: items[index].selected
-                                ? Colors.green
-                                : null),
+                            color: items[index].selected ? Colors.green : null),
                       ),
                     ),
                     trailing: items[index].selected
@@ -87,6 +86,9 @@ class BottomSheetMenu extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
                 color: backgroundColor ?? Colors.white),
+          ),
+          const SizedBox(
+            height: 20,
           )
         ],
       ),
