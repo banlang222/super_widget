@@ -119,9 +119,13 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
             child: widget.header,
           ),
           widget.content,
-          Container(
-            padding: const EdgeInsets.only(bottom: 10, top: 10),
-            child: widget.footer,
+          if (widget.footer != null)
+            Container(
+              padding: const EdgeInsets.only(top: 10),
+              child: widget.footer,
+            ),
+          SizedBox(
+            height: 20,
           )
         ],
       ),
