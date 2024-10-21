@@ -63,8 +63,8 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                 : Get.height * widget.containerSize.value,
           ),
           child: Scaffold(
-            backgroundColor:
-                widget.backGroundColor ?? themeData.dialogBackgroundColor,
+            backgroundColor: widget.backGroundColor ??
+                themeData.bottomSheetTheme.modalBackgroundColor,
             appBar: PreferredSize(
                 preferredSize: const Size(double.infinity, 60),
                 child: Padding(
@@ -102,7 +102,8 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
 
     return Container(
       decoration: BoxDecoration(
-          color: widget.backGroundColor ?? themeData.dialogBackgroundColor,
+          color: widget.backGroundColor ??
+              themeData.bottomSheetTheme.modalBackgroundColor,
           borderRadius:
               BorderRadius.vertical(top: Radius.circular(widget.radius))),
       child: Column(
@@ -112,8 +113,8 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
             decoration: BoxDecoration(
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(30)),
-                color:
-                    widget.backGroundColor ?? themeData.dialogBackgroundColor),
+                color: widget.backGroundColor ??
+                    themeData.bottomSheetTheme.modalBackgroundColor),
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
             child: widget.header,
           ),

@@ -23,6 +23,7 @@ class BottomSheetMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
     return Container(
       color: Colors.transparent,
       child: Column(
@@ -35,7 +36,8 @@ class BottomSheetMenu extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
-                color: backgroundColor ?? Colors.white),
+                color: backgroundColor ??
+                    themeData.bottomSheetTheme.modalBackgroundColor),
             child: ListView.separated(
                 shrinkWrap: true,
                 itemBuilder: (context, int index) {
@@ -85,7 +87,8 @@ class BottomSheetMenu extends StatelessWidget {
             ),
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
-                color: backgroundColor ?? Colors.white),
+                color: backgroundColor ??
+                    themeData.bottomSheetTheme.modalBackgroundColor),
           ),
           const SizedBox(
             height: 20,
