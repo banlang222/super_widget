@@ -123,7 +123,6 @@ class UploadField implements SuperFormField<List<String>> {
   @override
   Widget toWidget() {
     return Container(
-      color: Colors.white,
       padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: InputDecorator(
         decoration: InputDecoration(
@@ -181,7 +180,6 @@ class UploadField implements SuperFormField<List<String>> {
                         label: const Text('添加')),
                   ),
             Container(
-              color: Colors.grey[50],
               width: double.infinity,
               padding: const EdgeInsets.all(10),
               margin: const EdgeInsets.only(top: 20, bottom: 20),

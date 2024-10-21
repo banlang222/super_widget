@@ -13,87 +13,117 @@ enum ContainerSize {
 
 ///expanded content是否占用尽可能大的区域，默认为true, expanded = true时将显示全屏按钮
 ///header仅控制内容
-class BottomSheetContainer extends StatelessWidget {
-  BottomSheetContainer(
+class BottomSheetContainer extends StatefulWidget {
+  const BottomSheetContainer(
       {Key? key,
       this.header,
       required this.content,
       this.footer,
       this.containerSize = ContainerSize.medium,
       this.expanded = true,
+      this.radius = 30,
       this.backGroundColor})
       : super(key: key);
 
   final Widget? header;
   final Widget content;
   final Widget? footer;
+  final double radius;
+
   /// 需要配合isScrollControlled=true 使用
   final ContainerSize containerSize;
+
+  ///
   final bool expanded;
   final Color? backGroundColor;
 
-  final RxBool _fullScreen = RxBool(false);
+  @override
+  State<StatefulWidget> createState() {
+    return _BottomSheetContainerState();
+  }
+}
+
+class _BottomSheetContainerState extends State<BottomSheetContainer> {
+  bool _fullScreen = false;
 
   @override
   Widget build(BuildContext context) {
-    if (containerSize == ContainerSize.max) {
-      _fullScreen.value = true;
+    ThemeData themeData = Theme.of(context);
+    if (widget.containerSize == ContainerSize.max) {
+      _fullScreen = true;
     }
-    return Obx(() => Container(
+    if (widget.expanded) {
+      return ClipRRect(
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(widget.radius)),
+        child: ConstrainedBox(
           constraints: BoxConstraints(
-            maxHeight: _fullScreen.value
+            maxHeight: _fullScreen
                 ? Get.height
-                : Get.height * containerSize.value,
+                : Get.height * widget.containerSize.value,
           ),
-          decoration: BoxDecoration(
-              color: backGroundColor ?? Colors.white,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(30))),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(30)),
-                    color: backGroundColor ?? Colors.white),
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: header ?? Container(),
-                    ),
-                    expanded
-                        ? IconButton(
-                            onPressed: () {
-                              _fullScreen.value =
-                                  _fullScreen.value ? false : true;
-                            },
-                            icon: Icon(
-                              _fullScreen.value
-                                  ? Icons.fullscreen_exit
-                                  : Icons.fullscreen,
-                            ),
-                          )
-                        : Container()
-                  ],
-                ),
-              ),
-              expanded
-                  ? Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        child: content,
-                      ),
-                    )
-                  : content,
-              Container(
-                padding: const EdgeInsets.only(bottom: 10, top: 10),
-                child: footer,
-              )
-            ],
+          child: Scaffold(
+            backgroundColor:
+                widget.backGroundColor ?? themeData.dialogBackgroundColor,
+            appBar: PreferredSize(
+                preferredSize: const Size(double.infinity, 60),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (widget.header != null)
+                        Expanded(child: widget.header!),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _fullScreen = _fullScreen ? false : true;
+                          });
+                        },
+                        icon: Icon(
+                          _fullScreen
+                              ? Icons.fullscreen_exit
+                              : Icons.fullscreen,
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+            body: widget.content,
+            bottomNavigationBar: SizedBox(
+              height: 60,
+              child: widget.footer,
+            ),
           ),
-        ));
+        ),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+          color: widget.backGroundColor ?? themeData.dialogBackgroundColor,
+          borderRadius:
+              BorderRadius.vertical(top: Radius.circular(widget.radius))),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(30)),
+                color:
+                    widget.backGroundColor ?? themeData.dialogBackgroundColor),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+            child: widget.header,
+          ),
+          widget.content,
+          Container(
+            padding: const EdgeInsets.only(bottom: 10, top: 10),
+            child: widget.footer,
+          )
+        ],
+      ),
+    );
   }
 }

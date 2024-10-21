@@ -127,29 +127,28 @@ class FormFieldGroup {
       return Container(
         margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
         padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 10, bottom: 10),
-                child: Text(
-                  name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 10, bottom: 10),
+              child: Text(
+                name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              Column(
-                children: items.map((e) => e.toWidget()).toList(),
-              )
-            ],
-          ),
+            ),
+            Column(
+              children: items.map((e) => e.toWidget()).toList(),
+            )
+          ],
+        ),
       );
     }
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
       padding: const EdgeInsets.all(10),
-      child:Column(
-          children: items.map((e) => e.toWidget()).toList(),
-        ),
-
+      child: Column(
+        children: items.map((e) => e.toWidget()).toList(),
+      ),
     );
   }
 

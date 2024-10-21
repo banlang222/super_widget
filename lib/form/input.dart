@@ -53,10 +53,9 @@ class InputField<T> implements SuperFormField<T> {
       this.helperText,
       this.showCopyBtn = true,
       this.callback}) {
-    if(defaultValue != null) {
+    if (defaultValue != null) {
       _controller.text = defaultValue.toString();
     }
-
   }
 
   InputField.fromMap(Map<String, dynamic> map) {
@@ -265,8 +264,6 @@ class InputField<T> implements SuperFormField<T> {
       child: Obx(() => TextField(
             controller: _controller,
             readOnly: (readonly || !editMode),
-            style: TextStyle(
-                color: (readonly || !editMode) ? Colors.black54 : Colors.black),
             keyboardType: valueType == ValueType.int
                 ? const TextInputType.numberWithOptions(
                     signed: true, decimal: false)
@@ -300,8 +297,13 @@ class InputField<T> implements SuperFormField<T> {
                   ? ' * ${helperText ?? ''} ${valueType!.info}'
                   : helperText ?? '',
               errorText: _errorText['error'],
-              focusedBorder: (readonly || !editMode) ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(borderSide: BorderSide(
-                  color: Get.theme.inputDecorationTheme.disabledBorder?.borderSide.color ?? Colors.grey)) : null,
+              focusedBorder: (readonly || !editMode)
+                  ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(
+                      borderSide: BorderSide(
+                          color: Get.theme.inputDecorationTheme.disabledBorder
+                                  ?.borderSide.color ??
+                              Colors.grey))
+                  : null,
               suffix: valueType == ValueType.password
                   ? InkWell(
                       child: Icon(
@@ -326,7 +328,8 @@ class InputField<T> implements SuperFormField<T> {
                           ),
                           onTap: () async {
                             Utils.copy('$value');
-                          })
+                          },
+                        )
                       : null,
             ),
           )),
@@ -348,8 +351,6 @@ class InputField<T> implements SuperFormField<T> {
       child: Obx(() => TextField(
             controller: _controller,
             readOnly: (readonly || !editMode),
-            style: TextStyle(
-                color: (readonly || !editMode) ? Colors.black54 : Colors.black),
             keyboardType: valueType == ValueType.int
                 ? const TextInputType.numberWithOptions(
                     signed: true, decimal: false)
@@ -380,12 +381,14 @@ class InputField<T> implements SuperFormField<T> {
               errorText: _errorText['error'],
               isDense: true,
               isCollapsed: true,
-              filled: true,
-              fillColor: Colors.grey[100],
-              focusColor: Colors.white,
               contentPadding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-              focusedBorder: (readonly || !editMode) ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(borderSide: BorderSide(
-                  color: Get.theme.inputDecorationTheme.disabledBorder?.borderSide.color ?? Colors.grey)) : null,
+              focusedBorder: (readonly || !editMode)
+                  ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(
+                      borderSide: BorderSide(
+                          color: Get.theme.inputDecorationTheme.disabledBorder
+                                  ?.borderSide.color ??
+                              Colors.grey))
+                  : null,
               suffix: valueType == ValueType.search
                   ? InkWell(
                       child: const Icon(

@@ -138,6 +138,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
 
   @override
   Widget toWidget() {
+    ThemeData themeData = Theme.of(Get.context!);
     return GestureDetector(
       onTap: (readonly || !editMode)
           ? null
@@ -178,10 +179,16 @@ class SearchSelectField<T> implements SuperFormField<T> {
                                       element.value == _value.value)
                                   .text
                               : '',
-                          style: TextStyle(
-                              color: (readonly || !editMode)
-                                  ? Colors.black54
-                                  : Colors.black)),
+                          style: themeData.useMaterial3
+                              ? themeData.textTheme.bodyLarge?.apply(
+                                  color: (readonly || !editMode)
+                                      ? themeData.textTheme.bodyLarge?.color
+                                          ?.withOpacity(0.38)
+                                      : null)
+                              : themeData.textTheme.titleMedium?.apply(
+                                  color: (readonly || !editMode)
+                                      ? themeData.disabledColor
+                                      : null)),
                     ),
                     const Icon(Icons.arrow_drop_down_sharp)
                   ],
@@ -244,7 +251,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
 }
 
 class BottomSearchSelect<T> extends StatefulWidget {
-  BottomSearchSelect({Key? key, required this.options, this.value})
+  const BottomSearchSelect({Key? key, required this.options, this.value})
       : super(key: key);
   final List<SelectOption> options;
   final T? value;
@@ -285,7 +292,7 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
                 }
               },
             ),
-            counter: Container()),
+            counter: const SizedBox()),
         onChanged: (String word) {
           word.supperTrim();
           if (word.isNotEmpty) {
@@ -308,7 +315,6 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
               title: Text(_options[index].text),
               selected:
                   widget.value != null && _options[index].value == widget.value,
-              selectedTileColor: Colors.grey[100],
               leading:
                   widget.value != null && _options[index].value == widget.value
                       ? const Icon(Icons.check)
@@ -316,8 +322,6 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
               onTap: () {
                 Get.back(result: _options[index]);
               },
-              hoverColor: Colors.grey[100],
-              focusColor: Colors.grey[100],
             );
           },
           separatorBuilder: (BuildContext context, int index) {

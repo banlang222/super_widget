@@ -60,9 +60,11 @@ packages:
   extension:
     dependency: transitive
     description:
-      path: "../../../dartServer/extension"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: bd8da4cb24748c001e49300c831e09014be98bca
+      url: "https://github.com/banlang222/extension.git"
+    source: git
     version: "0.0.0"
   fake_async:
     dependency: transitive

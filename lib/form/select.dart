@@ -155,7 +155,7 @@ class SelectField<T> implements SuperFormField<T> {
             isFocused: false,
             isEmpty: !hasValue,
             child: Padding(
-              padding: EdgeInsets.all(0),
+              padding: const EdgeInsets.all(0),
               child: DropdownButton(
                 isExpanded: true,
                 underline: Container(),
@@ -172,7 +172,6 @@ class SelectField<T> implements SuperFormField<T> {
                           callback!(a);
                         }
                       },
-                focusColor: Colors.white,
               ),
             ),
           )),
