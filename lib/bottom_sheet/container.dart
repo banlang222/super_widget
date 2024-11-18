@@ -59,7 +59,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxHeight: _fullScreen
-                ? Get.height
+                ? Get.height - (_fullScreen ? 40 : 0)
                 : Get.height * widget.containerSize.value,
           ),
           child: Scaffold(
@@ -92,7 +92,7 @@ class _BottomSheetContainerState extends State<BottomSheetContainer> {
                 )),
             body: widget.content,
             bottomNavigationBar: SizedBox(
-              height: 60,
+              height: 80,
               child: widget.footer,
             ),
           ),

@@ -31,7 +31,7 @@ class BottomSheetMenu extends StatelessWidget {
         children: [
           Container(
             margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-            padding: const EdgeInsets.all(10),
+            // padding: const EdgeInsets.all(10),
             width: double.infinity,
             alignment: Alignment.center,
             decoration: BoxDecoration(
@@ -40,6 +40,7 @@ class BottomSheetMenu extends StatelessWidget {
                     themeData.bottomSheetTheme.modalBackgroundColor),
             child: ListView.separated(
                 shrinkWrap: true,
+                padding: EdgeInsets.zero,
                 itemBuilder: (context, int index) {
                   return ListTile(
                     tileColor: Colors.transparent,
