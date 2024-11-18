@@ -17,6 +17,7 @@ class ValueType {
   static const ValueType email = ValueType._('email', '仅限xx@xx.com形式');
   static const ValueType password = ValueType._('password', '');
   static const ValueType search = ValueType._('search', '');
+  static const ValueType date = ValueType._('date', '格式：2024-01-01');
 
   static ValueType? fromName(String? name) {
     switch (name) {
@@ -32,6 +33,8 @@ class ValueType {
         return password;
       case 'search':
         return search;
+      case 'date':
+        return date;
     }
     return null;
   }
@@ -258,6 +261,8 @@ class InputField<T> implements SuperFormField<T> {
     } else if (valueType == ValueType.number) {
       inputFormatters
           .add(FilteringTextInputFormatter.allow(RegExp(r'(^-|\d+|\.)')));
+    } else if(valueType == ValueType.date) {
+      inputFormatters.add(FilteringTextInputFormatter.allow(RegExp(r'(^\d|\-)')));
     }
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 10),

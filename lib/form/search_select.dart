@@ -73,6 +73,9 @@ class SearchSelectField<T> implements SuperFormField<T> {
 
   late List<SelectOption> options;
 
+  ///group为null时不筛选
+  dynamic group;
+
   final Rx<T?> _value = Rx<T?>(null);
 
   @override
@@ -91,12 +94,15 @@ class SearchSelectField<T> implements SuperFormField<T> {
   }
 
   bool get hasValue {
+    if(group != null) {
+      return options.where((element)=>element.group == group).map((e) => e.value).contains(_value.value);
+    }
     return options.map((e) => e.value).contains(_value.value);
   }
 
   @override
   bool check() {
-    if (isRequired && !hasValue) {
+    if (isRequired && (!hasValue || _value.value == null)) {
       _errorText['error'] = '必须选择';
       return false;
     }
@@ -139,22 +145,9 @@ class SearchSelectField<T> implements SuperFormField<T> {
   @override
   Widget toWidget() {
     ThemeData themeData = Theme.of(Get.context!);
-    return GestureDetector(
-      onTap: (readonly || !editMode)
-          ? null
-          : () async {
-              SelectOption? _selected =
-                  await Get.bottomSheet<SelectOption>(BottomSearchSelect(
-                options: options,
-                value: _value.value,
-              ));
-              if (_selected != null) {
-                _value.value = _selected.value;
-              }
-            },
-      child: Container(
-          padding: const EdgeInsets.only(top: 5, bottom: 5),
-          child: Obx(() => InputDecorator(
+    return Container(
+        padding: const EdgeInsets.only(top: 5, bottom: 5),
+    child:  Obx(() => InputDecorator(
                 decoration: InputDecoration(
                     labelText: '$text',
                     isDense: true,
@@ -166,11 +159,24 @@ class SearchSelectField<T> implements SuperFormField<T> {
                         : helperText ?? ''),
                 isFocused: false,
                 isEmpty: !hasValue,
-                child: Row(
+                child: InkWell(
+                  onTap: (readonly || !editMode)
+                  ? null
+                      : () async {
+                        SelectOption? _selected =
+                        await Get.bottomSheet<SelectOption>(BottomSearchSelect(
+                          options: group != null ? options.where((element)=>element.group == group).toList() : options,
+                          value: _value.value,
+                        ));
+                        if (_selected != null) {
+                          _value.value = _selected.value;
+                        }
+                },
+                child:Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      height: 55,
+                      height: 50,
                       alignment: Alignment.centerLeft,
                       child: Text(
                           hasValue

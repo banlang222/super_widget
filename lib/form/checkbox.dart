@@ -129,28 +129,29 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
 
   @override
   Widget toWidget() {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(text!),
-          Obx(() => Wrap(
-                children: options
-                    .map((e) => e.toWidget(_value[e.name] ?? false, (bool v) {
-                          _value.update(e.name, (value) => v);
-                        }))
-                    .toList(),
-              ))
-        ],
-      ),
-      decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.grey[200]!))),
-    );
+    return Padding(padding: const EdgeInsets.only(top: 10, bottom: 5),child: InputDecorator(
+      decoration: InputDecoration(
+          labelText: text,
+          isDense: true,
+          isCollapsed: true,
+          contentPadding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
+          helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}'
+          ),
+      isFocused: false,
+      isEmpty: false,
+      child: Obx(() => Wrap(
+        spacing: 15,
+        children: options
+            .map((e) => e.toWidget(_value[e.name] ?? false, (bool v) {
+          _value.update(e.name, (value) => v);
+        }))
+            .toList(),
+      ))),);
   }
 
   @override
   Widget toFilterWidget() {
-    return Container();
+    return toWidget();
   }
 }
 

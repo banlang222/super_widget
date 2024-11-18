@@ -99,7 +99,7 @@ class SelectField<T> implements SuperFormField<T> {
 
   @override
   bool check() {
-    if (isRequired && !hasValue) {
+    if (isRequired && (!hasValue || _value.value == null)) {
       _errorText['error'] = '必须选择';
       return false;
     }

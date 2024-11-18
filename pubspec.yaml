@@ -17,6 +17,7 @@ dependencies:
     git:
       url: https://github.com/banlang222/extension.git
   file_picker: ^5.2.0
+  calendar_date_picker2: 1.1.7
   flutter_cupertino_datetime_picker: ^3.0.0
 
 dev_dependencies:
