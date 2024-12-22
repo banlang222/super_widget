@@ -143,8 +143,7 @@ class FormFieldGroup {
         ),
       );
     }
-    return Container(
-      margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+    return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
         children: items.map((e) => e.toWidget()).toList(),

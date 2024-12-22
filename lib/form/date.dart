@@ -171,71 +171,81 @@ class DateField implements SuperFormField<DateTime> {
                   labelText: '$text（日期）',
                   isDense: true,
                   isCollapsed: true,
-                  contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 3),
+                  contentPadding: const EdgeInsets.fromLTRB(15, 8, 5, 3),
                   helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
                   errorText: _errorText['error']),
               isFocused: false,
               isEmpty: false,
-              child: InkWell(
-                onTap: (readonly || !editMode) ? null : () async {
-                  if (GetPlatform.isDesktop || kIsWeb) {
-                    final dates = await showCalendarDatePicker2Dialog(
-                        context: context ?? Get.context!,
-                        config: CalendarDatePicker2WithActionButtonsConfig(),
-                        dialogSize: const Size(400, 400));
-                    if (dates != null) {
-                      _value.value = DateTime(
-                          dates.first!.year,
-                          dates.first!.month,
-                          dates.first!.day,
-                          (_value.value ?? DateTime.now()).hour,
-                          (_value.value ?? DateTime.now()).minute,
-                          (_value.value ?? DateTime.now()).second);
-                      _errorText.clear();
-                    }
-                  } else {
-                    DatePicker.showDatePicker(Get.context!,
-                        initialDateTime: _value.value,
-                        locale: DateTimePickerLocale.zh_cn,
-                        pickerMode: DateTimePickerMode.date,
-                        pickerTheme: DateTimePickerTheme(
-                            backgroundColor: context?.theme.cardColor ??
-                                DateTimePickerTheme.Default.backgroundColor,
-                            confirmTextStyle: context?.textTheme.bodyMedium,
-                            itemTextStyle: DateTimePickerTheme
-                                .Default.itemTextStyle
-                                .copyWith(
-                                    color: context?.theme.brightness ==
-                                            Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black87)),
-                        onConfirm: (DateTime date, List<int> selected) {
-                      _value.value = DateTime(
-                          date.year,
-                          date.month,
-                          date.day,
-                          (_value.value ?? DateTime.now()).hour,
-                          (_value.value ?? DateTime.now()).minute,
-                          (_value.value ?? DateTime.now()).second);
-                      _errorText.clear();
-                    });
-                  }
-                },
-                child: Row(
+              child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.only(top: 15, bottom: 15),
-                      child:
-                          Obx(() => Text(Utils.dateFormat(_value.value, true))),
-                    ),
-                    (readonly || !editMode)
-                        ? Container()
-                        : const Icon(Icons.date_range)
+              GestureDetector(
+              onTap: (readonly || !editMode) ? null : () async {
+                if (GetPlatform.isDesktop || kIsWeb) {
+                  final dates = await showCalendarDatePicker2Dialog(
+                      context: context ?? Get.context!,
+                      config: CalendarDatePicker2WithActionButtonsConfig(),
+                      dialogSize: const Size(400, 400));
+                  if (dates != null && dates.isNotEmpty) {
+                    _value.value = DateTime(
+                        dates.first!.year,
+                        dates.first!.month,
+                        dates.first!.day,
+                        (_value.value ?? DateTime.now()).hour,
+                        (_value.value ?? DateTime.now()).minute,
+                        (_value.value ?? DateTime.now()).second);
+                    _errorText.clear();
+                  }
+                } else {
+                  DatePicker.showDatePicker(Get.context!,
+                      initialDateTime: _value.value,
+                      locale: DateTimePickerLocale.zh_cn,
+                      pickerMode: DateTimePickerMode.date,
+                      pickerTheme: DateTimePickerTheme(
+                          backgroundColor: context?.theme.cardColor ??
+                              DateTimePickerTheme.Default.backgroundColor,
+                          confirmTextStyle: context?.textTheme.bodyMedium,
+                          itemTextStyle: DateTimePickerTheme
+                              .Default.itemTextStyle
+                              .copyWith(
+                              color: context?.theme.brightness ==
+                                  Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black87)),
+                      onConfirm: (DateTime date, List<int> selected) {
+                        _value.value = DateTime(
+                            date.year,
+                            date.month,
+                            date.day,
+                            (_value.value ?? DateTime.now()).hour,
+                            (_value.value ?? DateTime.now()).minute,
+                            (_value.value ?? DateTime.now()).second);
+                        _errorText.clear();
+                      });
+                }
+              },
+          child: MouseRegion(cursor: (readonly || !editMode) ? MouseCursor.defer : MaterialStateMouseCursor.clickable,
+              child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 10,
+            children: [
+              if(!(readonly || !editMode))
+                  Icon(Icons.date_range),
+              Padding(
+                padding: const EdgeInsets.only(top: 15, bottom: 15),
+                child:
+                Obx(() => Text('${Utils.dateFormat(_value.value, true)}')),
+              ),
+            ],)),),
+                    if(!(readonly || !editMode))
+                    IconButton(onPressed: (){
+                      _value.value = null;
+                    }, icon: Icon(Icons.close))
+
                   ],
                 ),
               ),
-            )));
+            ));
   }
 
   Widget buildTimeWidget([BuildContext? context]) {
@@ -246,44 +256,50 @@ class DateField implements SuperFormField<DateTime> {
                   labelText: '$text（时间）',
                   isDense: true,
                   isCollapsed: true,
-                  contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 3),
+                  contentPadding: const EdgeInsets.fromLTRB(15, 5, 5, 3),
                   helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
                   errorText: _errorText['error']),
               isFocused: false,
               isEmpty: false,
-              child: InkWell(
-                onTap: () async {
-                  DatePicker.showDatePicker(Get.context!,
-                      initialDateTime: _value.value ?? DateTime.now(),
-                      locale: DateTimePickerLocale.zh_cn,
-                      pickerMode: DateTimePickerMode.time,
-                      pickerTheme: DateTimePickerTheme(
-                          backgroundColor:
-                              context?.theme.cardColor ?? Colors.white),
-                      onConfirm: (DateTime date, List<int> selected) {
-                    _value.value = DateTime(
-                        (_value.value ?? DateTime.now()).year,
-                        (_value.value ?? DateTime.now()).month,
-                        (_value.value ?? DateTime.now()).day,
-                        date.hour,
-                        date.minute,
-                        date.second);
-                    _errorText.clear();
-                  });
-                },
-                child: Row(
+              child:  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.only(top: 15, bottom: 15),
-                      child: Text(Utils.timeFormat(_value.value!)),
-                    ),
-                    (readonly || !editMode)
-                        ? Container()
-                        : const Icon(Icons.date_range)
+                  GestureDetector(
+                  onTap: () async {
+        DatePicker.showDatePicker(Get.context!,
+        initialDateTime: _value.value ?? DateTime.now(),
+        locale: DateTimePickerLocale.zh_cn,
+        pickerMode: DateTimePickerMode.time,
+        pickerTheme: DateTimePickerTheme(
+        backgroundColor:
+        context?.theme.cardColor ?? Colors.white),
+        onConfirm: (DateTime date, List<int> selected) {
+        _value.value = DateTime(
+        (_value.value ?? DateTime.now()).year,
+        (_value.value ?? DateTime.now()).month,
+        (_value.value ?? DateTime.now()).day,
+        date.hour,
+        date.minute,
+        date.second);
+        _errorText.clear();
+        });
+        },
+          child:MouseRegion(cursor: MaterialStateMouseCursor.clickable,child: Wrap(crossAxisAlignment: WrapCrossAlignment.center,spacing: 10,children: [
+            if(!(readonly || !editMode))
+              const Icon(Icons.access_time),
+            Padding(
+              padding: const EdgeInsets.only(top: 15, bottom: 15),
+              child: Text(Utils.timeFormat(_value.value)),
+            ),
+          ],),)),
+                    if(!(readonly || !editMode))
+                      IconButton(onPressed: (){
+                      _value.value = null;
+                    }, icon: Icon(Icons.close))
+
                   ],
                 ),
               ),
-            )));
+            ));
   }
 }

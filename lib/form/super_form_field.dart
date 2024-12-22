@@ -35,6 +35,7 @@ class FieldType {
   static const FieldType upload = FieldType._('upload');
   static const FieldType date = FieldType._('date');
   static const FieldType group = FieldType._('group');
+  static const FieldType custom = FieldType._('custom');
 
   static FieldType? fromName(String? name) {
     switch (name) {
@@ -56,6 +57,8 @@ class FieldType {
         return date;
       case 'group':
         return group;
+      case 'custom':
+        return custom;
     }
     return null;
   }

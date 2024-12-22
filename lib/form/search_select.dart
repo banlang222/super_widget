@@ -1,10 +1,13 @@
 import 'dart:convert';
+
+import 'package:extension/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:extension/extension.dart';
-import 'super_form_field.dart';
-import 'select_option.dart';
+import 'package:super_widget/form/utils.dart';
+
 import '../bottom_sheet/container.dart';
+import 'select_option.dart';
+import 'super_form_field.dart';
 
 class SearchSelectField<T> implements SuperFormField<T> {
   SearchSelectField(
@@ -16,6 +19,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
       this.options = const [],
       this.isRequired = false,
       this.helperText,
+      this.showCopyBtn = false,
       this.callback}) {
     if (defaultValue != null &&
         !options.map((e) => e.value).contains(defaultValue)) {
@@ -39,6 +43,8 @@ class SearchSelectField<T> implements SuperFormField<T> {
     }
     isRequired = map['isRequired'] ?? false;
     helperText = map['helperText'];
+    showCopyBtn = map['showCopyBtn'] ?? true;
+
     _value.value = defaultValue;
   }
 
@@ -65,6 +71,8 @@ class SearchSelectField<T> implements SuperFormField<T> {
 
   @override
   String? helperText;
+
+  late bool showCopyBtn;
 
   final _errorText = {}.obs;
 
@@ -94,8 +102,11 @@ class SearchSelectField<T> implements SuperFormField<T> {
   }
 
   bool get hasValue {
-    if(group != null) {
-      return options.where((element)=>element.group == group).map((e) => e.value).contains(_value.value);
+    if (group != null) {
+      return options
+          .where((element) => element.group == group)
+          .map((e) => e.value)
+          .contains(_value.value);
     }
     return options.map((e) => e.value).contains(_value.value);
   }
@@ -120,7 +131,8 @@ class SearchSelectField<T> implements SuperFormField<T> {
       'defaultValue': defaultValue,
       'options': options.map((element) => element.toMap()).toList(),
       'isRequired': isRequired,
-      'helperText': helperText
+      'helperText': helperText,
+      'showCopyBtn': showCopyBtn
     };
   }
 
@@ -139,67 +151,106 @@ class SearchSelectField<T> implements SuperFormField<T> {
         defaultValue: defaultValue,
         options: options,
         isRequired: isRequired,
-        helperText: helperText);
+        helperText: helperText,
+        showCopyBtn: showCopyBtn);
   }
 
   @override
   Widget toWidget() {
     ThemeData themeData = Theme.of(Get.context!);
     return Container(
-        padding: const EdgeInsets.only(top: 5, bottom: 5),
-    child:  Obx(() => InputDecorator(
-                decoration: InputDecoration(
-                    labelText: '$text',
-                    isDense: true,
-                    isCollapsed: true,
-                    contentPadding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                    errorText: _errorText['error'],
-                    helperText: isRequired
-                        ? '* ${helperText ?? ''}'
-                        : helperText ?? ''),
-                isFocused: false,
-                isEmpty: !hasValue,
-                child: InkWell(
-                  onTap: (readonly || !editMode)
-                  ? null
-                      : () async {
-                        SelectOption? _selected =
-                        await Get.bottomSheet<SelectOption>(BottomSearchSelect(
-                          options: group != null ? options.where((element)=>element.group == group).toList() : options,
-                          value: _value.value,
-                        ));
-                        if (_selected != null) {
-                          _value.value = _selected.value;
+      padding: const EdgeInsets.only(top: 5, bottom: 5),
+      child: Obx(() => InputDecorator(
+          decoration: InputDecoration(
+              labelText: '$text',
+              isDense: true,
+              isCollapsed: true,
+              contentPadding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+              errorText: _errorText['error'],
+              helperText:
+                  isRequired ? '* ${helperText ?? ''}' : helperText ?? '',
+              suffix: showCopyBtn
+                  ? InkWell(
+                      child: const Icon(
+                        Icons.copy,
+                        color: Colors.orangeAccent,
+                        size: 20,
+                      ),
+                      onTap: () async {
+                        if (value != null) {
+                          Utils.copy(options
+                              .firstWhere((element) => element.value == value)
+                              .text);
                         }
-                },
-                child:Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      height: 50,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                          hasValue
-                              ? options
-                                  .firstWhere((element) =>
-                                      element.value == _value.value)
-                                  .text
-                              : '',
-                          style: themeData.useMaterial3
-                              ? themeData.textTheme.bodyLarge?.apply(
-                                  color: (readonly || !editMode)
-                                      ? themeData.textTheme.bodyLarge?.color
-                                          ?.withOpacity(0.38)
-                                      : null)
-                              : themeData.textTheme.titleMedium?.apply(
-                                  color: (readonly || !editMode)
-                                      ? themeData.disabledColor
-                                      : null)),
-                    ),
-                    const Icon(Icons.arrow_drop_down_sharp)
-                  ],
-                ),
-              ))),
+                      },
+                    )
+                  : null),
+          isFocused: false,
+          isEmpty: !hasValue,
+          child: InkWell(
+            onTap: (readonly || !editMode)
+                ? null
+                : () async {
+                    SelectOption? _selected =
+                        await Get.bottomSheet<SelectOption>(BottomSearchSelect(
+                      options: group != null
+                          ? options
+                              .where((element) => element.group == group)
+                              .toList()
+                          : options,
+                      value: _value.value,
+                    ));
+                    if (_selected != null) {
+                      _value.value = _selected.value;
+                    }
+                  },
+            child: SizedBox(
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 50,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                            hasValue
+                                ? options
+                                    .firstWhere((element) =>
+                                        element.value == _value.value)
+                                    .text
+                                : '',
+                            style: themeData.useMaterial3
+                                ? themeData.textTheme.bodyLarge?.apply(
+                                    color: (readonly || !editMode)
+                                        ? themeData.disabledColor
+                                        : null)
+                                : themeData.textTheme.titleMedium?.apply(
+                                    color: (readonly || !editMode)
+                                        ? themeData.disabledColor
+                                        : null)),
+                      ),
+                      Icon(
+                        Icons.arrow_drop_down_sharp,
+                        color: (readonly || !editMode)
+                            ? themeData.disabledColor
+                            : null,
+                      ),
+                    ],
+                  )),
+                  if (showCopyBtn)
+                    const SizedBox(
+                      width: 10,
+                    )
+                ],
+              ),
+            ),
+          ))),
     );
   }
 
@@ -232,21 +283,17 @@ class SearchSelectField<T> implements SuperFormField<T> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  height: 50,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    hasValue
-                        ? options
-                            .firstWhere(
-                                (element) => element.value == _value.value)
-                            .text
-                        : '',
-                    style: TextStyle(
-                        color: (readonly || !editMode)
-                            ? Colors.black54
-                            : Colors.black),
-                  ),
+                Text(
+                  hasValue
+                      ? options
+                          .firstWhere(
+                              (element) => element.value == _value.value)
+                          .text
+                      : '',
+                  style: TextStyle(
+                      color: (readonly || !editMode)
+                          ? Colors.black54
+                          : Colors.black),
                 ),
                 const Icon(Icons.arrow_drop_down_sharp)
               ],

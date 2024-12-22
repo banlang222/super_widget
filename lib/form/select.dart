@@ -1,8 +1,11 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'super_form_field.dart';
-import 'select_option.dart';
 import 'package:get/get.dart';
+import 'package:super_widget/form/utils.dart';
+
+import 'select_option.dart';
+import 'super_form_field.dart';
 
 ///select
 class SelectField<T> implements SuperFormField<T> {
@@ -15,6 +18,7 @@ class SelectField<T> implements SuperFormField<T> {
       this.options = const [],
       this.isRequired = false,
       this.helperText,
+      this.showCopyBtn = false,
       this.callback}) {
     if (defaultValue != null &&
         !options.map((e) => e.value).contains(defaultValue)) {
@@ -38,6 +42,7 @@ class SelectField<T> implements SuperFormField<T> {
     }
     isRequired = map['isRequired'] ?? false;
     helperText = map['helperText'];
+    showCopyBtn = map['showCopyBtn'] ?? true;
     _value.value = defaultValue;
   }
 
@@ -71,6 +76,8 @@ class SelectField<T> implements SuperFormField<T> {
   Callback? callback;
 
   late List<SelectOption> options;
+
+  late bool showCopyBtn;
 
   final _value = Rx<T?>(null);
 
@@ -117,7 +124,8 @@ class SelectField<T> implements SuperFormField<T> {
       'defaultValue': defaultValue,
       'options': options.map((element) => element.toMap()).toList(),
       'isRequired': isRequired,
-      'helperText': helperText
+      'helperText': helperText,
+      'showCopyBtn': showCopyBtn
     };
   }
 
@@ -136,7 +144,8 @@ class SelectField<T> implements SuperFormField<T> {
         defaultValue: defaultValue,
         options: options,
         isRequired: isRequired,
-        helperText: helperText);
+        helperText: helperText,
+        showCopyBtn: showCopyBtn);
   }
 
   @override
@@ -151,11 +160,29 @@ class SelectField<T> implements SuperFormField<T> {
                 contentPadding: const EdgeInsets.fromLTRB(15, 4, 15, 0),
                 errorText: _errorText['error'],
                 helperText:
-                    isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),
+                    isRequired ? '* ${helperText ?? ''}' : helperText ?? '',
+                suffix: showCopyBtn
+                    ? InkWell(
+                        child: const Icon(
+                          Icons.copy,
+                          color: Colors.orangeAccent,
+                          size: 20,
+                        ),
+                        onTap: () async {
+                          if (value != null) {
+                            Utils.copy(options
+                                .firstWhere((element) => element.value == value)
+                                .text);
+                          }
+                        },
+                      )
+                    : null),
             isFocused: false,
             isEmpty: !hasValue,
             child: Padding(
-              padding: const EdgeInsets.all(0),
+              padding: showCopyBtn
+                  ? const EdgeInsets.only(right: 10)
+                  : const EdgeInsets.all(0),
               child: DropdownButton(
                 isExpanded: true,
                 underline: Container(),

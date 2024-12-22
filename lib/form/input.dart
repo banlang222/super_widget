@@ -135,7 +135,7 @@ class InputField<T> implements SuperFormField<T> {
   @override
   set value(dynamic v) {
     _controller.text = v == null ? '' : v.toString();
-    if (readonly) defaultValue = _controller.text as T;
+    if (readonly) defaultValue = v as T;
   }
 
   @override
@@ -265,7 +265,7 @@ class InputField<T> implements SuperFormField<T> {
       inputFormatters.add(FilteringTextInputFormatter.allow(RegExp(r'(^\d|\-)')));
     }
     return Container(
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      padding: const EdgeInsets.only(top: 10, bottom: 5),
       child: Obx(() => TextField(
             controller: _controller,
             readOnly: (readonly || !editMode),
