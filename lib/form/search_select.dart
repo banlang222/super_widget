@@ -225,15 +225,10 @@ class SearchSelectField<T> implements SuperFormField<T> {
                                         element.value == _value.value)
                                     .text
                                 : '',
-                            style: themeData.useMaterial3
-                                ? themeData.textTheme.bodyLarge?.apply(
-                                    color: (readonly || !editMode)
-                                        ? themeData.disabledColor
-                                        : null)
-                                : themeData.textTheme.titleMedium?.apply(
-                                    color: (readonly || !editMode)
-                                        ? themeData.disabledColor
-                                        : null)),
+                            style: TextStyle(
+                                color: (readonly || !editMode)
+                                    ? themeData.disabledColor
+                                    : null)),
                       ),
                       Icon(
                         Icons.arrow_drop_down_sharp,
