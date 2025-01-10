@@ -120,8 +120,6 @@ class InputField<T> implements SuperFormField<T> {
 
   @override
   T? get value {
-    if (readonly) return defaultValue;
-
     String? t = _controller.text.supperTrim();
     if (t.isNullOrEmpty) return null;
     if (valueType == ValueType.int) {
@@ -135,7 +133,6 @@ class InputField<T> implements SuperFormField<T> {
   @override
   set value(dynamic v) {
     _controller.text = v == null ? '' : v.toString();
-    if (readonly) defaultValue = v as T;
   }
 
   @override

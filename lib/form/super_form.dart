@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'form_field_group.dart';
+import 'super_form_field.dart';
 
 class SuperForm {
   SuperForm({this.formName, this.items = const []});
@@ -25,6 +27,22 @@ class SuperForm {
   SuperForm clone() {
     return SuperForm(
         formName: formName, items: items.map((e) => e.clone()).toList());
+  }
+
+  SuperFormField? find(String name) {
+    var _field;
+    for (var group in items) {
+      for (var field in group.items) {
+        if (field.name == name) {
+          _field = field;
+          break;
+        }
+      }
+      if (_field != null) {
+        break;
+      }
+    }
+    return _field;
   }
 
   @override
@@ -60,5 +78,4 @@ class SuperForm {
       item.setEditMode(_editMode);
     }
   }
-
 }

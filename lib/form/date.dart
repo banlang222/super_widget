@@ -47,7 +47,9 @@ class DateField implements SuperFormField<DateTime> {
   DateField.fromMap(Map<String, dynamic> map) {
     name = map['name'];
     text = map['text'];
-    defaultValue = map['defaultValue'];
+    if(map['defaultValue'] != null) {
+      defaultValue = DateTime.tryParse(map['defaultValue']);
+    }
     dateMode = DateMode.fromValue(map['dateMode']) ?? DateMode.date;
     helperText = map['helperText'];
     isRequired = map['isRequired'] ?? false;

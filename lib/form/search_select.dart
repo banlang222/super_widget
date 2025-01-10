@@ -88,17 +88,12 @@ class SearchSelectField<T> implements SuperFormField<T> {
 
   @override
   T? get value {
-    if (readonly) return defaultValue;
-
     return _value.value;
   }
 
   @override
   set value(T? v) {
     _value.value = v;
-    if (readonly) {
-      defaultValue = v;
-    }
   }
 
   bool get hasValue {
@@ -159,13 +154,13 @@ class SearchSelectField<T> implements SuperFormField<T> {
   Widget toWidget() {
     ThemeData themeData = Theme.of(Get.context!);
     return Container(
-      padding: const EdgeInsets.only(top: 5, bottom: 5),
+      padding: const EdgeInsets.only(top: 10, bottom: 5),
       child: Obx(() => InputDecorator(
           decoration: InputDecoration(
               labelText: '$text',
               isDense: true,
               isCollapsed: true,
-              contentPadding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+              contentPadding: const EdgeInsets.fromLTRB(15, 4, 15, 0),
               errorText: _errorText['error'],
               helperText:
                   isRequired ? '* ${helperText ?? ''}' : helperText ?? '',

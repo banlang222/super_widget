@@ -1,9 +1,11 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+
 import 'package:extension/extension.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'utils.dart';
+
 import 'super_form_field.dart';
+import 'utils.dart';
 
 class TextareaField implements SuperFormField<String> {
   TextareaField(
@@ -65,15 +67,12 @@ class TextareaField implements SuperFormField<String> {
 
   @override
   String? get value {
-    if (readonly) return defaultValue;
-
     return _controller.text.supperTrim();
   }
 
   @override
   set value(dynamic v) {
     _controller.text = v == null ? '' : v.toString();
-    if (readonly) defaultValue = v;
   }
 
   @override

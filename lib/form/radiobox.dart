@@ -63,8 +63,6 @@ class RadioBoxField<T> implements SuperFormField<T> {
 
   @override
   T? get value {
-    if (readonly) return defaultValue as T;
-
     return _value.value;
   }
 
@@ -113,21 +111,22 @@ class RadioBoxField<T> implements SuperFormField<T> {
 
   @override
   Widget toWidget() {
-    return InputDecorator(decoration: InputDecoration(
+    return InputDecorator(
+      decoration: InputDecoration(
         labelText: '$text',
         isDense: true,
         isCollapsed: true,
         contentPadding: const EdgeInsets.fromLTRB(15, 14, 15, 14),
-
       ),
       isEmpty: false,
       child: Obx(() => Wrap(
-        children: options
-            .map((e) => e.toWidget(_value.value, (T v) {
-          _value.value = v;
-        }))
-            .toList(),
-      )),);
+            children: options
+                .map((e) => e.toWidget(_value.value, (T v) {
+                      _value.value = v;
+                    }))
+                .toList(),
+          )),
+    );
   }
 
   @override

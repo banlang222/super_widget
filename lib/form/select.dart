@@ -83,8 +83,6 @@ class SelectField<T> implements SuperFormField<T> {
 
   @override
   T? get value {
-    if (readonly) return defaultValue;
-
     return _value.value;
   }
 
@@ -92,9 +90,6 @@ class SelectField<T> implements SuperFormField<T> {
   set value(dynamic v) {
     if (options.map((e) => e.value).contains(v)) {
       _value.value = v;
-      if (readonly) {
-        defaultValue = v;
-      }
     } else {
       _value.value = null;
     }
