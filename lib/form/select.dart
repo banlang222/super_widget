@@ -70,7 +70,7 @@ class SelectField<T> implements SuperFormField<T> {
   @override
   String? helperText;
 
-  final _errorText = {}.obs;
+  final _errorText = Rx<String?>(null);
 
   //联动回调
   Callback? callback;
@@ -95,6 +95,11 @@ class SelectField<T> implements SuperFormField<T> {
     }
   }
 
+  @override
+  set errorText(String? v) {
+    _errorText.value = v;
+  }
+
   bool get hasValue {
     return options.map((e) => e.value).contains(_value.value);
   }
@@ -102,7 +107,7 @@ class SelectField<T> implements SuperFormField<T> {
   @override
   bool check() {
     if (isRequired && (!hasValue || _value.value == null)) {
-      _errorText['error'] = '必须选择';
+      _errorText.value = '必须选择';
       return false;
     }
     return true;
@@ -153,7 +158,7 @@ class SelectField<T> implements SuperFormField<T> {
                 isDense: true,
                 isCollapsed: true,
                 contentPadding: const EdgeInsets.fromLTRB(15, 4, 15, 0),
-                errorText: _errorText['error'],
+                errorText: _errorText.value,
                 helperText:
                     isRequired ? '* ${helperText ?? ''}' : helperText ?? '',
                 suffix: showCopyBtn
@@ -186,7 +191,7 @@ class SelectField<T> implements SuperFormField<T> {
                 onChanged: (readonly || !editMode)
                     ? null
                     : (dynamic a) {
-                        _errorText.clear();
+                        _errorText.value = null;
                         //更新选择的值
                         _value.value = a;
                         //联动回调
@@ -210,7 +215,7 @@ class SelectField<T> implements SuperFormField<T> {
                   isDense: true,
                   isCollapsed: true,
                   contentPadding: const EdgeInsets.fromLTRB(15, 3, 15, 3),
-                  errorText: _errorText['error'],
+                  errorText: _errorText.value,
                   helperText:
                       isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),
               isFocused: false,
@@ -223,7 +228,7 @@ class SelectField<T> implements SuperFormField<T> {
                 onChanged: (readonly || !editMode)
                     ? null
                     : (dynamic a) {
-                        _errorText.clear();
+                        _errorText.value = null;
                         _value.value = a;
                         //联动回调
                         if (callback != null) {

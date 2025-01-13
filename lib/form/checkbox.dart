@@ -93,6 +93,9 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
   }
 
   @override
+  set errorText(String? v) {}
+
+  @override
   bool check() {
     return true;
   }

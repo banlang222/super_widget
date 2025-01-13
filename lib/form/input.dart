@@ -1,8 +1,10 @@
 import 'dart:convert';
+
+import 'package:extension/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:extension/extension.dart';
 import 'package:get/get.dart';
+
 import 'super_form_field.dart';
 import 'utils.dart';
 
@@ -103,6 +105,11 @@ class InputField<T> implements SuperFormField<T> {
   @override
   String? helperText;
 
+  @override
+  set errorText(String? v) {
+    _errorText.value = v;
+  }
+
   ValueType? valueType;
 
   int? maxLength;
@@ -145,10 +152,10 @@ class InputField<T> implements SuperFormField<T> {
     if (!t.isNullOrEmpty) {
       //进行长度校验
       if (maxLength != null && t!.length > maxLength!) {
-        _errorText['error'] = '超出最大长度$maxLength';
+        _errorText.value = '超出最大长度$maxLength';
         return false;
       } else if (minLength != null && t!.length < minLength!) {
-        _errorText['error'] = '小于最低长度$minLength';
+        _errorText.value = '小于最低长度$minLength';
         return false;
       }
 
@@ -157,16 +164,15 @@ class InputField<T> implements SuperFormField<T> {
         int? tv = t.toInt();
         if (tv == null) {
           if (isRequired) {
-            _errorText['error'] =
-                '${isRequired ? '必须填写,' : ''}${valueType!.info}';
+            _errorText.value = '${isRequired ? '必须填写,' : ''}${valueType!.info}';
             return false;
           }
         } else {
           if (minValue != null && tv < minValue!) {
-            _errorText['error'] = '不能小于$minValue';
+            _errorText.value = '不能小于$minValue';
             return false;
           } else if (maxValue != null && tv > maxValue!) {
-            _errorText['error'] = '不能大于$maxValue';
+            _errorText.value = '不能大于$maxValue';
             return false;
           }
         }
@@ -174,32 +180,31 @@ class InputField<T> implements SuperFormField<T> {
         num? tv = t.toNum();
         if (tv == null) {
           if (isRequired) {
-            _errorText['error'] =
-                '${isRequired ? '必须填写,' : ''}${valueType!.info}';
+            _errorText.value = '${isRequired ? '必须填写,' : ''}${valueType!.info}';
             return false;
           }
         } else {
           if (minValue != null && tv < minValue!) {
-            _errorText['error'] = '不能小于$minValue';
+            _errorText.value = '不能小于$minValue';
             return false;
           } else if (maxValue != null && tv > maxValue!) {
-            _errorText['error'] = '不能大于$maxValue';
+            _errorText.value = '不能大于$maxValue';
             return false;
           }
         }
       } else if (valueType == ValueType.email &&
           !RegExp(r'\S+@\S+\.\S+').hasMatch(t!)) {
-        _errorText['error'] = '${isRequired ? '必须填写,' : ''}${valueType!.info}';
+        _errorText.value = '${isRequired ? '必须填写,' : ''}${valueType!.info}';
         return false;
       }
     }
     //没填写又必须填写时
     else if (isRequired) {
-      _errorText['error'] = '必须填写';
+      _errorText.value = '必须填写';
       return false;
     }
 
-    _errorText.clear();
+    _errorText.value = null;
     return true;
   }
 
@@ -246,7 +251,7 @@ class InputField<T> implements SuperFormField<T> {
         helperText: helperText);
   }
 
-  final _errorText = {}.obs;
+  final _errorText = Rx<String?>(null);
   final _obscureText = true.obs;
 
   @override
@@ -258,8 +263,9 @@ class InputField<T> implements SuperFormField<T> {
     } else if (valueType == ValueType.number) {
       inputFormatters
           .add(FilteringTextInputFormatter.allow(RegExp(r'(^-|\d+|\.)')));
-    } else if(valueType == ValueType.date) {
-      inputFormatters.add(FilteringTextInputFormatter.allow(RegExp(r'(^\d|\-)')));
+    } else if (valueType == ValueType.date) {
+      inputFormatters
+          .add(FilteringTextInputFormatter.allow(RegExp(r'(^\d|\-)')));
     }
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 5),
@@ -298,7 +304,7 @@ class InputField<T> implements SuperFormField<T> {
               helperText: isRequired
                   ? ' * ${helperText ?? ''} ${valueType!.info}'
                   : helperText ?? '',
-              errorText: _errorText['error'],
+              errorText: _errorText.value,
               focusedBorder: (readonly || !editMode)
                   ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(
                       borderSide: BorderSide(
@@ -380,7 +386,7 @@ class InputField<T> implements SuperFormField<T> {
             decoration: InputDecoration(
               labelText: text,
               helperText: helperText,
-              errorText: _errorText['error'],
+              errorText: _errorText.value,
               isDense: true,
               isCollapsed: true,
               contentPadding: const EdgeInsets.fromLTRB(15, 15, 15, 15),

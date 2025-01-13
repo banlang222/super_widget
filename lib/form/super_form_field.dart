@@ -20,6 +20,7 @@ abstract class SuperFormField<T> {
   late bool isRequired;
   bool check();
   String? helperText;
+  set errorText(String? v);
 }
 
 class FieldType {

@@ -72,6 +72,9 @@ class RadioBoxField<T> implements SuperFormField<T> {
   }
 
   @override
+  set errorText(String? v) {}
+
+  @override
   bool check() {
     return true;
   }

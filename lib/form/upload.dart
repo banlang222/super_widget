@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:extension/extension.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'super_form_field.dart';
+
 import 'file_icon.dart';
+import 'super_form_field.dart';
 
 typedef SendProgressCallback = Function(num progress);
 typedef DoUpload = Function(
@@ -76,6 +77,9 @@ class UploadField implements SuperFormField<List<String>> {
       }
     }
   }
+
+  @override
+  set errorText(String? v) {}
 
   @override
   bool check() {

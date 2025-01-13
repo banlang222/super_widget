@@ -74,7 +74,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
 
   late bool showCopyBtn;
 
-  final _errorText = {}.obs;
+  final _errorText = Rx<String?>(null);
 
   //联动回调
   Callback? callback;
@@ -96,6 +96,11 @@ class SearchSelectField<T> implements SuperFormField<T> {
     _value.value = v;
   }
 
+  @override
+  set errorText(String? v) {
+    _errorText.value = v;
+  }
+
   bool get hasValue {
     if (group != null) {
       return options
@@ -109,7 +114,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
   @override
   bool check() {
     if (isRequired && (!hasValue || _value.value == null)) {
-      _errorText['error'] = '必须选择';
+      _errorText.value = '必须选择';
       return false;
     }
     return true;
@@ -161,7 +166,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
               isDense: true,
               isCollapsed: true,
               contentPadding: const EdgeInsets.fromLTRB(15, 4, 15, 0),
-              errorText: _errorText['error'],
+              errorText: _errorText.value,
               helperText:
                   isRequired ? '* ${helperText ?? ''}' : helperText ?? '',
               suffix: showCopyBtn
@@ -265,7 +270,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
                 isDense: true,
                 isCollapsed: true,
                 contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 0),
-                errorText: _errorText['error'],
+                errorText: _errorText.value,
                 helperText:
                     isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),
             isFocused: false,
