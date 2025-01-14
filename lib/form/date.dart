@@ -97,14 +97,25 @@ class DateField implements SuperFormField<DateTime> {
 
   @override
   set value(dynamic v) {
-    DateTime? _v;
+    DateTime? dt;
     if (v is DateTime) {
-      _v = v;
+      dt = v;
     } else if (v is String) {
-      _v = v.toDateTime();
+      dt = v.toDateTime();
+    } else {
+      dt = null;
     }
-    _value.value = _v;
-    if (readonly) defaultValue = _v;
+    if (dt == null) {
+      _value.value = null;
+    } else {
+      if (dateMode == DateMode.date) {
+        _value.value = DateTime(dt.year, dt.month, dt.day);
+      } else if (dateMode == DateMode.time) {
+        _value.value = DateTime(1970, 1, 1, dt.hour, dt.minute, dt.second);
+      } else {
+        _value.value = dt;
+      }
+    }
   }
 
   final _value = Rx<DateTime?>(null);
@@ -203,9 +214,9 @@ class DateField implements SuperFormField<DateTime> {
                                   dates.first!.year,
                                   dates.first!.month,
                                   dates.first!.day,
-                                  (_value.value ?? DateTime.now()).hour,
-                                  (_value.value ?? DateTime.now()).minute,
-                                  (_value.value ?? DateTime.now()).second);
+                                  0,
+                                  0,
+                                  0);
                               _errorText.value = null;
                             }
                           } else {
@@ -228,12 +239,7 @@ class DateField implements SuperFormField<DateTime> {
                                                 : Colors.black87)),
                                 onConfirm: (DateTime date, List<int> selected) {
                               _value.value = DateTime(
-                                  date.year,
-                                  date.month,
-                                  date.day,
-                                  (_value.value ?? DateTime.now()).hour,
-                                  (_value.value ?? DateTime.now()).minute,
-                                  (_value.value ?? DateTime.now()).second);
+                                  date.year, date.month, date.day, 0, 0, 0);
                               _errorText.value = null;
                             });
                           }
@@ -246,11 +252,12 @@ class DateField implements SuperFormField<DateTime> {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 10,
                         children: [
-                          if (!(readonly || !editMode)) Icon(Icons.date_range),
+                          if (!(readonly || !editMode))
+                            const Icon(Icons.date_range),
                           Padding(
                             padding: const EdgeInsets.only(top: 15, bottom: 15),
-                            child: Obx(() => Text(
-                                '${Utils.dateFormat(_value.value, true)}')),
+                            child: Obx(() =>
+                                Text(Utils.dateFormat(_value.value, true))),
                           ),
                         ],
                       )),
@@ -260,7 +267,7 @@ class DateField implements SuperFormField<DateTime> {
                       onPressed: () {
                         _value.value = null;
                       },
-                      icon: Icon(Icons.close))
+                      icon: const Icon(Icons.close))
               ],
             ),
           ),
@@ -295,12 +302,7 @@ class DateField implements SuperFormField<DateTime> {
                                   context?.theme.cardColor ?? Colors.white),
                           onConfirm: (DateTime date, List<int> selected) {
                         _value.value = DateTime(
-                            (_value.value ?? DateTime.now()).year,
-                            (_value.value ?? DateTime.now()).month,
-                            (_value.value ?? DateTime.now()).day,
-                            date.hour,
-                            date.minute,
-                            date.second);
+                            1970, 1, 1, date.hour, date.minute, date.second);
                         _errorText.value = null;
                       });
                     },
@@ -324,7 +326,7 @@ class DateField implements SuperFormField<DateTime> {
                       onPressed: () {
                         _value.value = null;
                       },
-                      icon: Icon(Icons.close))
+                      icon: const Icon(Icons.close))
               ],
             ),
           ),

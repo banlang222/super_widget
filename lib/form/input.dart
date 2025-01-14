@@ -163,7 +163,7 @@ class InputField<T> implements SuperFormField<T> {
       if (valueType == ValueType.int) {
         int? tv = t.toInt();
         if (tv == null) {
-          if (isRequired) {
+          if (isRequired && !readonly) {
             _errorText.value = '${isRequired ? '必须填写,' : ''}${valueType!.info}';
             return false;
           }
@@ -179,7 +179,7 @@ class InputField<T> implements SuperFormField<T> {
       } else if (valueType == ValueType.number) {
         num? tv = t.toNum();
         if (tv == null) {
-          if (isRequired) {
+          if (isRequired && !readonly) {
             _errorText.value = '${isRequired ? '必须填写,' : ''}${valueType!.info}';
             return false;
           }
@@ -193,13 +193,14 @@ class InputField<T> implements SuperFormField<T> {
           }
         }
       } else if (valueType == ValueType.email &&
-          !RegExp(r'\S+@\S+\.\S+').hasMatch(t!)) {
+          !RegExp(r'\S+@\S+\.\S+').hasMatch(t!) &&
+          !readonly) {
         _errorText.value = '${isRequired ? '必须填写,' : ''}${valueType!.info}';
         return false;
       }
     }
     //没填写又必须填写时
-    else if (isRequired) {
+    else if (isRequired && !readonly) {
       _errorText.value = '必须填写';
       return false;
     }
