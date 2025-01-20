@@ -36,7 +36,9 @@ class FieldGroup<T> extends SuperFormField<T> {
         case FieldType.date:
           return DateField.fromMap(e);
         case FieldType.group:
-          break;
+          return FieldGroup.fromMap(e);
+        case FieldType.custom:
+          return CustomField.fromMap(e);
       }
       return null;
     }));

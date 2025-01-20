@@ -10,10 +10,13 @@ class SuperForm {
   late List<FormFieldGroup> items;
   bool _editMode = true;
 
-  SuperForm.fromMap(Map<String, dynamic> map) {
+  ///当含有自定义字段时，需要传入customFieldCallback，对自定义字段进行构建
+  SuperForm.fromMap(Map<String, dynamic> map,
+      {CustomFieldCallback? customFieldCallback}) {
     formName = map['formName'];
     items = List<Map<String, dynamic>>.from(map['items'])
-        .map((e) => FormFieldGroup.fromMap(e))
+        .map((e) =>
+            FormFieldGroup.fromMap(e, customFieldCallback: customFieldCallback))
         .toList();
   }
 
@@ -29,6 +32,15 @@ class SuperForm {
         formName: formName, items: items.map((e) => e.clone()).toList());
   }
 
+  FormFieldGroup? findGroup(String name) {
+    var groups = items.where((element) => element.name == name);
+    if (groups.isNotEmpty) {
+      return groups.first;
+    }
+    return null;
+  }
+
+  /// 查找field
   SuperFormField? find(String name) {
     var _field;
     for (var group in items) {

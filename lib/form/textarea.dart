@@ -21,7 +21,7 @@ class TextareaField implements SuperFormField<String> {
       this.helperText});
 
   TextareaField.fromMap(Map<String, dynamic> map) {
-    defaultValue = map['defaultValue'];
+    defaultValue = map['defaultValue'].toString();
     name = map['name'];
     readonly = map['readonly'] ?? false;
     editMode = map['editMode'] ?? true;

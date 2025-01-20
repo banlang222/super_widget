@@ -1,19 +1,24 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+
+import 'checkbox.dart';
+import 'date.dart';
 import 'field_group.dart';
-import 'super_form_field.dart';
 import 'input.dart';
+import 'radiobox.dart';
+import 'search_select.dart';
+import 'select.dart';
+import 'super_form_field.dart';
 import 'textarea.dart';
 import 'upload.dart';
-import 'date.dart';
-import 'select.dart';
-import 'search_select.dart';
-import 'radiobox.dart';
-import 'checkbox.dart';
 
 class FormFieldGroup {
   FormFieldGroup({required this.name, this.items = const []});
-  FormFieldGroup.fromMap(Map<String, dynamic> map) {
+
+  ///当含有自定义字段时，需要传入customFieldCallback，对自定义字段进行构建，不传入则返回一个不能用的CustomField
+  FormFieldGroup.fromMap(Map<String, dynamic> map,
+      {CustomFieldCallback? customFieldCallback}) {
     name = map['name'];
     items = List<SuperFormField>.from((map['items'] ?? []).map((e) {
       FieldType? fieldType = FieldType.fromName(e['type']);
@@ -36,6 +41,12 @@ class FormFieldGroup {
           return DateField.fromMap(e);
         case FieldType.group:
           return FieldGroup.fromMap(e);
+        case FieldType.custom:
+          if (customFieldCallback != null) {
+            return customFieldCallback.call(e) ?? CustomField.fromMap(e);
+          } else {
+            return CustomField.fromMap(e);
+          }
       }
       return null;
     }));

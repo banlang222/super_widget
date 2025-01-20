@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 typedef Callback = Function(dynamic value);
+typedef CustomFieldCallback = SuperFormField? Function(
+    Map<String, dynamic> map);
 
 abstract class SuperFormField<T> {
   late String name;
@@ -62,5 +64,98 @@ class FieldType {
         return custom;
     }
     return null;
+  }
+}
+
+///自定义类型
+///只解析基本数据
+class CustomField implements SuperFormField {
+  CustomField(
+      {required this.name,
+      required this.text,
+      this.isRequired = false,
+      this.readonly = false,
+      this.helperText,
+      this.defaultValue,
+      this.editMode = true});
+
+  @override
+  var defaultValue;
+
+  @override
+  String? helperText;
+
+  @override
+  late bool isRequired;
+
+  @override
+  late String name;
+
+  @override
+  late bool readonly;
+
+  @override
+  String? text;
+
+  @override
+  FieldType? type = FieldType.custom;
+
+  CustomField.fromMap(Map<String, dynamic> map) {
+    defaultValue = map['defaultValue'];
+    name = map['name'];
+    readonly = map['readonly'] ?? false;
+    text = map['text'];
+    isRequired = map['isRequired'] ?? false;
+    helperText = map['helperText'];
+    editMode = map['editMode'] ?? true;
+  }
+  @override
+  CustomField clone() {
+    return CustomField(
+        name: name,
+        text: text,
+        isRequired: isRequired,
+        readonly: readonly,
+        helperText: helperText,
+        defaultValue: defaultValue,
+        editMode: editMode);
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'text': text,
+      'type': type?.name,
+      'isRequired': isRequired,
+      'readonly': readonly,
+      'helperText': helperText,
+      'defaultValue': defaultValue,
+      'editMode': editMode
+    };
+  }
+
+  @override
+  late bool editMode;
+
+  @override
+  var value;
+
+  @override
+  bool check() {
+    return true;
+  }
+
+  @override
+  set errorText(String? v) {}
+
+  @override
+  Widget toFilterWidget() {
+    return Container();
+  }
+
+  @override
+  Widget toWidget() {
+    return Container();
   }
 }

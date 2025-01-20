@@ -86,6 +86,11 @@ class SelectField<T> implements SuperFormField<T> {
     return _value.value;
   }
 
+  String? get valueText {
+    if(_value.value == null) return null;
+    return options.firstWhere((element)=>element.value == _value.value).text;
+  }
+
   @override
   set value(dynamic v) {
     if (options.map((e) => e.value).contains(v)) {
