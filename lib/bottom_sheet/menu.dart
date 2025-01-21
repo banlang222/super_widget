@@ -87,7 +87,8 @@ class BottomSheetMenu extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
                 color: backgroundColor ?? Colors.white),
-          )
+          ),
+          SizedBox(height: 20,)
         ],
       ),
     );

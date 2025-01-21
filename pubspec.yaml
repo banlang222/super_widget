@@ -14,7 +14,7 @@ dependencies:
   html: ^0.15.0
   get: ^4.1.4
   extension:
-    path: ../../dartServer/extension
+    path: ../extension
   file_picker: ^5.2.0
   flutter_cupertino_datetime_picker: ^3.0.0
 
