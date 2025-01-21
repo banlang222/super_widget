@@ -4,18 +4,20 @@ version: 0.0.1
 homepage:
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=2.19.0 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  html: ^0.15.0
-  get: ^4.1.4
+  html: ^0.15.4
+  get: ^4.6.5
   extension:
-    path: ../extension
+    git:
+      url: https://github.com/banlang222/extension.git
   file_picker: ^5.2.0
+  calendar_date_picker2: 1.1.7
   flutter_cupertino_datetime_picker: ^3.0.0
 
 dev_dependencies:

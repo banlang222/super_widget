@@ -1,8 +1,10 @@
 import 'dart:convert';
+
+import 'package:extension/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:extension/extension.dart';
 import 'package:get/get.dart';
+
 import 'super_form_field.dart';
 import 'utils.dart';
 
@@ -17,6 +19,7 @@ class ValueType {
   static const ValueType email = ValueType._('email', '仅限xx@xx.com形式');
   static const ValueType password = ValueType._('password', '');
   static const ValueType search = ValueType._('search', '');
+  static const ValueType date = ValueType._('date', '格式：2024-01-01');
 
   static ValueType? fromName(String? name) {
     switch (name) {
@@ -32,6 +35,8 @@ class ValueType {
         return password;
       case 'search':
         return search;
+      case 'date':
+        return date;
     }
     return null;
   }
@@ -52,7 +57,11 @@ class InputField<T> implements SuperFormField<T> {
       this.isRequired = false,
       this.helperText,
       this.showCopyBtn = true,
-      this.callback});
+      this.callback}) {
+    if (defaultValue != null) {
+      _controller.text = defaultValue.toString();
+    }
+  }
 
   InputField.fromMap(Map<String, dynamic> map) {
     defaultValue = map['defaultValue'];
@@ -96,6 +105,11 @@ class InputField<T> implements SuperFormField<T> {
   @override
   String? helperText;
 
+  @override
+  set errorText(String? v) {
+    _errorText.value = v;
+  }
+
   ValueType? valueType;
 
   int? maxLength;
@@ -113,8 +127,6 @@ class InputField<T> implements SuperFormField<T> {
 
   @override
   T? get value {
-    if (readonly) return defaultValue;
-
     String? t = _controller.text.supperTrim();
     if (t.isNullOrEmpty) return null;
     if (valueType == ValueType.int) {
@@ -128,7 +140,6 @@ class InputField<T> implements SuperFormField<T> {
   @override
   set value(dynamic v) {
     _controller.text = v == null ? '' : v.toString();
-    if (readonly) defaultValue = _controller.text as T;
   }
 
   @override
@@ -141,10 +152,10 @@ class InputField<T> implements SuperFormField<T> {
     if (!t.isNullOrEmpty) {
       //进行长度校验
       if (maxLength != null && t!.length > maxLength!) {
-        _errorText['error'] = '超出最大长度$maxLength';
+        _errorText.value = '超出最大长度$maxLength';
         return false;
       } else if (minLength != null && t!.length < minLength!) {
-        _errorText['error'] = '小于最低长度$minLength';
+        _errorText.value = '小于最低长度$minLength';
         return false;
       }
 
@@ -152,50 +163,49 @@ class InputField<T> implements SuperFormField<T> {
       if (valueType == ValueType.int) {
         int? tv = t.toInt();
         if (tv == null) {
-          if (isRequired) {
-            _errorText['error'] =
-                '${isRequired ? '必须填写,' : ''}${valueType!.info}';
+          if (isRequired && !readonly) {
+            _errorText.value = '${isRequired ? '必须填写,' : ''}${valueType!.info}';
             return false;
           }
         } else {
           if (minValue != null && tv < minValue!) {
-            _errorText['error'] = '不能小于$minValue';
+            _errorText.value = '不能小于$minValue';
             return false;
           } else if (maxValue != null && tv > maxValue!) {
-            _errorText['error'] = '不能大于$maxValue';
+            _errorText.value = '不能大于$maxValue';
             return false;
           }
         }
       } else if (valueType == ValueType.number) {
         num? tv = t.toNum();
         if (tv == null) {
-          if (isRequired) {
-            _errorText['error'] =
-                '${isRequired ? '必须填写,' : ''}${valueType!.info}';
+          if (isRequired && !readonly) {
+            _errorText.value = '${isRequired ? '必须填写,' : ''}${valueType!.info}';
             return false;
           }
         } else {
           if (minValue != null && tv < minValue!) {
-            _errorText['error'] = '不能小于$minValue';
+            _errorText.value = '不能小于$minValue';
             return false;
           } else if (maxValue != null && tv > maxValue!) {
-            _errorText['error'] = '不能大于$maxValue';
+            _errorText.value = '不能大于$maxValue';
             return false;
           }
         }
       } else if (valueType == ValueType.email &&
-          !RegExp(r'\S+@\S+\.\S+').hasMatch(t!)) {
-        _errorText['error'] = '${isRequired ? '必须填写,' : ''}${valueType!.info}';
+          !RegExp(r'\S+@\S+\.\S+').hasMatch(t!) &&
+          !readonly) {
+        _errorText.value = '${isRequired ? '必须填写,' : ''}${valueType!.info}';
         return false;
       }
     }
     //没填写又必须填写时
-    else if (isRequired) {
-      _errorText['error'] = '必须填写';
+    else if (isRequired && !readonly) {
+      _errorText.value = '必须填写';
       return false;
     }
 
-    _errorText.clear();
+    _errorText.value = null;
     return true;
   }
 
@@ -242,7 +252,7 @@ class InputField<T> implements SuperFormField<T> {
         helperText: helperText);
   }
 
-  final _errorText = {}.obs;
+  final _errorText = Rx<String?>(null);
   final _obscureText = true.obs;
 
   @override
@@ -254,14 +264,15 @@ class InputField<T> implements SuperFormField<T> {
     } else if (valueType == ValueType.number) {
       inputFormatters
           .add(FilteringTextInputFormatter.allow(RegExp(r'(^-|\d+|\.)')));
+    } else if (valueType == ValueType.date) {
+      inputFormatters
+          .add(FilteringTextInputFormatter.allow(RegExp(r'(^\d|\-)')));
     }
     return Container(
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      padding: const EdgeInsets.only(top: 10, bottom: 5),
       child: Obx(() => TextField(
             controller: _controller,
             readOnly: (readonly || !editMode),
-            style: TextStyle(
-                color: (readonly || !editMode) ? Colors.black54 : Colors.black),
             keyboardType: valueType == ValueType.int
                 ? const TextInputType.numberWithOptions(
                     signed: true, decimal: false)
@@ -294,9 +305,14 @@ class InputField<T> implements SuperFormField<T> {
               helperText: isRequired
                   ? ' * ${helperText ?? ''} ${valueType!.info}'
                   : helperText ?? '',
-              errorText: _errorText['error'],
-              focusedBorder: (readonly || !editMode) ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(borderSide: BorderSide(
-                  color: Get.theme.inputDecorationTheme.disabledBorder?.borderSide.color ?? Colors.grey)) : null,
+              errorText: _errorText.value,
+              focusedBorder: (readonly || !editMode)
+                  ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(
+                      borderSide: BorderSide(
+                          color: Get.theme.inputDecorationTheme.disabledBorder
+                                  ?.borderSide.color ??
+                              Colors.grey))
+                  : null,
               suffix: valueType == ValueType.password
                   ? InkWell(
                       child: Icon(
@@ -321,7 +337,8 @@ class InputField<T> implements SuperFormField<T> {
                           ),
                           onTap: () async {
                             Utils.copy('$value');
-                          })
+                          },
+                        )
                       : null,
             ),
           )),
@@ -343,8 +360,6 @@ class InputField<T> implements SuperFormField<T> {
       child: Obx(() => TextField(
             controller: _controller,
             readOnly: (readonly || !editMode),
-            style: TextStyle(
-                color: (readonly || !editMode) ? Colors.black54 : Colors.black),
             keyboardType: valueType == ValueType.int
                 ? const TextInputType.numberWithOptions(
                     signed: true, decimal: false)
@@ -372,15 +387,17 @@ class InputField<T> implements SuperFormField<T> {
             decoration: InputDecoration(
               labelText: text,
               helperText: helperText,
-              errorText: _errorText['error'],
+              errorText: _errorText.value,
               isDense: true,
               isCollapsed: true,
-              filled: true,
-              fillColor: Colors.grey[100],
-              focusColor: Colors.white,
               contentPadding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-              focusedBorder: (readonly || !editMode) ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(borderSide: BorderSide(
-                  color: Get.theme.inputDecorationTheme.disabledBorder?.borderSide.color ?? Colors.grey)) : null,
+              focusedBorder: (readonly || !editMode)
+                  ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(
+                      borderSide: BorderSide(
+                          color: Get.theme.inputDecorationTheme.disabledBorder
+                                  ?.borderSide.color ??
+                              Colors.grey))
+                  : null,
               suffix: valueType == ValueType.search
                   ? InkWell(
                       child: const Icon(

@@ -1,10 +1,13 @@
 import 'dart:convert';
+
+import 'package:extension/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:extension/extension.dart';
-import 'super_form_field.dart';
-import 'select_option.dart';
+import 'package:super_widget/form/utils.dart';
+
 import '../bottom_sheet/container.dart';
+import 'select_option.dart';
+import 'super_form_field.dart';
 
 class SearchSelectField<T> implements SuperFormField<T> {
   SearchSelectField(
@@ -16,6 +19,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
       this.options = const [],
       this.isRequired = false,
       this.helperText,
+      this.showCopyBtn = false,
       this.callback}) {
     if (defaultValue != null &&
         !options.map((e) => e.value).contains(defaultValue)) {
@@ -39,6 +43,8 @@ class SearchSelectField<T> implements SuperFormField<T> {
     }
     isRequired = map['isRequired'] ?? false;
     helperText = map['helperText'];
+    showCopyBtn = map['showCopyBtn'] ?? true;
+
     _value.value = defaultValue;
   }
 
@@ -66,38 +72,49 @@ class SearchSelectField<T> implements SuperFormField<T> {
   @override
   String? helperText;
 
-  final _errorText = {}.obs;
+  late bool showCopyBtn;
+
+  final _errorText = Rx<String?>(null);
 
   //联动回调
   Callback? callback;
 
   late List<SelectOption> options;
 
+  ///group为null时不筛选
+  dynamic group;
+
   final Rx<T?> _value = Rx<T?>(null);
 
   @override
   T? get value {
-    if (readonly) return defaultValue;
-
     return _value.value;
   }
 
   @override
   set value(T? v) {
     _value.value = v;
-    if (readonly) {
-      defaultValue = v;
-    }
+  }
+
+  @override
+  set errorText(String? v) {
+    _errorText.value = v;
   }
 
   bool get hasValue {
+    if (group != null) {
+      return options
+          .where((element) => element.group == group)
+          .map((e) => e.value)
+          .contains(_value.value);
+    }
     return options.map((e) => e.value).contains(_value.value);
   }
 
   @override
   bool check() {
-    if (isRequired && !hasValue) {
-      _errorText['error'] = '必须选择';
+    if (isRequired && (!hasValue || _value.value == null)) {
+      _errorText.value = '必须选择';
       return false;
     }
     return true;
@@ -114,7 +131,8 @@ class SearchSelectField<T> implements SuperFormField<T> {
       'defaultValue': defaultValue,
       'options': options.map((element) => element.toMap()).toList(),
       'isRequired': isRequired,
-      'helperText': helperText
+      'helperText': helperText,
+      'showCopyBtn': showCopyBtn
     };
   }
 
@@ -133,60 +151,101 @@ class SearchSelectField<T> implements SuperFormField<T> {
         defaultValue: defaultValue,
         options: options,
         isRequired: isRequired,
-        helperText: helperText);
+        helperText: helperText,
+        showCopyBtn: showCopyBtn);
   }
 
   @override
   Widget toWidget() {
-    return GestureDetector(
-      onTap: (readonly || !editMode)
-          ? null
-          : () async {
-              SelectOption? _selected =
-                  await Get.bottomSheet<SelectOption>(BottomSearchSelect(
-                options: options,
-                value: _value.value,
-              ));
-              if (_selected != null) {
-                _value.value = _selected.value;
-              }
-            },
-      child: Container(
-          padding: const EdgeInsets.only(top: 5, bottom: 5),
-          child: Obx(() => InputDecorator(
-                decoration: InputDecoration(
-                    labelText: '$text',
-                    isDense: true,
-                    isCollapsed: true,
-                    contentPadding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                    errorText: _errorText['error'],
-                    helperText: isRequired
-                        ? '* ${helperText ?? ''}'
-                        : helperText ?? ''),
-                isFocused: false,
-                isEmpty: !hasValue,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      height: 55,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                          hasValue
-                              ? options
-                                  .firstWhere((element) =>
-                                      element.value == _value.value)
-                                  .text
-                              : '',
-                          style: TextStyle(
-                              color: (readonly || !editMode)
-                                  ? Colors.black54
-                                  : Colors.black)),
-                    ),
-                    const Icon(Icons.arrow_drop_down_sharp)
-                  ],
-                ),
-              ))),
+    ThemeData themeData = Theme.of(Get.context!);
+    return Container(
+      padding: const EdgeInsets.only(top: 10, bottom: 5),
+      child: Obx(() => InputDecorator(
+          decoration: InputDecoration(
+              labelText: '$text',
+              isDense: true,
+              isCollapsed: true,
+              contentPadding: const EdgeInsets.fromLTRB(15, 4, 15, 0),
+              errorText: _errorText.value,
+              helperText:
+                  isRequired ? '* ${helperText ?? ''}' : helperText ?? '',
+              suffix: showCopyBtn
+                  ? InkWell(
+                      child: const Icon(
+                        Icons.copy,
+                        color: Colors.orangeAccent,
+                        size: 20,
+                      ),
+                      onTap: () async {
+                        if (value != null) {
+                          Utils.copy(options
+                              .firstWhere((element) => element.value == value)
+                              .text);
+                        }
+                      },
+                    )
+                  : null),
+          isFocused: false,
+          isEmpty: !hasValue,
+          child: InkWell(
+            onTap: (readonly || !editMode)
+                ? null
+                : () async {
+                    SelectOption? _selected =
+                        await Get.bottomSheet<SelectOption>(BottomSearchSelect(
+                      options: group != null
+                          ? options
+                              .where((element) => element.group == group)
+                              .toList()
+                          : options,
+                      value: _value.value,
+                    ));
+                    if (_selected != null) {
+                      _value.value = _selected.value;
+                    }
+                  },
+            child: SizedBox(
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 50,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                            hasValue
+                                ? options
+                                    .firstWhere((element) =>
+                                        element.value == _value.value)
+                                    .text
+                                : '',
+                            style: TextStyle(
+                                color: (readonly || !editMode)
+                                    ? themeData.disabledColor
+                                    : null)),
+                      ),
+                      Icon(
+                        Icons.arrow_drop_down_sharp,
+                        color: (readonly || !editMode)
+                            ? themeData.disabledColor
+                            : null,
+                      ),
+                    ],
+                  )),
+                  if (showCopyBtn)
+                    const SizedBox(
+                      width: 10,
+                    )
+                ],
+              ),
+            ),
+          ))),
     );
   }
 
@@ -211,7 +270,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
                 isDense: true,
                 isCollapsed: true,
                 contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 0),
-                errorText: _errorText['error'],
+                errorText: _errorText.value,
                 helperText:
                     isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),
             isFocused: false,
@@ -219,21 +278,17 @@ class SearchSelectField<T> implements SuperFormField<T> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  height: 50,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    hasValue
-                        ? options
-                            .firstWhere(
-                                (element) => element.value == _value.value)
-                            .text
-                        : '',
-                    style: TextStyle(
-                        color: (readonly || !editMode)
-                            ? Colors.black54
-                            : Colors.black),
-                  ),
+                Text(
+                  hasValue
+                      ? options
+                          .firstWhere(
+                              (element) => element.value == _value.value)
+                          .text
+                      : '',
+                  style: TextStyle(
+                      color: (readonly || !editMode)
+                          ? Colors.black54
+                          : Colors.black),
                 ),
                 const Icon(Icons.arrow_drop_down_sharp)
               ],
@@ -244,7 +299,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
 }
 
 class BottomSearchSelect<T> extends StatefulWidget {
-  BottomSearchSelect({Key? key, required this.options, this.value})
+  const BottomSearchSelect({Key? key, required this.options, this.value})
       : super(key: key);
   final List<SelectOption> options;
   final T? value;
@@ -285,7 +340,7 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
                 }
               },
             ),
-            counter: Container()),
+            counter: const SizedBox()),
         onChanged: (String word) {
           word.supperTrim();
           if (word.isNotEmpty) {
@@ -308,7 +363,6 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
               title: Text(_options[index].text),
               selected:
                   widget.value != null && _options[index].value == widget.value,
-              selectedTileColor: Colors.grey[100],
               leading:
                   widget.value != null && _options[index].value == widget.value
                       ? const Icon(Icons.check)
@@ -316,8 +370,6 @@ class _BottomSearchSelectState extends State<BottomSearchSelect> {
               onTap: () {
                 Get.back(result: _options[index]);
               },
-              hoverColor: Colors.grey[100],
-              focusColor: Colors.grey[100],
             );
           },
           separatorBuilder: (BuildContext context, int index) {

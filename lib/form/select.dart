@@ -1,8 +1,11 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'super_form_field.dart';
-import 'select_option.dart';
 import 'package:get/get.dart';
+import 'package:super_widget/form/utils.dart';
+
+import 'select_option.dart';
+import 'super_form_field.dart';
 
 ///select
 class SelectField<T> implements SuperFormField<T> {
@@ -15,6 +18,7 @@ class SelectField<T> implements SuperFormField<T> {
       this.options = const [],
       this.isRequired = false,
       this.helperText,
+      this.showCopyBtn = false,
       this.callback}) {
     if (defaultValue != null &&
         !options.map((e) => e.value).contains(defaultValue)) {
@@ -38,6 +42,7 @@ class SelectField<T> implements SuperFormField<T> {
     }
     isRequired = map['isRequired'] ?? false;
     helperText = map['helperText'];
+    showCopyBtn = map['showCopyBtn'] ?? true;
     _value.value = defaultValue;
   }
 
@@ -65,32 +70,39 @@ class SelectField<T> implements SuperFormField<T> {
   @override
   String? helperText;
 
-  final _errorText = {}.obs;
+  final _errorText = Rx<String?>(null);
 
   //联动回调
   Callback? callback;
 
   late List<SelectOption> options;
 
+  late bool showCopyBtn;
+
   final _value = Rx<T?>(null);
 
   @override
   T? get value {
-    if (readonly) return defaultValue;
-
     return _value.value;
+  }
+
+  String? get valueText {
+    if(_value.value == null) return null;
+    return options.firstWhere((element)=>element.value == _value.value).text;
   }
 
   @override
   set value(dynamic v) {
     if (options.map((e) => e.value).contains(v)) {
       _value.value = v;
-      if (readonly) {
-        defaultValue = v;
-      }
     } else {
       _value.value = null;
     }
+  }
+
+  @override
+  set errorText(String? v) {
+    _errorText.value = v;
   }
 
   bool get hasValue {
@@ -99,8 +111,8 @@ class SelectField<T> implements SuperFormField<T> {
 
   @override
   bool check() {
-    if (isRequired && !hasValue) {
-      _errorText['error'] = '必须选择';
+    if (isRequired && (!hasValue || _value.value == null)) {
+      _errorText.value = '必须选择';
       return false;
     }
     return true;
@@ -117,7 +129,8 @@ class SelectField<T> implements SuperFormField<T> {
       'defaultValue': defaultValue,
       'options': options.map((element) => element.toMap()).toList(),
       'isRequired': isRequired,
-      'helperText': helperText
+      'helperText': helperText,
+      'showCopyBtn': showCopyBtn
     };
   }
 
@@ -136,26 +149,45 @@ class SelectField<T> implements SuperFormField<T> {
         defaultValue: defaultValue,
         options: options,
         isRequired: isRequired,
-        helperText: helperText);
+        helperText: helperText,
+        showCopyBtn: showCopyBtn);
   }
 
   @override
   Widget toWidget() {
     return Container(
-      padding: const EdgeInsets.only(top: 5, bottom: 5),
+      padding: const EdgeInsets.only(top: 10, bottom: 5),
       child: Obx(() => InputDecorator(
             decoration: InputDecoration(
                 labelText: '$text',
                 isDense: true,
                 isCollapsed: true,
-                contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 0),
-                errorText: _errorText['error'],
+                contentPadding: const EdgeInsets.fromLTRB(15, 4, 15, 0),
+                errorText: _errorText.value,
                 helperText:
-                    isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),
+                    isRequired ? '* ${helperText ?? ''}' : helperText ?? '',
+                suffix: showCopyBtn
+                    ? InkWell(
+                        child: const Icon(
+                          Icons.copy,
+                          color: Colors.orangeAccent,
+                          size: 20,
+                        ),
+                        onTap: () async {
+                          if (value != null) {
+                            Utils.copy(options
+                                .firstWhere((element) => element.value == value)
+                                .text);
+                          }
+                        },
+                      )
+                    : null),
             isFocused: false,
             isEmpty: !hasValue,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 5),
+              padding: showCopyBtn
+                  ? const EdgeInsets.only(right: 10)
+                  : const EdgeInsets.all(0),
               child: DropdownButton(
                 isExpanded: true,
                 underline: Container(),
@@ -164,7 +196,7 @@ class SelectField<T> implements SuperFormField<T> {
                 onChanged: (readonly || !editMode)
                     ? null
                     : (dynamic a) {
-                        _errorText.clear();
+                        _errorText.value = null;
                         //更新选择的值
                         _value.value = a;
                         //联动回调
@@ -172,7 +204,6 @@ class SelectField<T> implements SuperFormField<T> {
                           callback!(a);
                         }
                       },
-                focusColor: Colors.white,
               ),
             ),
           )),
@@ -189,7 +220,7 @@ class SelectField<T> implements SuperFormField<T> {
                   isDense: true,
                   isCollapsed: true,
                   contentPadding: const EdgeInsets.fromLTRB(15, 3, 15, 3),
-                  errorText: _errorText['error'],
+                  errorText: _errorText.value,
                   helperText:
                       isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),
               isFocused: false,
@@ -202,7 +233,7 @@ class SelectField<T> implements SuperFormField<T> {
                 onChanged: (readonly || !editMode)
                     ? null
                     : (dynamic a) {
-                        _errorText.clear();
+                        _errorText.value = null;
                         _value.value = a;
                         //联动回调
                         if (callback != null) {

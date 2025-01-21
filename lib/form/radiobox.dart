@@ -1,9 +1,11 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'super_form_field.dart';
 
-class RadioBoxField implements SuperFormField<Map<String, bool>> {
+class RadioBoxField<T> implements SuperFormField<T> {
   RadioBoxField(
       {this.defaultValue,
       this.options = const [],
@@ -13,13 +15,7 @@ class RadioBoxField implements SuperFormField<Map<String, bool>> {
       required this.name,
       this.isRequired = false,
       this.helperText}) {
-    defaultValue ??= <String, bool>{};
-    _value.value = Map<String, bool>.from(defaultValue!);
-    if (_value.isEmpty) {
-      for (var element in options) {
-        _value.update(element.name, (value) => false);
-      }
-    }
+    _value.value = defaultValue!;
   }
 
   RadioBoxField.fromMap(Map<String, dynamic> map) {
@@ -38,7 +34,7 @@ class RadioBoxField implements SuperFormField<Map<String, bool>> {
 
   //只有一个值
   @override
-  Map<String, bool>? defaultValue;
+  T? defaultValue;
 
   @override
   late String name;
@@ -63,22 +59,20 @@ class RadioBoxField implements SuperFormField<Map<String, bool>> {
 
   late List<RadioOption> options;
 
-  final _value = <String, bool>{}.obs;
+  late Rx<T?> _value = Rx(null);
 
   @override
-  Map<String, bool>? get value {
-    if (readonly) return defaultValue;
-
+  T? get value {
     return _value.value;
   }
 
   @override
-  set value(Map<String, bool>? v) {
-    if (v != null) {
-      _value.value = v;
-      _value.refresh();
-    }
+  set value(dynamic v) {
+    _value.value = v;
   }
+
+  @override
+  set errorText(String? v) {}
 
   @override
   bool check() {
@@ -120,22 +114,21 @@ class RadioBoxField implements SuperFormField<Map<String, bool>> {
 
   @override
   Widget toWidget() {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(text ?? ''),
-          Obx(() => Wrap(
-                children: options
-                    .map((e) => e.toWidget(_value[e.name] ?? false, (bool v) {
-                          _value.update(e.name, (value) => v);
-                        }))
-                    .toList(),
-              ))
-        ],
+    return InputDecorator(
+      decoration: InputDecoration(
+        labelText: '$text',
+        isDense: true,
+        isCollapsed: true,
+        contentPadding: const EdgeInsets.fromLTRB(15, 14, 15, 14),
       ),
-      decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.grey[200]!))),
+      isEmpty: false,
+      child: Obx(() => Wrap(
+            children: options
+                .map((e) => e.toWidget(_value.value, (T v) {
+                      _value.value = v;
+                    }))
+                .toList(),
+          )),
     );
   }
 
@@ -145,21 +138,19 @@ class RadioBoxField implements SuperFormField<Map<String, bool>> {
   }
 }
 
-class RadioOption {
-  RadioOption({this.group, required this.name, required this.text});
+class RadioOption<T> {
+  RadioOption({required this.value, required this.text});
 
   RadioOption.fromMap(Map<String, dynamic> map) {
-    group = map['group'];
-    name = map['name'];
+    value = map['value'];
     text = map['text'];
   }
 
-  late String name;
+  late T value;
   late String text;
-  String? group;
 
   Map<String, dynamic> toMap() {
-    return {'name': name, 'text': text};
+    return {'value': value, 'text': text};
   }
 
   @override
@@ -167,15 +158,15 @@ class RadioOption {
     return json.encode(toMap());
   }
 
-  Widget toWidget(bool value, Function callback) {
+  Widget toWidget(T? groupValue, Function callback) {
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Radio(
             value: value,
-            groupValue: group,
-            onChanged: (Object? ob) {
-              callback(ob);
+            groupValue: groupValue,
+            onChanged: (val) {
+              callback(val);
             }),
         Text(text)
       ],

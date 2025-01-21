@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'super_form_field.dart';
+
+import 'checkbox.dart';
+import 'date.dart';
 import 'input.dart';
+import 'radiobox.dart';
+import 'search_select.dart';
+import 'select.dart';
+import 'super_form_field.dart';
 import 'textarea.dart';
 import 'upload.dart';
-import 'date.dart';
-import 'select.dart';
-import 'search_select.dart';
-import 'radiobox.dart';
-import 'checkbox.dart';
 
 class FieldGroup<T> extends SuperFormField<T> {
   FieldGroup({required this.name, this.text, this.items = const []});
@@ -35,7 +36,9 @@ class FieldGroup<T> extends SuperFormField<T> {
         case FieldType.date:
           return DateField.fromMap(e);
         case FieldType.group:
-          break;
+          return FieldGroup.fromMap(e);
+        case FieldType.custom:
+          return CustomField.fromMap(e);
       }
       return null;
     }));
@@ -126,5 +129,10 @@ class FieldGroup<T> extends SuperFormField<T> {
         ],
       ),
     );
+  }
+
+  @override
+  set errorText(String? v) {
+    // TODO: implement errorText
   }
 }

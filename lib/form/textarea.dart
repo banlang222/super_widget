@@ -1,9 +1,11 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+
 import 'package:extension/extension.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'utils.dart';
+
 import 'super_form_field.dart';
+import 'utils.dart';
 
 class TextareaField implements SuperFormField<String> {
   TextareaField(
@@ -65,15 +67,12 @@ class TextareaField implements SuperFormField<String> {
 
   @override
   String? get value {
-    if (readonly) return defaultValue;
-
     return _controller.text.supperTrim();
   }
 
   @override
   set value(dynamic v) {
-    _controller.text = v;
-    if (readonly) defaultValue = v;
+    _controller.text = (v == null) ? '' : v;
   }
 
   @override
@@ -81,21 +80,26 @@ class TextareaField implements SuperFormField<String> {
     return _check(_controller.text.supperTrim());
   }
 
+  @override
+  set errorText(String? v) {
+    _errorText.value = v;
+  }
+
   bool _check(String? t) {
     //有填写时
     if (!t.isNullOrEmpty) {
       //进行长度校验
       if (maxLength != null && t!.length > maxLength!) {
-        _errorText['error'] = '超出最大长度$maxLength';
+        _errorText.value = '超出最大长度$maxLength';
         return false;
       } else if (minLength != null && t!.length < minLength!) {
-        _errorText['error'] = '小于最低长度$minLength';
+        _errorText.value = '小于最低长度$minLength';
         return false;
       }
     }
     //没填写又必须填写时
     else if (isRequired) {
-      _errorText['error'] = '必须填写';
+      _errorText.value = '必须填写';
       return false;
     }
     return true;
@@ -138,7 +142,7 @@ class TextareaField implements SuperFormField<String> {
         helperText: helperText);
   }
 
-  final _errorText = {}.obs;
+  final _errorText = Rx<String?>(null);
 
   @override
   Widget toWidget() {
@@ -149,8 +153,6 @@ class TextareaField implements SuperFormField<String> {
             maxLength: maxLength,
             controller: _controller,
             readOnly: (readonly || !editMode),
-            style: TextStyle(
-                color: (readonly || !editMode) ? Colors.black54 : Colors.black),
             textInputAction: TextInputAction.newline,
             onChanged: (String t) {
               _check(t.supperTrim());
@@ -158,10 +160,15 @@ class TextareaField implements SuperFormField<String> {
             decoration: InputDecoration(
               labelText: text,
               helperText: isRequired ? ' * ${helperText ?? ''}' : helperText,
-              errorText: _errorText['error'],
+              errorText: _errorText.value,
               isDense: true,
-              focusedBorder: (readonly || !editMode) ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(borderSide: BorderSide(
-                  color: Get.theme.inputDecorationTheme.disabledBorder?.borderSide.color ?? Colors.grey)) : null,
+              focusedBorder: (readonly || !editMode)
+                  ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(
+                      borderSide: BorderSide(
+                          color: Get.theme.inputDecorationTheme.disabledBorder
+                                  ?.borderSide.color ??
+                              Colors.grey))
+                  : null,
               suffix: showCopyBtn!
                   ? InkWell(
                       child: const Icon(

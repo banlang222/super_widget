@@ -16,12 +16,14 @@ class BSMenuItem {
 
 ///bottomSheetMenu按钮点击后自动关闭，无需再处理关闭动作
 class BottomSheetMenu extends StatelessWidget {
-  const BottomSheetMenu({Key? key, required this.items, this.backgroundColor}) : super(key: key);
+  const BottomSheetMenu({Key? key, required this.items, this.backgroundColor})
+      : super(key: key);
   final List<BSMenuItem> items;
   final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
     return Container(
       color: Colors.transparent,
       child: Column(
@@ -29,14 +31,16 @@ class BottomSheetMenu extends StatelessWidget {
         children: [
           Container(
             margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-            padding: const EdgeInsets.all(10),
+            // padding: const EdgeInsets.all(10),
             width: double.infinity,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                color: backgroundColor ?? Colors.white),
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                color: backgroundColor ??
+                    themeData.bottomSheetTheme.modalBackgroundColor),
             child: ListView.separated(
                 shrinkWrap: true,
+                padding: EdgeInsets.zero,
                 itemBuilder: (context, int index) {
                   return ListTile(
                     tileColor: Colors.transparent,
@@ -49,9 +53,7 @@ class BottomSheetMenu extends StatelessWidget {
                       child: Text(
                         items[index].text,
                         style: TextStyle(
-                            color: items[index].selected
-                                ? Colors.green
-                                : null),
+                            color: items[index].selected ? Colors.green : null),
                       ),
                     ),
                     trailing: items[index].selected
@@ -86,9 +88,12 @@ class BottomSheetMenu extends StatelessWidget {
             ),
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
-                color: backgroundColor ?? Colors.white),
+                color: backgroundColor ??
+                    themeData.bottomSheetTheme.modalBackgroundColor),
           ),
-          SizedBox(height: 20,)
+          const SizedBox(
+            height: 20,
+          )
         ],
       ),
     );

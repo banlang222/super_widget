@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
-import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:extension/extension.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
+import 'package:get/get.dart';
+
 import 'super_form_field.dart';
 import 'utils.dart';
-import '../bottom_sheet/container.dart';
 
 class DateMode {
   const DateMode._(this.name, this.value, this.text);
@@ -40,16 +41,16 @@ class DateField implements SuperFormField<DateTime> {
       this.isRequired = false,
       this.readonly = false,
       this.editMode = true}) {
-    defaultValue ??= DateTime.now();
-    _value.value = defaultValue;
+    // defaultValue ??= DateTime.now();
+    // _value.value = defaultValue;
   }
 
   DateField.fromMap(Map<String, dynamic> map) {
     name = map['name'];
     text = map['text'];
-    defaultValue = map['defaultValue'] == null
-        ? DateTime.now()
-        : (map['defaultValue'] as String).toDateTime() ?? DateTime.now();
+    if (map['defaultValue'] != null) {
+      defaultValue = DateTime.tryParse(map['defaultValue']);
+    }
     dateMode = DateMode.fromValue(map['dateMode']) ?? DateMode.date;
     helperText = map['helperText'];
     isRequired = map['isRequired'] ?? false;
@@ -85,27 +86,41 @@ class DateField implements SuperFormField<DateTime> {
   late DateMode dateMode;
 
   @override
-  DateTime get value {
-    return _value.value!;
+  DateTime? get value {
+    return _value.value;
+  }
+
+  @override
+  set errorText(String? v) {
+    _errorText.value = v;
   }
 
   @override
   set value(dynamic v) {
-    DateTime _v;
+    DateTime? dt;
     if (v is DateTime) {
-      _v = v;
+      dt = v;
     } else if (v is String) {
-      _v = v.toDateTime() ?? DateTime.now();
+      dt = v.toDateTime();
     } else {
-      _v = DateTime.now();
+      dt = null;
     }
-    _value.value = _v;
-    if (readonly) defaultValue = _v;
+    if (dt == null) {
+      _value.value = null;
+    } else {
+      if (dateMode == DateMode.date) {
+        _value.value = DateTime(dt.year, dt.month, dt.day);
+      } else if (dateMode == DateMode.time) {
+        _value.value = DateTime(1970, 1, 1, dt.hour, dt.minute, dt.second);
+      } else {
+        _value.value = dt;
+      }
+    }
   }
 
   final _value = Rx<DateTime?>(null);
 
-  final _errorText = {}.obs;
+  final _errorText = Rx<String?>(null);
 
   @override
   bool check() {
@@ -114,10 +129,10 @@ class DateField implements SuperFormField<DateTime> {
 
   bool _check() {
     if (isRequired && _value.value == null) {
-      _errorText['error'] = isRequired ? '必须填写' : '';
+      _errorText.value = isRequired ? '必须填写' : '';
       return false;
     }
-    _errorText.clear();
+    _errorText.value = null;
     return true;
   }
 
@@ -155,11 +170,11 @@ class DateField implements SuperFormField<DateTime> {
   }
 
   @override
-  Widget toWidget() {
+  Widget toWidget([BuildContext? context]) {
     if (dateMode == DateMode.date) {
-      return buildDateWidget();
+      return buildDateWidget(context);
     } else if (dateMode == DateMode.time) {
-      return buildTimeWidget();
+      return buildTimeWidget(context);
     } else {
       return Column(
         children: [buildDateWidget(), buildTimeWidget()],
@@ -167,194 +182,154 @@ class DateField implements SuperFormField<DateTime> {
     }
   }
 
-  Widget buildDateWidget() {
-    return Container(
+  Widget buildDateWidget([BuildContext? context]) {
+    return Padding(
         padding: const EdgeInsets.only(top: 5, bottom: 5),
-        child: Obx(() => InputDecorator(
-              decoration: InputDecoration(
-                  labelText: '$text（日期）',
-                  isDense: true,
-                  isCollapsed: true,
-                  contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 3),
-                  helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
-                  errorText: _errorText['error']),
-              isFocused: false,
-              isEmpty: false,
-              child: InkWell(
-                onTap: () async {
-                  DatePicker.showDatePicker(Get.context!,
-                      initialDateTime: _value.value,
-                      locale: DateTimePickerLocale.zh_cn,
-                      pickerMode: DateTimePickerMode.date,
-                      onConfirm: (DateTime date, List<int> selected) {
-                    _value.value = DateTime(
-                        date.year,
-                        date.month,
-                        date.day,
-                        _value.value!.hour,
-                        _value.value!.minute,
-                        _value.value!.second);
-                    _errorText.clear();
-                  });
-                  // Get.bottomSheet(
-                  //     BottomSheetContainer(
-                  //       backGroundColor: Get.theme.backgroundColor,
-                  //       header: Row(
-                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //         children: [
-                  //           TextButton.icon(
-                  //               onPressed: () {
-                  //                 Get.back();
-                  //               },
-                  //               label: const Text('取消'),
-                  //               icon: const Icon(
-                  //                 Icons.close,
-                  //                 size: 20,
-                  //               )),
-                  //           const Text('请选择日期'),
-                  //           TextButton.icon(
-                  //               onPressed: () {
-                  //                 _errorText.clear();
-                  //                 //dateKey.currentState.setState(() {});
-                  //                 Get.back();
-                  //               },
-                  //               label: const Text('确定'),
-                  //               icon: const Icon(
-                  //                 Icons.check,
-                  //                 size: 20,
-                  //               ))
-                  //         ],
-                  //       ),
-                  //       content: Container(
-                  //         height: 150,
-                  //         child: CupertinoDatePicker(
-                  //           mode: CupertinoDatePickerMode.date,
-                  //           initialDateTime: _value.value,
-                  //           onDateTimeChanged: (DateTime date) {
-                  //             _value.value = DateTime(
-                  //                 date.year,
-                  //                 date.month,
-                  //                 date.day,
-                  //                 _value.value!.hour,
-                  //                 _value.value!.minute,
-                  //                 _value.value!.second);
-                  //             _errorText.clear();
-                  //             //dateKey.currentState.setState(() {});
-                  //           },
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     isScrollControlled: true);
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(top: 15, bottom: 15),
-                      child: Obx(
-                          () => Text(Utils.dateFormat(_value.value!, true))),
-                    ),
-                    (readonly || !editMode)
-                        ? Container()
-                        : const Icon(Icons.date_range)
-                  ],
+        child: Obx(
+          () => InputDecorator(
+            decoration: InputDecoration(
+                labelText: '$text（日期）',
+                isDense: true,
+                isCollapsed: true,
+                contentPadding: const EdgeInsets.fromLTRB(15, 8, 5, 3),
+                helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
+                errorText: _errorText.value),
+            isFocused: false,
+            isEmpty: false,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: (readonly || !editMode)
+                      ? null
+                      : () async {
+                          if (GetPlatform.isDesktop || kIsWeb) {
+                            final dates = await showCalendarDatePicker2Dialog(
+                                context: context ?? Get.context!,
+                                config:
+                                    CalendarDatePicker2WithActionButtonsConfig(),
+                                dialogSize: const Size(400, 400));
+                            if (dates != null && dates.isNotEmpty) {
+                              _value.value = DateTime(
+                                  dates.first!.year,
+                                  dates.first!.month,
+                                  dates.first!.day,
+                                  0,
+                                  0,
+                                  0);
+                              _errorText.value = null;
+                            }
+                          } else {
+                            DatePicker.showDatePicker(Get.context!,
+                                initialDateTime: _value.value,
+                                locale: DateTimePickerLocale.zh_cn,
+                                pickerMode: DateTimePickerMode.date,
+                                pickerTheme: DateTimePickerTheme(
+                                    backgroundColor: context?.theme.cardColor ??
+                                        DateTimePickerTheme
+                                            .Default.backgroundColor,
+                                    confirmTextStyle:
+                                        context?.textTheme.bodyMedium,
+                                    itemTextStyle: DateTimePickerTheme
+                                        .Default.itemTextStyle
+                                        .copyWith(
+                                            color: context?.theme.brightness ==
+                                                    Brightness.dark
+                                                ? Colors.white
+                                                : Colors.black87)),
+                                onConfirm: (DateTime date, List<int> selected) {
+                              _value.value = DateTime(
+                                  date.year, date.month, date.day, 0, 0, 0);
+                              _errorText.value = null;
+                            });
+                          }
+                        },
+                  child: MouseRegion(
+                      cursor: (readonly || !editMode)
+                          ? MouseCursor.defer
+                          : MaterialStateMouseCursor.clickable,
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 10,
+                        children: [
+                          if (!(readonly || !editMode))
+                            const Icon(Icons.date_range),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15, bottom: 15),
+                            child: Obx(() =>
+                                Text(Utils.dateFormat(_value.value, true))),
+                          ),
+                        ],
+                      )),
                 ),
-              ),
-            )));
+                if (!(readonly || !editMode))
+                  IconButton(
+                      onPressed: () {
+                        _value.value = null;
+                      },
+                      icon: const Icon(Icons.close))
+              ],
+            ),
+          ),
+        ));
   }
 
-  Widget buildTimeWidget() {
+  Widget buildTimeWidget([BuildContext? context]) {
     return Container(
         padding: const EdgeInsets.only(top: 5, bottom: 5),
-        child: Obx(() => InputDecorator(
-              decoration: InputDecoration(
-                  labelText: '$text（时间）',
-                  isDense: true,
-                  isCollapsed: true,
-                  contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 3),
-                  helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
-                  errorText: _errorText['error']),
-              isFocused: false,
-              isEmpty: false,
-              child: InkWell(
-                onTap: () async {
-                  DatePicker.showDatePicker(Get.context!,
-                      initialDateTime: _value.value ?? DateTime.now(),
-                      locale: DateTimePickerLocale.zh_cn,
-                      pickerMode: DateTimePickerMode.time,
-                      onConfirm: (DateTime date, List<int> selected) {
-                    _value.value = DateTime(
-                        _value.value!.year,
-                        _value.value!.month,
-                        _value.value!.day,
-                        date.hour,
-                        date.minute,
-                        date.second);
-                    _errorText.clear();
-                  });
-                  // Get.bottomSheet(
-                  //     BottomSheetContainer(
-                  //       backGroundColor: Get.theme.backgroundColor,
-                  //       header: Row(
-                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //         children: [
-                  //           TextButton.icon(
-                  //               onPressed: () {
-                  //                 Get.back();
-                  //               },
-                  //               label: const Text('取消'),
-                  //               icon: const Icon(
-                  //                 Icons.close,
-                  //                 size: 20,
-                  //               )),
-                  //           const Text('请选择时间'),
-                  //           TextButton.icon(
-                  //               onPressed: () {
-                  //                 _value.value ??= DateTime.now();
-                  //                 _errorText.clear();
-                  //                 Get.back();
-                  //               },
-                  //               label: const Text('确定'),
-                  //               icon: const Icon(
-                  //                 Icons.check,
-                  //                 size: 20,
-                  //               ))
-                  //         ],
-                  //       ),
-                  //       content: SizedBox(
-                  //         height: 150,
-                  //         child: CupertinoDatePicker(
-                  //           mode: CupertinoDatePickerMode.time,
-                  //           initialDateTime: _value.value ?? DateTime.now(),
-                  //           onDateTimeChanged: (DateTime date) {
-                  //             _value.value = DateTime(
-                  //                 _value.value!.year,
-                  //                 _value.value!.month,
-                  //                 _value.value!.day,
-                  //                 date.hour,
-                  //                 date.minute,
-                  //                 date.second);
-                  //             _errorText.clear();
-                  //             //timeKey.currentState.setState(() {});
-                  //           },
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     isScrollControlled: true);
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(top: 15, bottom: 15),
-                      child: Text(Utils.timeFormat(_value.value!)),
-                    ),
-                    (readonly || !editMode)
-                        ? Container()
-                        : const Icon(Icons.date_range)
-                  ],
-                ),
-              ),
-            )));
+        child: Obx(
+          () => InputDecorator(
+            decoration: InputDecoration(
+                labelText: '$text（时间）',
+                isDense: true,
+                isCollapsed: true,
+                contentPadding: const EdgeInsets.fromLTRB(15, 5, 5, 3),
+                helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
+                errorText: _errorText.value),
+            isFocused: false,
+            isEmpty: false,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                    onTap: () async {
+                      DatePicker.showDatePicker(Get.context!,
+                          initialDateTime: _value.value ?? DateTime.now(),
+                          locale: DateTimePickerLocale.zh_cn,
+                          pickerMode: DateTimePickerMode.time,
+                          pickerTheme: DateTimePickerTheme(
+                              backgroundColor:
+                                  context?.theme.cardColor ?? Colors.white),
+                          onConfirm: (DateTime date, List<int> selected) {
+                        _value.value = DateTime(
+                            1970, 1, 1, date.hour, date.minute, date.second);
+                        _errorText.value = null;
+                      });
+                    },
+                    child: MouseRegion(
+                      cursor: MaterialStateMouseCursor.clickable,
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 10,
+                        children: [
+                          if (!(readonly || !editMode))
+                            const Icon(Icons.access_time),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15, bottom: 15),
+                            child: Text(Utils.timeFormat(_value.value)),
+                          ),
+                        ],
+                      ),
+                    )),
+                if (!(readonly || !editMode))
+                  IconButton(
+                      onPressed: () {
+                        _value.value = null;
+                      },
+                      icon: const Icon(Icons.close))
+              ],
+            ),
+          ),
+        ));
   }
 }

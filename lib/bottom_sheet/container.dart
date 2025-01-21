@@ -13,98 +13,122 @@ enum ContainerSize {
 
 ///expanded content是否占用尽可能大的区域，默认为true, expanded = true时将显示全屏按钮
 ///header仅控制内容
-class BottomSheetContainer extends StatelessWidget {
-  BottomSheetContainer(
+class BottomSheetContainer extends StatefulWidget {
+  const BottomSheetContainer(
       {Key? key,
       this.header,
       required this.content,
       this.footer,
       this.containerSize = ContainerSize.medium,
       this.expanded = true,
+      this.radius = 30,
       this.backGroundColor})
       : super(key: key);
 
   final Widget? header;
   final Widget content;
   final Widget? footer;
+  final double radius;
+
+  /// 需要配合isScrollControlled=true 使用
   final ContainerSize containerSize;
+
+  ///
   final bool expanded;
   final Color? backGroundColor;
 
-  final RxBool _fullScreen = RxBool(false);
+  @override
+  State<StatefulWidget> createState() {
+    return _BottomSheetContainerState();
+  }
+}
+
+class _BottomSheetContainerState extends State<BottomSheetContainer> {
+  bool _fullScreen = false;
 
   @override
   Widget build(BuildContext context) {
-    if (containerSize == ContainerSize.max) {
-      _fullScreen.value = true;
+    ThemeData themeData = Theme.of(context);
+    if (widget.containerSize == ContainerSize.max) {
+      _fullScreen = true;
     }
-    return Obx(() => Container(
+    if (widget.expanded) {
+      return ClipRRect(
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(widget.radius)),
+        child: ConstrainedBox(
           constraints: BoxConstraints(
-            maxHeight: _fullScreen.value
-                ? Get.height
-                : Get.height * containerSize.value,
+            maxHeight: _fullScreen
+                ? Get.height - (_fullScreen ? 40 : 0)
+                : Get.height * widget.containerSize.value,
           ),
-          decoration: BoxDecoration(
-              color: backGroundColor ?? Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(30)),
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.grey.withAlpha(50),
-                          (backGroundColor ?? Colors.white).withAlpha(100),
-                          Colors.grey.withAlpha(1),
-                        ],
-                        stops: const [
-                          0,
-                          .3,
-                          1,
-                        ])),
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: header ?? Container(),
-                    ),
-                    expanded
-                        ? IconButton(
-                            onPressed: () {
-                              _fullScreen.value =
-                                  _fullScreen.value ? false : true;
-                            },
-                            icon: Icon(
-                              _fullScreen.value
-                                  ? Icons.fullscreen_exit
-                                  : Icons.fullscreen,
-                            ),
-                          )
-                        : Container()
-                  ],
-                ),
-              ),
-              expanded
-                  ? Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        child: content,
-                      ),
-                    )
-                  : content,
-              Container(
-                padding: const EdgeInsets.only(bottom: 10, top: 10),
-                child: footer,
-              )
-            ],
+          child: Scaffold(
+            backgroundColor: widget.backGroundColor ??
+                themeData.bottomSheetTheme.modalBackgroundColor,
+            appBar: PreferredSize(
+                preferredSize: const Size(double.infinity, 60),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (widget.header != null)
+                        Expanded(child: widget.header!),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _fullScreen = _fullScreen ? false : true;
+                          });
+                        },
+                        icon: Icon(
+                          _fullScreen
+                              ? Icons.fullscreen_exit
+                              : Icons.fullscreen,
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+            body: widget.content,
+            bottomNavigationBar: SizedBox(
+              height: 80,
+              child: widget.footer,
+            ),
           ),
-        ));
+        ),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+          color: widget.backGroundColor ??
+              themeData.bottomSheetTheme.modalBackgroundColor,
+          borderRadius:
+              BorderRadius.vertical(top: Radius.circular(widget.radius))),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(30)),
+                color: widget.backGroundColor ??
+                    themeData.bottomSheetTheme.modalBackgroundColor),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+            child: widget.header,
+          ),
+          widget.content,
+          if (widget.footer != null)
+            Container(
+              padding: const EdgeInsets.only(top: 10),
+              child: widget.footer,
+            ),
+          SizedBox(
+            height: 20,
+          )
+        ],
+      ),
+    );
   }
 }

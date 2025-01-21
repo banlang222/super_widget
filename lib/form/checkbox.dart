@@ -1,7 +1,9 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'super_form_field.dart';
 import 'package:get/get.dart';
+
+import 'super_form_field.dart';
 
 class CheckBoxField implements SuperFormField<Map<String, bool>> {
   CheckBoxField(
@@ -72,23 +74,26 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
 
   @override
   Map<String, bool> get value {
-    if (readonly) {
-      Map<String, bool> _v = Map.from(defaultValue!);
-      if (_v.isEmpty) {
-        for (var element in options) {
-          _v[element.name] = false;
-        }
-        return _v;
-      }
-    }
+    // if (readonly) {
+    //   Map<String, bool> _v = Map.from(defaultValue!);
+    //   if (_v.isEmpty) {
+    //     for (var element in options) {
+    //       _v[element.name] = false;
+    //     }
+    //     return _v;
+    //   }
+    // }
     return _value.value;
   }
 
   @override
   set value(dynamic v) {
     _value.value = Map.from(v);
-    if (readonly) defaultValue = Map.from(v);
+    // if (readonly) defaultValue = Map.from(v);
   }
+
+  @override
+  set errorText(String? v) {}
 
   @override
   bool check() {
@@ -129,28 +134,31 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
 
   @override
   Widget toWidget() {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(text!),
-          Obx(() => Wrap(
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 5),
+      child: InputDecorator(
+          decoration: InputDecoration(
+              labelText: text,
+              isDense: true,
+              isCollapsed: true,
+              contentPadding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
+              helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}'),
+          isFocused: false,
+          isEmpty: false,
+          child: Obx(() => Wrap(
+                spacing: 15,
                 children: options
                     .map((e) => e.toWidget(_value[e.name] ?? false, (bool v) {
                           _value.update(e.name, (value) => v);
                         }))
                     .toList(),
-              ))
-        ],
-      ),
-      decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.grey[200]!))),
+              ))),
     );
   }
 
   @override
   Widget toFilterWidget() {
-    return Container();
+    return toWidget();
   }
 }
 
