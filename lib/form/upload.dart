@@ -139,11 +139,77 @@ class UploadField implements SuperFormField<List<String>> {
         isFocused: true,
         isEmpty: false,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              child: Obx(() => _value.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Text('还没有文件，请添加'),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: _value
+                          .map((element) => Container(
+                                margin: const EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10),
+                                decoration: const BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)),
+                                    color: Colors.black12),
+                                child: (element['url'] as String).isEmpty
+                                    ? Container(
+                                        padding: const EdgeInsets.all(10),
+                                        child: LinearProgressIndicator(
+                                          backgroundColor: Colors.grey[100],
+                                          value: element['progress'],
+                                          minHeight: 40,
+                                        ),
+                                      )
+                                    : Wrap(
+                                        spacing: 10,
+                                        crossAxisAlignment:
+                                            WrapCrossAlignment.center,
+                                        children: [
+                                          Icon(FileType.fromUrl(element['url'])!
+                                              .icon),
+                                          Text('${element['url']}'),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          // TextButton.icon(
+                                          //   icon: const Icon(
+                                          //     Icons.open_in_new,
+                                          //     size: 20,
+                                          //   ),
+                                          //   label: const Text('查看'),
+                                          //   onPressed: () {
+                                          //     print('url=${element['url']}');
+                                          //   },
+                                          // ),
+                                          TextButton.icon(
+                                            icon: const Icon(
+                                              Icons.cancel,
+                                              size: 20,
+                                            ),
+                                            label: const Text('删除'),
+                                            onPressed: () {
+                                              _value.removeWhere(
+                                                  (e) => e == element);
+                                            },
+                                          )
+                                        ],
+                                      ),
+                              ))
+                          .toList())),
+            ),
+            const Divider(),
             (readonly || !editMode)
                 ? Container()
                 : Container(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
                     child: TextButton.icon(
                         onPressed: () async {
                           FilePickerResult? result = await FilePicker.platform
@@ -181,73 +247,11 @@ class UploadField implements SuperFormField<List<String>> {
                           Icons.add,
                           size: 20,
                         ),
-                        label: const Text('添加')),
+                        style: const ButtonStyle(
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.black12)),
+                        label: const Text('添加文件')),
                   ),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              margin: const EdgeInsets.only(top: 20, bottom: 20),
-              child: Obx(() => _value.isEmpty
-                  ? const Text('还没有文件，请添加')
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _value
-                          .map((element) => Container(
-                              height: 60,
-                              margin: const EdgeInsets.all(10),
-                              decoration: const BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
-                                  color: Colors.black12),
-                              child: (element['url'] as String).isEmpty
-                                  ? Container(
-                                      padding: const EdgeInsets.all(10),
-                                      child: LinearProgressIndicator(
-                                        backgroundColor: Colors.grey[100],
-                                        value: element['progress'],
-                                        minHeight: 40,
-                                      ),
-                                    )
-                                  : Container(
-                                      margin: const EdgeInsets.all(10),
-                                      alignment: Alignment.centerLeft,
-                                      child: Wrap(
-                                        spacing: 10,
-                                        crossAxisAlignment:
-                                            WrapCrossAlignment.center,
-                                        children: [
-                                          Icon(FileType.fromUrl(element['url'])!
-                                              .icon),
-                                          Text('${element['url']}'),
-                                          const SizedBox(
-                                            width: 40,
-                                          ),
-                                          TextButton.icon(
-                                            icon: const Icon(
-                                              Icons.open_in_new,
-                                              size: 20,
-                                            ),
-                                            label: const Text('查看'),
-                                            onPressed: () {
-                                              print('url=${element['url']}');
-                                            },
-                                          ),
-                                          TextButton.icon(
-                                            icon: const Icon(
-                                              Icons.cancel,
-                                              size: 20,
-                                            ),
-                                            label: const Text('删除'),
-                                            onPressed: () {
-                                              _value.removeWhere(
-                                                  (e) => e == element);
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    )))
-                          .toList())),
-            ),
           ],
         ),
       ),
