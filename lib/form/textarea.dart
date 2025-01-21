@@ -72,7 +72,7 @@ class TextareaField implements SuperFormField<String> {
 
   @override
   set value(dynamic v) {
-    _controller.text = v == null ? '' : v.toString();
+    _controller.text = (v == null) ? '' : v;
   }
 
   @override
