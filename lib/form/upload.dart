@@ -220,9 +220,6 @@ class UploadField implements SuperFormField<List<String>> {
                         child: TextButton.icon(
                             onPressed: () async {
                               XFile? xfile = await openFile();
-                              print('name:${xfile?.name}');
-                              print('path:${xfile?.path}');
-                              print('mime:${xfile?.mimeType}');
                               if (xfile != null) {
                                 String? extension;
                                 try {
