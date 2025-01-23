@@ -1,3 +1,9 @@
 # This is a generated file; do not edit or check into version control.
-file_picker=/Users/banlang/StudioProjects/flutter/pub_cache/hosted/pub.flutter-io.cn/file_picker-5.5.0/
-flutter_plugin_android_lifecycle=/Users/banlang/StudioProjects/flutter/pub_cache/hosted/pub.flutter-io.cn/flutter_plugin_android_lifecycle-2.0.22/
+file_selector=/Users/banlang/StudioProjects/flutter/pub_cache/git/flutter_packages-8c61f19e816168efc212cca5c4fbf9ac183ee90e/packages/file_selector/file_selector/
+file_selector_android=/Users/banlang/StudioProjects/flutter/pub_cache/hosted/pub.flutter-io.cn/file_selector_android-0.5.1+6/
+file_selector_ios=/Users/banlang/StudioProjects/flutter/pub_cache/hosted/pub.flutter-io.cn/file_selector_ios-0.5.3+1/
+file_selector_linux=/Users/banlang/StudioProjects/flutter/pub_cache/hosted/pub.flutter-io.cn/file_selector_linux-0.9.3+2/
+file_selector_macos=/Users/banlang/StudioProjects/flutter/pub_cache/hosted/pub.flutter-io.cn/file_selector_macos-0.9.4+2/
+file_selector_ohos=/Users/banlang/StudioProjects/flutter/pub_cache/git/flutter_packages-8c61f19e816168efc212cca5c4fbf9ac183ee90e/packages/file_selector/file_selector_ohos/
+file_selector_web=/Users/banlang/StudioProjects/flutter/pub_cache/hosted/pub.flutter-io.cn/file_selector_web-0.9.4+2/
+file_selector_windows=/Users/banlang/StudioProjects/flutter/pub_cache/hosted/pub.flutter-io.cn/file_selector_windows-0.9.3+3/

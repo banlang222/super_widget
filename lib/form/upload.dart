@@ -1,5 +1,6 @@
 import 'package:extension/extension.dart';
-import 'package:file_picker/file_picker.dart';
+// import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -218,24 +219,25 @@ class UploadField implements SuperFormField<List<String>> {
                         padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
                         child: TextButton.icon(
                             onPressed: () async {
-                              FilePickerResult? result =
-                                  await FilePicker.platform.pickFiles(
-                                      dialogTitle: '选择文件',
-                                      type: FileType.custom,
-                                      allowedExtensions: SFileType.extAllowed
-                                          .map((e) => e.name)
-                                          .toList(),
-                                      allowMultiple: false);
-                              if (result != null && result.files.isNotEmpty) {
-                                if (SFileType.fromExt(result
-                                        .files.first.extension
-                                        ?.toLowerCase()) !=
-                                    null) {
+                              XFile? xfile = await openFile();
+                              print('name:${xfile?.name}');
+                              print('path:${xfile?.path}');
+                              print('mime:${xfile?.mimeType}');
+                              if (xfile != null) {
+                                String? extension;
+                                try {
+                                  extension = xfile.name
+                                      .substring(
+                                          xfile.name.lastIndexOf('.') + 1)
+                                      .toLowerCase();
+                                } catch (e) {
+                                  print('e=$e');
+                                }
+                                if (extension != null &&
+                                    SFileType.fromExt(extension) != null) {
                                   _errorText.value = null;
                                   Map<String, dynamic> file = {
-                                    'origin': kIsWeb
-                                        ? result.files.first.name
-                                        : result.files.first.path,
+                                    'origin': xfile.path,
                                     'url': '',
                                     'progress': 0.0
                                   };
@@ -245,22 +247,14 @@ class UploadField implements SuperFormField<List<String>> {
                                       .isEmpty) {
                                     _value.add(file);
                                   }
-                                  String? url;
-                                  if (kIsWeb) {
-                                    url = await doUpload!(
-                                      (num progress) {
-                                        file['progress'] = progress;
-                                        _value.refresh();
-                                      },
-                                      fileName: result.files.first.name,
-                                      fileBytes: result.files.first.bytes!,
-                                    );
-                                  } else {
-                                    url = await doUpload!((num progress) {
+                                  String? url = await doUpload!(
+                                    (num progress) {
                                       file['progress'] = progress;
                                       _value.refresh();
-                                    }, filePath: result.files.first.path);
-                                  }
+                                    },
+                                    fileName: xfile.name,
+                                    fileBytes: await xfile.readAsBytes(),
+                                  );
                                   if (!url.isNullOrEmpty) {
                                     file['url'] = url;
                                     _value.refresh();
@@ -268,12 +262,65 @@ class UploadField implements SuperFormField<List<String>> {
                                     _errorText.value = '上传失败';
                                   }
                                 } else {
-                                  print(
-                                      '不允许上传 ${result.files.first.extension} 文件');
-                                  _errorText.value =
-                                      '不允许上传 ${result.files.first.extension} 文件';
+                                  _errorText.value = '不允许上传 $extension 文件';
                                 }
                               }
+                              // FilePickerResult? result =
+                              //     await FilePicker.platform.pickFiles(
+                              //         dialogTitle: '选择文件',
+                              //         type: FileType.custom,
+                              //         allowedExtensions: SFileType.extAllowed
+                              //             .map((e) => e.name)
+                              //             .toList(),
+                              //         allowMultiple: false);
+                              // if (result != null && result.files.isNotEmpty) {
+                              //   if (SFileType.fromExt(result
+                              //           .files.first.extension
+                              //           ?.toLowerCase()) !=
+                              //       null) {
+                              //     _errorText.value = null;
+                              //     Map<String, dynamic> file = {
+                              //       'origin': kIsWeb
+                              //           ? result.files.first.name
+                              //           : result.files.first.path,
+                              //       'url': '',
+                              //       'progress': 0.0
+                              //     };
+                              //     if (_value
+                              //         .where((element) =>
+                              //             element['origin'] == file['origin'])
+                              //         .isEmpty) {
+                              //       _value.add(file);
+                              //     }
+                              //     String? url;
+                              //     if (kIsWeb) {
+                              //       url = await doUpload!(
+                              //         (num progress) {
+                              //           file['progress'] = progress;
+                              //           _value.refresh();
+                              //         },
+                              //         fileName: result.files.first.name,
+                              //         fileBytes: result.files.first.bytes!,
+                              //       );
+                              //     } else {
+                              //       url = await doUpload!((num progress) {
+                              //         file['progress'] = progress;
+                              //         _value.refresh();
+                              //       }, filePath: result.files.first.path);
+                              //     }
+                              //     if (!url.isNullOrEmpty) {
+                              //       file['url'] = url;
+                              //       _value.refresh();
+                              //     } else {
+                              //       _errorText.value = '上传失败';
+                              //     }
+                              //   } else {
+                              //     print(
+                              //         '不允许上传 ${result.files.first.extension} 文件');
+                              //     _errorText.value =
+                              //         '不允许上传 ${result.files.first.extension} 文件';
+                              //   }
+                              // }
                             },
                             icon: const Icon(
                               Icons.add,

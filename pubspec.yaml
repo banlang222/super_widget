@@ -16,7 +16,12 @@ dependencies:
   extension:
     git:
       url: https://github.com/banlang222/extension.git
-  file_picker: ^5.2.0
+  #file_picker: ^5.2.0
+  file_selector:
+    git:
+      url: https://gitee.com/openharmony-sig/flutter_packages.git
+      ref: master
+      path: packages/file_selector/file_selector
   calendar_date_picker2: 1.1.7
   flutter_cupertino_datetime_picker: ^3.0.0
 
