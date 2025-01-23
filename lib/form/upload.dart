@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:extension/extension.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +9,8 @@ import 'file_icon.dart';
 import 'super_form_field.dart';
 
 typedef SendProgressCallback = Function(num progress);
-typedef DoUpload = Function(
-    String filePath, SendProgressCallback progressCallback);
+typedef DoUpload = Function(String fileName, Uint8List fileBytes,
+    SendProgressCallback progressCallback);
 
 class UploadField implements SuperFormField<List<String>> {
   UploadField(
@@ -78,8 +80,11 @@ class UploadField implements SuperFormField<List<String>> {
     }
   }
 
+  final _errorText = Rx<String?>(null);
   @override
-  set errorText(String? v) {}
+  set errorText(String? v) {
+    _errorText.value = v;
+  }
 
   @override
   bool check() {
@@ -127,137 +132,152 @@ class UploadField implements SuperFormField<List<String>> {
   @override
   Widget toWidget() {
     return Container(
-      padding: const EdgeInsets.only(top: 5, bottom: 5),
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: '$text',
-          isDense: true,
-          isCollapsed: true,
-          contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 0),
-          helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
-        ),
-        isFocused: true,
-        isEmpty: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              child: Obx(() => _value.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: Text('还没有文件，请添加'),
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _value
-                          .map((element) => Container(
-                                margin: const EdgeInsets.all(10),
-                                padding: const EdgeInsets.all(10),
-                                decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)),
-                                    color: Colors.black12),
-                                child: (element['url'] as String).isEmpty
-                                    ? Container(
-                                        padding: const EdgeInsets.all(10),
-                                        child: LinearProgressIndicator(
-                                          backgroundColor: Colors.grey[100],
-                                          value: element['progress'],
-                                          minHeight: 40,
-                                        ),
-                                      )
-                                    : Wrap(
-                                        spacing: 10,
-                                        crossAxisAlignment:
-                                            WrapCrossAlignment.center,
-                                        children: [
-                                          Icon(
-                                              SFileType.fromUrl(element['url'])!
-                                                  .icon),
-                                          Text('${element['url']}'),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          // TextButton.icon(
-                                          //   icon: const Icon(
-                                          //     Icons.open_in_new,
-                                          //     size: 20,
-                                          //   ),
-                                          //   label: const Text('查看'),
-                                          //   onPressed: () {
-                                          //     print('url=${element['url']}');
-                                          //   },
-                                          // ),
-                                          TextButton.icon(
-                                            icon: const Icon(
-                                              Icons.cancel,
-                                              size: 20,
+        padding: const EdgeInsets.only(top: 5, bottom: 5),
+        child: Obx(
+          () => InputDecorator(
+            decoration: InputDecoration(
+                labelText: '$text',
+                isDense: true,
+                isCollapsed: true,
+                contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 0),
+                helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
+                errorText: _errorText.value),
+            isFocused: true,
+            isEmpty: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    child: _value.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Text('还没有文件，请添加'),
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: _value
+                                .map((element) => Container(
+                                      margin: const EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5)),
+                                          color: Colors.black12),
+                                      child: (element['url'] as String).isEmpty
+                                          ? Container(
+                                              padding: const EdgeInsets.all(10),
+                                              child: LinearProgressIndicator(
+                                                backgroundColor:
+                                                    Colors.grey[100],
+                                                value: element['progress'],
+                                                minHeight: 40,
+                                              ),
+                                            )
+                                          : Wrap(
+                                              spacing: 10,
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              children: [
+                                                Icon(SFileType.fromUrl(
+                                                        element['url'])!
+                                                    .icon),
+                                                Text('${element['url']}'),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                // TextButton.icon(
+                                                //   icon: const Icon(
+                                                //     Icons.open_in_new,
+                                                //     size: 20,
+                                                //   ),
+                                                //   label: const Text('查看'),
+                                                //   onPressed: () {
+                                                //     print('url=${element['url']}');
+                                                //   },
+                                                // ),
+                                                TextButton.icon(
+                                                  icon: const Icon(
+                                                    Icons.cancel,
+                                                    size: 20,
+                                                  ),
+                                                  label: const Text('删除'),
+                                                  onPressed: () {
+                                                    _value.removeWhere(
+                                                        (e) => e == element);
+                                                  },
+                                                )
+                                              ],
                                             ),
-                                            label: const Text('删除'),
-                                            onPressed: () {
-                                              _value.removeWhere(
-                                                  (e) => e == element);
-                                            },
-                                          )
-                                        ],
-                                      ),
-                              ))
-                          .toList())),
-            ),
-            const Divider(),
-            (readonly || !editMode)
-                ? Container()
-                : Container(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-                    child: TextButton.icon(
-                        onPressed: () async {
-                          FilePickerResult? result = await FilePicker.platform
-                              .pickFiles(
-                                  dialogTitle: '选择文件',
-                                  type: FileType.custom,
-                                  allowedExtensions: SFileType.extAllowed
-                                      .map((e) => e.name)
-                                      .toList(),
-                                  allowMultiple: false);
-                          if (result != null && !result.paths.isNullOrEmpty) {
-                            Map<String, dynamic> file = {
-                              'origin': '${result.paths.first}',
-                              'url': '',
-                              'progress': 0.0
-                            };
-                            if (_value
-                                .where((element) =>
-                                    element['origin'] == file['origin'])
-                                .isEmpty) {
-                              _value.add(file);
-                            }
+                                    ))
+                                .toList())),
+                const Divider(),
+                (readonly || !editMode)
+                    ? Container()
+                    : Container(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+                        child: TextButton.icon(
+                            onPressed: () async {
+                              FilePickerResult? result =
+                                  await FilePicker.platform.pickFiles(
+                                      dialogTitle: '选择文件',
+                                      type: FileType.custom,
+                                      allowedExtensions: SFileType.extAllowed
+                                          .map((e) => e.name)
+                                          .toList(),
+                                      allowMultiple: false);
+                              if (result != null && result.files.isNotEmpty) {
+                                if (!SFileType.extAllowed.contains(result
+                                    .files.first.extension
+                                    ?.toLowerCase())) {
+                                  _errorText.value = null;
+                                  Map<String, dynamic> file = {
+                                    'origin': result.files.first.name,
+                                    'url': '',
+                                    'progress': 0.0
+                                  };
+                                  if (_value
+                                      .where((element) =>
+                                          element['origin'] == file['origin'])
+                                      .isEmpty) {
+                                    _value.add(file);
+                                  }
 
-                            String url = await doUpload!(result.paths.first!,
-                                (num progress) {
-                              file['progress'] = progress;
-                              _value.refresh();
-                            });
-                            if (!url.isNullOrEmpty) {
-                              file['url'] = url;
-                              _value.refresh();
-                            }
-                          }
-                        },
-                        icon: const Icon(
-                          Icons.add,
-                          size: 20,
-                        ),
-                        style: const ButtonStyle(
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.black12)),
-                        label: const Text('添加文件')),
-                  ),
-          ],
-        ),
-      ),
-    );
+                                  String url = await doUpload!(
+                                      result.files.first.name,
+                                      result.files.first.bytes!,
+                                      (num progress) {
+                                    file['progress'] = progress;
+                                    _value.refresh();
+                                  });
+                                  if (!url.isNullOrEmpty) {
+                                    file['url'] = url;
+                                    _value.refresh();
+                                  } else {
+                                    _errorText.value = '上传失败';
+                                  }
+                                } else {
+                                  print(
+                                      '不允许上传 ${result.files.first.extension} 文件');
+                                  _errorText.value =
+                                      '不允许上传 ${result.files.first.extension} 文件';
+                                }
+                              }
+                            },
+                            icon: const Icon(
+                              Icons.add,
+                              size: 20,
+                            ),
+                            style: const ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Colors.black12)),
+                            label: const Text('添加文件')),
+                      ),
+              ],
+            ),
+          ),
+        ));
   }
 }
 
