@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:extension/extension.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -229,9 +227,10 @@ class UploadField implements SuperFormField<List<String>> {
                                           .toList(),
                                       allowMultiple: false);
                               if (result != null && result.files.isNotEmpty) {
-                                if (!SFileType.extAllowed.contains(result
-                                    .files.first.extension
-                                    ?.toLowerCase())) {
+                                if (SFileType.fromExt(result
+                                        .files.first.extension
+                                        ?.toLowerCase()) !=
+                                    null) {
                                   _errorText.value = null;
                                   Map<String, dynamic> file = {
                                     'origin': result.files.first.path,
