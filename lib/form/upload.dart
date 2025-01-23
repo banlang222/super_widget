@@ -233,7 +233,9 @@ class UploadField implements SuperFormField<List<String>> {
                                     null) {
                                   _errorText.value = null;
                                   Map<String, dynamic> file = {
-                                    'origin': result.files.first.path,
+                                    'origin': kIsWeb
+                                        ? result.files.first.name
+                                        : result.files.first.path,
                                     'url': '',
                                     'progress': 0.0
                                   };
@@ -243,9 +245,6 @@ class UploadField implements SuperFormField<List<String>> {
                                       .isEmpty) {
                                     _value.add(file);
                                   }
-                                  print('path=${result.paths.first}');
-                                  print(
-                                      'fileBytes=${result.files.first.bytes}');
                                   String? url;
                                   if (kIsWeb) {
                                     url = await doUpload!(
