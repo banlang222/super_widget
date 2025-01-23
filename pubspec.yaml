@@ -24,6 +24,8 @@ dependencies:
       path: packages/file_selector/file_selector
   calendar_date_picker2: 1.1.7
   flutter_cupertino_datetime_picker: ^3.0.0
+  desktop_drop:
+  dotted_border:
 
 dev_dependencies:
   flutter_test:
