@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:extension/extension.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,8 +10,8 @@ import 'file_icon.dart';
 import 'super_form_field.dart';
 
 typedef SendProgressCallback = Function(num progress);
-typedef DoUpload = Function(String fileName, Uint8List fileBytes,
-    SendProgressCallback progressCallback);
+typedef DoUpload = Function(SendProgressCallback progressCallback,
+    {String? fileName, Uint8List? fileBytes, String? filePath});
 
 class UploadField implements SuperFormField<List<String>> {
   UploadField(
@@ -233,7 +234,7 @@ class UploadField implements SuperFormField<List<String>> {
                                     ?.toLowerCase())) {
                                   _errorText.value = null;
                                   Map<String, dynamic> file = {
-                                    'origin': result.files.first.name,
+                                    'origin': result.files.first.path,
                                     'url': '',
                                     'progress': 0.0
                                   };
@@ -243,14 +244,25 @@ class UploadField implements SuperFormField<List<String>> {
                                       .isEmpty) {
                                     _value.add(file);
                                   }
-
-                                  String url = await doUpload!(
-                                      result.files.first.name,
-                                      result.files.first.bytes!,
+                                  print('path=${result.paths.first}');
+                                  print(
+                                      'fileBytes=${result.files.first.bytes}');
+                                  String? url;
+                                  if (kIsWeb) {
+                                    url = await doUpload!(
                                       (num progress) {
-                                    file['progress'] = progress;
-                                    _value.refresh();
-                                  });
+                                        file['progress'] = progress;
+                                        _value.refresh();
+                                      },
+                                      fileName: result.files.first.name,
+                                      fileBytes: result.files.first.bytes!,
+                                    );
+                                  } else {
+                                    url = await doUpload!((num progress) {
+                                      file['progress'] = progress;
+                                      _value.refresh();
+                                    }, filePath: result.files.first.path);
+                                  }
                                   if (!url.isNullOrEmpty) {
                                     file['url'] = url;
                                     _value.refresh();
