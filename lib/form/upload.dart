@@ -149,35 +149,36 @@ class UploadField implements SuperFormField<List<String>> {
             child: IntrinsicHeight(
               child: Row(
                 children: [
-                  DropTarget(
-                      onDragEntered: (details) {
-                        _dragText.value = '请松手';
-                      },
-                      onDragDone: (details) async {
-                        var xFile = details.files.first;
-                        await upload(xFile);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 20, 20, 25),
-                        child: SizedBox(
-                          width: 300,
-                          child: InkWell(
-                            onTap: () async {
-                              XFile? xFile = await openFile();
-                              if (xFile != null) {
-                                upload(xFile);
-                              }
-                            },
-                            child: DottedBorder(
-                              borderType: BorderType.RRect,
-                              color: Colors.grey,
-                              radius: const Radius.circular(10),
-                              padding: const EdgeInsets.all(30),
-                              child: Center(child: Text(_dragText.value)),
+                  if (!readonly || editMode)
+                    DropTarget(
+                        onDragEntered: (details) {
+                          _dragText.value = '请松手';
+                        },
+                        onDragDone: (details) async {
+                          var xFile = details.files.first;
+                          await upload(xFile);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 20, 20, 25),
+                          child: SizedBox(
+                            width: 300,
+                            child: InkWell(
+                              onTap: () async {
+                                XFile? xFile = await openFile();
+                                if (xFile != null) {
+                                  upload(xFile);
+                                }
+                              },
+                              child: DottedBorder(
+                                borderType: BorderType.RRect,
+                                color: Colors.grey,
+                                radius: const Radius.circular(10),
+                                padding: const EdgeInsets.all(30),
+                                child: Center(child: Text(_dragText.value)),
+                              ),
                             ),
                           ),
-                        ),
-                      )),
+                        )),
                   Expanded(
                       child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
