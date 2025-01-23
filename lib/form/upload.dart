@@ -173,8 +173,9 @@ class UploadField implements SuperFormField<List<String>> {
                                         crossAxisAlignment:
                                             WrapCrossAlignment.center,
                                         children: [
-                                          Icon(FileType.fromUrl(element['url'])!
-                                              .icon),
+                                          Icon(
+                                              SFileType.fromUrl(element['url'])!
+                                                  .icon),
                                           Text('${element['url']}'),
                                           const SizedBox(
                                             width: 10,
@@ -215,7 +216,8 @@ class UploadField implements SuperFormField<List<String>> {
                           FilePickerResult? result = await FilePicker.platform
                               .pickFiles(
                                   dialogTitle: '选择文件',
-                                  allowedExtensions: FileType.extAllowed
+                                  type: FileType.custom,
+                                  allowedExtensions: SFileType.extAllowed
                                       .map((e) => e.name)
                                       .toList(),
                                   allowMultiple: false);
@@ -259,36 +261,36 @@ class UploadField implements SuperFormField<List<String>> {
   }
 }
 
-class FileType {
-  const FileType._(this.name, this.icon);
+class SFileType {
+  const SFileType._(this.name, this.icon);
 
   final String name;
   final IconData icon;
 
-  static const FileType png = FileType._('png', FileIcon.file_image);
-  static const FileType jpg = FileType._('jpg', FileIcon.file_image);
-  static const FileType jpeg = FileType._('jpeg', FileIcon.file_image);
-  static const FileType gif = FileType._('gif', FileIcon.file_image);
-  static const FileType bmp = FileType._('bmp', FileIcon.file_image);
-  static const FileType rar = FileType._('rar', FileIcon.file_archive);
-  static const FileType zip = FileType._('zip', FileIcon.file_archive);
-  static const FileType doc = FileType._('doc', FileIcon.file_word);
-  static const FileType docx = FileType._('docx', FileIcon.file_word);
-  static const FileType xls = FileType._('xls', FileIcon.file_excel);
-  static const FileType xlsx = FileType._('xlsx', FileIcon.file_excel);
-  static const FileType ppt = FileType._('ppt', FileIcon.file_powerpoint);
-  static const FileType pptx = FileType._('pptx', FileIcon.file_powerpoint);
-  static const FileType pdf = FileType._('pdf', FileIcon.file_pdf);
-  static const FileType txt = FileType._('txt', FileIcon.doc_text);
-  static const FileType mp4 =
-      FileType._('mp4', Icons.video_collection_outlined);
+  static const SFileType png = SFileType._('png', FileIcon.file_image);
+  static const SFileType jpg = SFileType._('jpg', FileIcon.file_image);
+  static const SFileType jpeg = SFileType._('jpeg', FileIcon.file_image);
+  static const SFileType gif = SFileType._('gif', FileIcon.file_image);
+  static const SFileType bmp = SFileType._('bmp', FileIcon.file_image);
+  static const SFileType rar = SFileType._('rar', FileIcon.file_archive);
+  static const SFileType zip = SFileType._('zip', FileIcon.file_archive);
+  static const SFileType doc = SFileType._('doc', FileIcon.file_word);
+  static const SFileType docx = SFileType._('docx', FileIcon.file_word);
+  static const SFileType xls = SFileType._('xls', FileIcon.file_excel);
+  static const SFileType xlsx = SFileType._('xlsx', FileIcon.file_excel);
+  static const SFileType ppt = SFileType._('ppt', FileIcon.file_powerpoint);
+  static const SFileType pptx = SFileType._('pptx', FileIcon.file_powerpoint);
+  static const SFileType pdf = SFileType._('pdf', FileIcon.file_pdf);
+  static const SFileType txt = SFileType._('txt', FileIcon.doc_text);
+  static const SFileType mp4 =
+      SFileType._('mp4', Icons.video_collection_outlined);
 
-  static FileType? fromUrl(String url) {
+  static SFileType? fromUrl(String url) {
     String ext = url.split('.').last.toLowerCase();
     return fromExt(ext);
   }
 
-  static FileType? fromExt(String? ext) {
+  static SFileType? fromExt(String? ext) {
     switch (ext) {
       case 'png':
         return png;
@@ -327,7 +329,7 @@ class FileType {
     }
   }
 
-  static List<FileType> get extAllowed {
+  static List<SFileType> get extAllowed {
     return [
       png,
       jpg,
