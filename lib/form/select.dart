@@ -212,14 +212,14 @@ class SelectField<T> implements SuperFormField<T> {
 
   @override
   Widget toFilterWidget() {
-    return Container(
+    return Padding(
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: Obx(() => InputDecorator(
+        child: Obx(() => InputDecorator(expands: false,
               decoration: InputDecoration(
                   labelText: '$text',
                   isDense: true,
                   isCollapsed: true,
-                  contentPadding: const EdgeInsets.fromLTRB(15, 3, 15, 3),
+                  contentPadding: const EdgeInsets.fromLTRB(10, 3, 5, 3),
                   errorText: _errorText.value,
                   helperText:
                       isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),

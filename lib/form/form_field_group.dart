@@ -162,38 +162,20 @@ class FormFieldGroup {
     );
   }
 
-  Widget toFilterWidget([bool showName = true]) {
-    if (showName) {
-      return Container(
-        padding: const EdgeInsets.only(left: 10, right: 10),
-        child: Column(
+  ///width: 每个Field的宽度，key为Field.name，不设置宽度的情况下按比例分配，Input占3，其它占1
+  Widget toFilterWidget({bool isVertical = false, Map<String, double> width = const {}}) {
+    if (isVertical) {
+      return Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 10, bottom: 10),
-              child: Text(
-                name,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            Row(
-              children: items
-                  .map((e) => Expanded(
-                        flex: e is InputField ? 3 : 1,
-                        child: e.toFilterWidget(),
-                      ))
-                  .toList(),
-            )
-          ],
-        ),
+          children: items.map((e)=>e.toFilterWidget()).toList(),
       );
     }
     return Row(
       children: items
-          .map((e) => Expanded(
-                flex: e is InputField ? 3 : 1,
-                child: e.toFilterWidget(),
-              ))
+          .map((e) => width.containsKey(e.name) ? SizedBox(width: width[e.name],child: e.toFilterWidget(),) : Expanded(
+        flex: e is InputField ? 3 : 1,
+        child: e.toFilterWidget(),
+      ))
           .toList(),
     );
   }

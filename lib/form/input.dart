@@ -355,7 +355,7 @@ class InputField<T> implements SuperFormField<T> {
       inputFormatters
           .add(FilteringTextInputFormatter.allow(RegExp(r'(^-|\d+|\.)')));
     }
-    return Container(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Obx(() => TextField(
             controller: _controller,

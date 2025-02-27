@@ -225,18 +225,13 @@ class DateField implements SuperFormField<DateTime> {
                                 locale: DateTimePickerLocale.zh_cn,
                                 pickerMode: DateTimePickerMode.date,
                                 pickerTheme: DateTimePickerTheme(
-                                    backgroundColor: context?.theme.cardColor ??
-                                        DateTimePickerTheme
-                                            .Default.backgroundColor,
+                                    backgroundColor: Colors.grey[100]!,
                                     confirmTextStyle:
-                                        context?.textTheme.bodyMedium,
-                                    itemTextStyle: DateTimePickerTheme
-                                        .Default.itemTextStyle
-                                        .copyWith(
-                                            color: context?.theme.brightness ==
-                                                    Brightness.dark
-                                                ? Colors.white
-                                                : Colors.black87)),
+                                        const TextStyle(color: Colors.green),
+                                    cancelTextStyle:
+                                        const TextStyle(color: Colors.blue),
+                                    itemTextStyle:
+                                        const TextStyle(color: Colors.black)),
                                 onConfirm: (DateTime date, List<int> selected) {
                               _value.value = DateTime(
                                   date.year, date.month, date.day, 0, 0, 0);

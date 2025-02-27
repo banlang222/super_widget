@@ -264,12 +264,12 @@ class SearchSelectField<T> implements SuperFormField<T> {
                 _value.value = _selected.value;
               }
             },
-      child: Obx(() => InputDecorator(
+      child: Obx(() => InputDecorator(expands: false,
             decoration: InputDecoration(
                 labelText: '$text',
                 isDense: true,
                 isCollapsed: true,
-                contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 0),
+                contentPadding: const EdgeInsets.fromLTRB(10, 5, 5, 0),
                 errorText: _errorText.value,
                 helperText:
                     isRequired ? '* ${helperText ?? ''}' : helperText ?? ''),
