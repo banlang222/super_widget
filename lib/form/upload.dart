@@ -14,7 +14,7 @@ typedef SendProgressCallback = Function(num progress);
 typedef DoUpload = Function(SendProgressCallback progressCallback,
     {String? fileName, Uint8List? fileBytes, String? filePath});
 
-class UploadField implements SuperFormField<List<String>> {
+class UploadField implements SuperFormField<List<String>?> {
   UploadField(
       {required this.name,
       this.text,
@@ -24,12 +24,20 @@ class UploadField implements SuperFormField<List<String>> {
       this.readonly = false,
       this.editMode = true,
       this.uploadUrl,
-      this.doUpload}) {
+      this.doUpload,
+      this.singleFile = false}) {
     _value.value = defaultValue?.map((e) => {'url': e}).toList() ?? [];
   }
 
   UploadField.fromMap(Map<String, dynamic> map) {
-    defaultValue = map['defaultValue'];
+    if (map['defaultValue'] != null) {
+      if (map['defaultValue'] is String) {
+        defaultValue = [map['defaultValue']];
+      } else {
+        defaultValue = map['defaultValue'];
+      }
+      _value.addAll(defaultValue!.map((e) => {'url': e}));
+    }
     name = map['name'];
     readonly = map['readonly'] ?? false;
     editMode = map['editMode'] ?? true;
@@ -63,6 +71,8 @@ class UploadField implements SuperFormField<List<String>> {
   @override
   FieldType? type = FieldType.upload;
 
+  bool singleFile = false;
+
   String? uploadUrl;
   DoUpload? doUpload;
 
@@ -72,11 +82,20 @@ class UploadField implements SuperFormField<List<String>> {
   }
 
   @override
-  set value(List<String>? v) {
-    if (v != null) {
-      for (var element in v) {
-        if (_value.where((e) => e['url'] == element).isEmpty) {
-          _value.add({'url': element});
+  set value(dynamic v) {
+    if (v == null) {
+      _value.clear();
+    } else {
+      if (v is String) {
+        _value.value = [
+          {'url': v}
+        ];
+      } else if (v is List<String>) {
+        _value.clear();
+        for (var element in v) {
+          if (_value.where((e) => e['url'] == element).isEmpty) {
+            _value.add({'url': element});
+          }
         }
       }
     }
@@ -90,10 +109,14 @@ class UploadField implements SuperFormField<List<String>> {
 
   @override
   bool check() {
-    return _value.isNotEmpty &&
+    if (isRequired && _value.isEmpty ||
         _value
             .where((element) => (element['url'] as String).isNullOrEmpty)
-            .isEmpty;
+            .isNotEmpty) {
+      _errorText.value = '请检查';
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -133,6 +156,7 @@ class UploadField implements SuperFormField<List<String>> {
 
   @override
   Widget toWidget() {
+    print('files=${_value.value}');
     return Container(
         padding: const EdgeInsets.only(top: 5, bottom: 5),
         child: Obx(
@@ -282,7 +306,9 @@ class UploadField implements SuperFormField<List<String>> {
         'url': '',
         'progress': 0.0
       };
-      if (_value
+      if (singleFile) {
+        _value.value = [file];
+      } else if (_value
           .where((element) => element['origin'] == file['origin'])
           .isEmpty) {
         _value.add(file);
