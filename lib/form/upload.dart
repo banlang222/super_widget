@@ -14,6 +14,16 @@ typedef SendProgressCallback = Function(num progress);
 typedef DoUpload = Function(SendProgressCallback progressCallback,
     {String? fileName, Uint8List? fileBytes, String? filePath});
 
+enum DragStatus {
+  outside(0, '将文件拖到这里，或点此选取文件'),
+  inside(1, '请松手'),
+  uploading(2, '上传中');
+
+  const DragStatus(this.value, this.text);
+  final String text;
+  final int value;
+}
+
 class UploadField implements SuperFormField<List<String>?> {
   UploadField(
       {required this.name,
@@ -25,7 +35,8 @@ class UploadField implements SuperFormField<List<String>?> {
       this.editMode = true,
       this.uploadUrl,
       this.doUpload,
-      this.singleFile = false}) {
+      this.singleFile = false,
+      required this.allowedFileType}) {
     _value.value = defaultValue?.map((e) => {'url': e}).toList() ?? [];
   }
 
@@ -45,6 +56,14 @@ class UploadField implements SuperFormField<List<String>?> {
     isRequired = map['isRequired'] ?? false;
     uploadUrl = map['uploadUrl'];
     helperText = map['helperText'];
+    if (map['allowedFileType'] != null &&
+        map['allowedFileType'] is List<String>) {
+      allowedFileType = (map['allowedFileType'] as List<String>)
+          .map((e) => SFileType.fromExt(e))
+          .toList();
+    } else {
+      allowedFileType = SFileType.all;
+    }
   }
 
   @override
@@ -76,11 +95,14 @@ class UploadField implements SuperFormField<List<String>?> {
   String? uploadUrl;
   DoUpload? doUpload;
 
+  List<SFileType> allowedFileType = SFileType.all;
+
   @override
   List<String> get value {
     return _value.map((e) => e['url'] as String).toList();
   }
 
+  /// 接受String及List<String>
   @override
   set value(dynamic v) {
     if (v == null) {
@@ -129,7 +151,8 @@ class UploadField implements SuperFormField<List<String>?> {
         defaultValue: defaultValue,
         isRequired: isRequired,
         helperText: helperText,
-        doUpload: doUpload);
+        doUpload: doUpload,
+        allowedFileType: allowedFileType);
   }
 
   @override
@@ -156,7 +179,6 @@ class UploadField implements SuperFormField<List<String>?> {
 
   @override
   Widget toWidget() {
-    print('files=${_value.value}');
     return Container(
         padding: const EdgeInsets.only(top: 5, bottom: 5),
         child: Obx(
@@ -166,7 +188,8 @@ class UploadField implements SuperFormField<List<String>?> {
                 isDense: true,
                 isCollapsed: true,
                 contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 0),
-                helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
+                helperText:
+                    '${isRequired ? ' * ' : ''}${helperText ?? '允许上传类型：${allowedFileType.map((e) => e.name).join('、')}'}',
                 errorText: _errorText.value),
             isFocused: true,
             isEmpty: false,
@@ -176,7 +199,10 @@ class UploadField implements SuperFormField<List<String>?> {
                   if (!readonly || editMode)
                     DropTarget(
                         onDragEntered: (details) {
-                          _dragText.value = '请松手';
+                          _dragStatus.value = DragStatus.uploading;
+                        },
+                        onDragExited: (details) {
+                          _dragStatus.value = DragStatus.outside;
                         },
                         onDragDone: (details) async {
                           var xFile = details.files.first;
@@ -198,7 +224,8 @@ class UploadField implements SuperFormField<List<String>?> {
                                 color: Colors.grey,
                                 radius: const Radius.circular(10),
                                 padding: const EdgeInsets.all(30),
-                                child: Center(child: Text(_dragText.value)),
+                                child:
+                                    Center(child: Text(_dragStatus.value.text)),
                               ),
                             ),
                           ),
@@ -217,68 +244,64 @@ class UploadField implements SuperFormField<List<String>?> {
                                 )
                               : Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: _value
-                                      .map((element) => Container(
-                                            margin: const EdgeInsets.all(10),
-                                            padding: const EdgeInsets.all(10),
-                                            decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(5)),
-                                                color: Colors.black12),
-                                            child: (element['url'] as String)
-                                                    .isEmpty
-                                                ? Container(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    child:
-                                                        LinearProgressIndicator(
-                                                      backgroundColor:
-                                                          Colors.grey[100],
-                                                      value:
-                                                          element['progress'],
-                                                      minHeight: 40,
-                                                    ),
-                                                  )
-                                                : Wrap(
-                                                    spacing: 10,
-                                                    crossAxisAlignment:
-                                                        WrapCrossAlignment
-                                                            .center,
-                                                    children: [
-                                                      Icon(SFileType.fromUrl(
-                                                              element['url'])!
-                                                          .icon),
-                                                      Text('${element['url']}'),
-                                                      const SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      // TextButton.icon(
-                                                      //   icon: const Icon(
-                                                      //     Icons.open_in_new,
-                                                      //     size: 20,
-                                                      //   ),
-                                                      //   label: const Text('查看'),
-                                                      //   onPressed: () {
-                                                      //     print('url=${element['url']}');
-                                                      //   },
-                                                      // ),
-                                                      TextButton.icon(
-                                                        icon: const Icon(
-                                                          Icons.cancel,
-                                                          size: 20,
-                                                        ),
-                                                        label: const Text('删除'),
-                                                        onPressed: () {
-                                                          _value.removeWhere(
-                                                              (e) =>
-                                                                  e == element);
-                                                        },
+                                  children: _value.map((element) {
+                                    var url = element['url'];
+                                    var sFileType = SFileType.fromUrl(url);
+                                    return Container(
+                                      margin: const EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5)),
+                                          color: Colors.black12),
+                                      child: url.isEmpty
+                                          ? Container(
+                                              padding: const EdgeInsets.all(10),
+                                              child: LinearProgressIndicator(
+                                                backgroundColor:
+                                                    Colors.grey[100],
+                                                value: element['progress'],
+                                                minHeight: 40,
+                                              ),
+                                            )
+                                          : Wrap(
+                                              spacing: 10,
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              children: [
+                                                (sFileType.isImg)
+                                                    ? Tooltip(
+                                                        richMessage: WidgetSpan(
+                                                            child:
+                                                                Image.network(
+                                                          url,
+                                                          width: 300,
+                                                        )),
+                                                        child: Icon(
+                                                            sFileType.icon),
                                                       )
-                                                    ],
+                                                    : Icon(
+                                                        sFileType.icon,
+                                                      ),
+                                                Text('${element['url']}'),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                TextButton.icon(
+                                                  icon: const Icon(
+                                                    Icons.cancel,
+                                                    size: 20,
                                                   ),
-                                          ))
-                                      .toList())),
+                                                  label: const Text('删除'),
+                                                  onPressed: () {
+                                                    _value.removeWhere(
+                                                        (e) => e == element);
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                    );
+                                  }).toList())),
                     ],
                   )),
                 ],
@@ -288,10 +311,10 @@ class UploadField implements SuperFormField<List<String>?> {
         ));
   }
 
-  final _dragText = '将文件拖到这里，或点此选取文件'.obs;
+  final _dragStatus = DragStatus.outside.obs;
 
   Future<void> upload(XFile xFile) async {
-    _dragText.value = '正在上传';
+    _dragStatus.value = DragStatus.uploading;
     String? extension;
     try {
       extension =
@@ -299,7 +322,8 @@ class UploadField implements SuperFormField<List<String>?> {
     } catch (e) {
       print('e=$e');
     }
-    if (extension != null && SFileType.fromExt(extension) != null) {
+    if (extension != null &&
+        allowedFileType.contains(SFileType.fromExt(extension))) {
       _errorText.value = null;
       Map<String, dynamic> file = {
         'origin': xFile.path,
@@ -330,7 +354,7 @@ class UploadField implements SuperFormField<List<String>?> {
     } else {
       _errorText.value = '不允许上传 $extension 文件';
     }
-    _dragText.value = '将文件拖到这里，或点此选取文件';
+    _dragStatus.value = DragStatus.outside;
   }
 }
 
@@ -357,13 +381,35 @@ class SFileType {
   static const SFileType txt = SFileType._('txt', FileIcon.doc_text);
   static const SFileType mp4 =
       SFileType._('mp4', Icons.video_collection_outlined);
+  static const SFileType unknown = SFileType._('unknown', Icons.block);
 
-  static SFileType? fromUrl(String url) {
-    String ext = url.split('.').last.toLowerCase();
+  static List<SFileType> get all {
+    return [
+      png,
+      jpg,
+      jpeg,
+      gif,
+      bmp,
+      rar,
+      zip,
+      doc,
+      docx,
+      xls,
+      xlsx,
+      ppt,
+      pptx,
+      pdf,
+      txt
+    ];
+  }
+
+  static SFileType fromUrl(String? url) {
+    if (url.isNullOrEmpty) return SFileType.unknown;
+    String ext = url!.split('.').last.toLowerCase();
     return fromExt(ext);
   }
 
-  static SFileType? fromExt(String? ext) {
+  static SFileType fromExt(String? ext) {
     switch (ext) {
       case 'png':
         return png;
@@ -398,8 +444,12 @@ class SFileType {
       case 'mp4':
         return mp4;
       default:
-        return null;
+        return unknown;
     }
+  }
+
+  bool get isImg {
+    return icon == FileIcon.file_image;
   }
 
   static List<SFileType> get extAllowed {
