@@ -56,9 +56,8 @@ class UploadField implements SuperFormField<List<String>?> {
     isRequired = map['isRequired'] ?? false;
     uploadUrl = map['uploadUrl'];
     helperText = map['helperText'];
-    if (map['allowedFileType'] != null &&
-        map['allowedFileType'] is List<String>) {
-      allowedFileType = (map['allowedFileType'] as List<String>)
+    if (map['allowedFileType'] != null && map['allowedFileType'] is List) {
+      allowedFileType = List<String>.from(map['allowedFileType'])
           .map((e) => SFileType.fromExt(e))
           .toList();
     } else {
