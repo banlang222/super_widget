@@ -95,7 +95,7 @@ class UploadField implements SuperFormField<List<String>?> {
   String? uploadUrl;
   DoUpload? doUpload;
 
-  List<SFileType> allowedFileType = SFileType.all;
+  late List<SFileType> allowedFileType;
 
   @override
   List<String> get value {
