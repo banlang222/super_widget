@@ -114,11 +114,15 @@ class RadioBoxField<T> implements SuperFormField<T> {
 
   @override
   Widget toWidget() {
+    final ThemeData themeData = Theme.of(Get.context!);
     return InputDecorator(
       decoration: InputDecoration(
         labelText: '$text',
         isDense: true,
         isCollapsed: true,
+        enabledBorder: (readonly || !editMode)
+            ? themeData.inputDecorationTheme.disabledBorder
+            : themeData.inputDecorationTheme.border,
         contentPadding: const EdgeInsets.fromLTRB(15, 14, 15, 14),
       ),
       isEmpty: false,

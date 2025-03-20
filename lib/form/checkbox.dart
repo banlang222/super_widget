@@ -134,6 +134,7 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
 
   @override
   Widget toWidget() {
+    final ThemeData themeData = Theme.of(Get.context!);
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 5),
       child: InputDecorator(
@@ -141,6 +142,9 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
               labelText: text,
               isDense: true,
               isCollapsed: true,
+              enabledBorder: (readonly || !editMode)
+                  ? themeData.inputDecorationTheme.disabledBorder
+                  : themeData.inputDecorationTheme.border,
               contentPadding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
               helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}'),
           isFocused: false,

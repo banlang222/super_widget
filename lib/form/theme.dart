@@ -2,16 +2,15 @@
 //   useMaterial3: true,
 //   textTheme: const TextTheme(titleMedium: TextStyle(color: Colors.black)),
 //   inputDecorationTheme: InputDecorationTheme(
-//     border: OutlineInputBorder(
-//         borderSide: BorderSide(color: Colors.grey[400]!),
-//         borderRadius: const BorderRadius.all(Radius.circular(8))),
+//     //默认为enable
 //     enabledBorder: OutlineInputBorder(
 //         borderSide: BorderSide(color: Colors.grey[400]!),
-//         borderRadius: const BorderRadius.all(Radius.circular(8))),
+//         borderRadius: BorderRadius.all(Radius.circular(8))),
+//     //readonly或非editMode时为disable
 //     disabledBorder: OutlineInputBorder(
-//         borderSide: BorderSide(color: Colors.grey[800]!),
-//         borderRadius: const BorderRadius.all(Radius.circular(8))),
-//     focusedBorder: const OutlineInputBorder(
+//         borderSide: BorderSide(color: Colors.grey[200]!),
+//         borderRadius: BorderRadius.all(Radius.circular(8))),
+//     focusedBorder: OutlineInputBorder(
 //         borderSide: BorderSide(color: Colors.amber),
 //         borderRadius: BorderRadius.all(Radius.circular(8))),
 //   ),

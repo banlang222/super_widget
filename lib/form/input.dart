@@ -268,6 +268,7 @@ class InputField<T> implements SuperFormField<T> {
       inputFormatters
           .add(FilteringTextInputFormatter.allow(RegExp(r'(^\d|\-)')));
     }
+    final ThemeData themeData = Theme.of(Get.context!);
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 5),
       child: Obx(() => TextField(
@@ -306,13 +307,9 @@ class InputField<T> implements SuperFormField<T> {
                   ? ' * ${helperText ?? ''} ${valueType!.info}'
                   : helperText ?? '',
               errorText: _errorText.value,
-              focusedBorder: (readonly || !editMode)
-                  ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(
-                      borderSide: BorderSide(
-                          color: Get.theme.inputDecorationTheme.disabledBorder
-                                  ?.borderSide.color ??
-                              Colors.grey))
-                  : null,
+              enabledBorder: (readonly || !editMode)
+                  ? themeData.inputDecorationTheme.disabledBorder
+                  : themeData.inputDecorationTheme.border,
               suffix: valueType == ValueType.password
                   ? InkWell(
                       child: Icon(

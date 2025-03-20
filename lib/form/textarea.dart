@@ -146,6 +146,7 @@ class TextareaField implements SuperFormField<String> {
 
   @override
   Widget toWidget() {
+    final ThemeData themeData = Theme.of(Get.context!);
     return Container(
       padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: Obx(() => TextField(
@@ -162,6 +163,9 @@ class TextareaField implements SuperFormField<String> {
               helperText: isRequired ? ' * ${helperText ?? ''}' : helperText,
               errorText: _errorText.value,
               isDense: true,
+              enabledBorder: (readonly || !editMode)
+                  ? themeData.inputDecorationTheme.disabledBorder
+                  : themeData.inputDecorationTheme.border,
               focusedBorder: (readonly || !editMode)
                   ? Get.theme.inputDecorationTheme.focusedBorder?.copyWith(
                       borderSide: BorderSide(

@@ -178,6 +178,7 @@ class UploadField implements SuperFormField<List<String>?> {
 
   @override
   Widget toWidget() {
+    final ThemeData themeData = Theme.of(Get.context!);
     return Container(
         padding: const EdgeInsets.only(top: 5, bottom: 5),
         child: Obx(
@@ -186,6 +187,9 @@ class UploadField implements SuperFormField<List<String>?> {
                 labelText: '$text',
                 isDense: true,
                 isCollapsed: true,
+                enabledBorder: (readonly || !editMode)
+                    ? themeData.inputDecorationTheme.disabledBorder
+                    : themeData.inputDecorationTheme.border,
                 contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 0),
                 helperText:
                     '${isRequired ? ' * ' : ''}${helperText ?? '允许上传类型：${allowedFileType.map((e) => e.name).join('、')}'}',

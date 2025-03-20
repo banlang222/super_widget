@@ -87,8 +87,8 @@ class SelectField<T> implements SuperFormField<T> {
   }
 
   String? get valueText {
-    if(_value.value == null) return null;
-    return options.firstWhere((element)=>element.value == _value.value).text;
+    if (_value.value == null) return null;
+    return options.firstWhere((element) => element.value == _value.value).text;
   }
 
   @override
@@ -155,6 +155,7 @@ class SelectField<T> implements SuperFormField<T> {
 
   @override
   Widget toWidget() {
+    final ThemeData themeData = Theme.of(Get.context!);
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 5),
       child: Obx(() => InputDecorator(
@@ -162,6 +163,9 @@ class SelectField<T> implements SuperFormField<T> {
                 labelText: '$text',
                 isDense: true,
                 isCollapsed: true,
+                enabledBorder: (readonly || !editMode)
+                    ? themeData.inputDecorationTheme.disabledBorder
+                    : themeData.inputDecorationTheme.border,
                 contentPadding: const EdgeInsets.fromLTRB(15, 4, 15, 0),
                 errorText: _errorText.value,
                 helperText:
@@ -184,18 +188,37 @@ class SelectField<T> implements SuperFormField<T> {
                     : null),
             isFocused: false,
             isEmpty: !hasValue,
-            child: Padding(
+            child: Container(
+              height: 50,
               padding: showCopyBtn
                   ? const EdgeInsets.only(right: 10)
                   : const EdgeInsets.all(0),
-              child: DropdownButton(
-                isExpanded: true,
-                underline: Container(),
-                value: _value.value,
-                items: options.map((e) => e.toWidget()).toList(),
-                onChanged: (readonly || !editMode)
-                    ? null
-                    : (dynamic a) {
+              child: (readonly || !editMode)
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 50,
+                          alignment: Alignment.centerLeft,
+                          child: Text(hasValue
+                              ? options
+                                  .firstWhere((element) =>
+                                      element.value == _value.value)
+                                  .text
+                              : ''),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_down_sharp,
+                        ),
+                      ],
+                    )
+                  : DropdownButton(
+                      isExpanded: true,
+                      underline: Container(),
+                      value: _value.value,
+                      items: options.map((e) => e.toWidget()).toList(),
+                      onChanged: (dynamic a) {
                         _errorText.value = null;
                         //更新选择的值
                         _value.value = a;
@@ -204,7 +227,7 @@ class SelectField<T> implements SuperFormField<T> {
                           callback!(a);
                         }
                       },
-              ),
+                    ),
             ),
           )),
     );
@@ -214,7 +237,8 @@ class SelectField<T> implements SuperFormField<T> {
   Widget toFilterWidget() {
     return Padding(
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: Obx(() => InputDecorator(expands: false,
+        child: Obx(() => InputDecorator(
+              expands: false,
               decoration: InputDecoration(
                   labelText: '$text',
                   isDense: true,

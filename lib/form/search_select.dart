@@ -157,7 +157,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
 
   @override
   Widget toWidget() {
-    ThemeData themeData = Theme.of(Get.context!);
+    final ThemeData themeData = Theme.of(Get.context!);
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 5),
       child: Obx(() => InputDecorator(
@@ -165,6 +165,9 @@ class SearchSelectField<T> implements SuperFormField<T> {
               labelText: '$text',
               isDense: true,
               isCollapsed: true,
+              enabledBorder: (readonly || !editMode)
+                  ? themeData.inputDecorationTheme.disabledBorder
+                  : themeData.inputDecorationTheme.border,
               contentPadding: const EdgeInsets.fromLTRB(15, 4, 15, 0),
               errorText: _errorText.value,
               helperText:
@@ -219,22 +222,16 @@ class SearchSelectField<T> implements SuperFormField<T> {
                         height: 50,
                         alignment: Alignment.centerLeft,
                         child: Text(
-                            hasValue
-                                ? options
-                                    .firstWhere((element) =>
-                                        element.value == _value.value)
-                                    .text
-                                : '',
-                            style: TextStyle(
-                                color: (readonly || !editMode)
-                                    ? themeData.disabledColor
-                                    : null)),
+                          hasValue
+                              ? options
+                                  .firstWhere((element) =>
+                                      element.value == _value.value)
+                                  .text
+                              : '',
+                        ),
                       ),
                       Icon(
                         Icons.arrow_drop_down_sharp,
-                        color: (readonly || !editMode)
-                            ? themeData.disabledColor
-                            : null,
                       ),
                     ],
                   )),
@@ -264,7 +261,8 @@ class SearchSelectField<T> implements SuperFormField<T> {
                 _value.value = _selected.value;
               }
             },
-      child: Obx(() => InputDecorator(expands: false,
+      child: Obx(() => InputDecorator(
+            expands: false,
             decoration: InputDecoration(
                 labelText: '$text',
                 isDense: true,
