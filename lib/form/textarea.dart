@@ -15,7 +15,7 @@ class TextareaField implements SuperFormField<String> {
       this.editMode = true,
       this.defaultValue,
       this.maxLength = 500,
-      this.minLength = 0,
+      this.maxLines = 10,
       this.isRequired = false,
       this.showCopyBtn = true,
       this.helperText});
@@ -28,7 +28,7 @@ class TextareaField implements SuperFormField<String> {
     text = map['text'];
     _controller.text = defaultValue ?? '';
     maxLength = map['maxLength'] ?? 500;
-    minLength = map['minLength'] ?? 0;
+    maxLines = map['maxLines'] ?? 10;
     isRequired = map['isRequired'] ?? false;
     showCopyBtn = map['showCopyBtn'] ?? true;
     helperText = map['helperText'];
@@ -59,7 +59,7 @@ class TextareaField implements SuperFormField<String> {
   String? helperText;
 
   int? maxLength;
-  int? minLength;
+  int? maxLines;
 
   bool? showCopyBtn;
 
@@ -92,9 +92,6 @@ class TextareaField implements SuperFormField<String> {
       if (maxLength != null && t!.length > maxLength!) {
         _errorText.value = '超出最大长度$maxLength';
         return false;
-      } else if (minLength != null && t!.length < minLength!) {
-        _errorText.value = '小于最低长度$minLength';
-        return false;
       }
     }
     //没填写又必须填写时
@@ -115,7 +112,7 @@ class TextareaField implements SuperFormField<String> {
       'readonly': readonly,
       'editMode': editMode,
       'maxLength': maxLength,
-      'minLength': minLength,
+      'maxLines': maxLines,
       'isRequired': isRequired,
       'showCopyBtn': showCopyBtn,
       'helperText': helperText
@@ -136,7 +133,7 @@ class TextareaField implements SuperFormField<String> {
         editMode: editMode,
         defaultValue: defaultValue,
         maxLength: maxLength,
-        minLength: minLength,
+        maxLines: maxLines,
         isRequired: isRequired,
         showCopyBtn: showCopyBtn,
         helperText: helperText);
@@ -150,7 +147,7 @@ class TextareaField implements SuperFormField<String> {
     return Container(
       padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: Obx(() => TextField(
-            maxLines: 5,
+            maxLines: maxLines,
             maxLength: maxLength,
             controller: _controller,
             readOnly: (readonly || !editMode),
