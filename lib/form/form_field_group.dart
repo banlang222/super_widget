@@ -20,6 +20,7 @@ class FormFieldGroup {
   FormFieldGroup.fromMap(Map<String, dynamic> map,
       {CustomFieldCallback? customFieldCallback}) {
     name = map['name'];
+    text = map['text'];
     items = List<SuperFormField>.from((map['items'] ?? []).map((e) {
       FieldType? fieldType = FieldType.fromName(e['type']);
       switch (fieldType) {
@@ -53,11 +54,13 @@ class FormFieldGroup {
   }
 
   late String name;
+  String? text;
   late List<SuperFormField> items;
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
+      'text': text,
       'items': items.map((element) => element.toMap()).toList()
     };
   }
@@ -133,8 +136,8 @@ class FormFieldGroup {
     return _value;
   }
 
-  Widget toWidget([bool showName = true]) {
-    if (showName) {
+  Widget toWidget([bool showGroupTitle = true]) {
+    if (showGroupTitle) {
       return Container(
         margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
         padding: const EdgeInsets.all(10),
@@ -143,7 +146,7 @@ class FormFieldGroup {
             Container(
               margin: const EdgeInsets.only(top: 10, bottom: 10),
               child: Text(
-                name,
+                text ?? name,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -163,19 +166,25 @@ class FormFieldGroup {
   }
 
   ///width: 每个Field的宽度，key为Field.name，不设置宽度的情况下按比例分配，Input占3，其它占1
-  Widget toFilterWidget({bool isVertical = false, Map<String, double> width = const {}}) {
+  Widget toFilterWidget(
+      {bool isVertical = false, Map<String, double> width = const {}}) {
     if (isVertical) {
       return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: items.map((e)=>e.toFilterWidget()).toList(),
+        mainAxisSize: MainAxisSize.min,
+        children: items.map((e) => e.toFilterWidget()).toList(),
       );
     }
     return Row(
       children: items
-          .map((e) => width.containsKey(e.name) ? SizedBox(width: width[e.name],child: e.toFilterWidget(),) : Expanded(
-        flex: e is InputField ? 3 : 1,
-        child: e.toFilterWidget(),
-      ))
+          .map((e) => width.containsKey(e.name)
+              ? SizedBox(
+                  width: width[e.name],
+                  child: e.toFilterWidget(),
+                )
+              : Expanded(
+                  flex: e is InputField ? 3 : 1,
+                  child: e.toFilterWidget(),
+                ))
           .toList(),
     );
   }

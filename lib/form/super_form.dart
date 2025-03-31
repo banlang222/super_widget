@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'form_field_group.dart';
 import 'super_form_field.dart';
 
@@ -89,5 +89,11 @@ class SuperForm {
     for (var item in items) {
       item.setEditMode(_editMode);
     }
+  }
+
+  Widget toWidget([bool showGroupTitle = true]) {
+    return Column(
+      children: items.map((e) => e.toWidget(showGroupTitle)).toList(),
+    );
   }
 }
