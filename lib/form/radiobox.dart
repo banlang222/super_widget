@@ -120,6 +120,7 @@ class RadioBoxField<T> implements SuperFormField<T> {
         labelText: '$text',
         isDense: true,
         isCollapsed: true,
+        helperText: isRequired ? ' * ${helperText ?? ''}' : helperText ?? '',
         enabledBorder: (readonly || !editMode)
             ? themeData.inputDecorationTheme.disabledBorder
             : themeData.inputDecorationTheme.border,
