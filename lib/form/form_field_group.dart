@@ -141,18 +141,16 @@ class FormFieldGroup {
       return Container(
         margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
         padding: const EdgeInsets.all(10),
-        child: Column(
+        child: Column(mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              margin: const EdgeInsets.only(top: 10, bottom: 10),
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
               child: Text(
                 text ?? name,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            Column(
-              children: items.map((e) => e.toWidget()).toList(),
-            )
+            ...items.map((e) => e.toWidget())
           ],
         ),
       );
@@ -177,14 +175,14 @@ class FormFieldGroup {
     return Row(
       children: items
           .map((e) => width.containsKey(e.name)
-              ? SizedBox(
-                  width: width[e.name],
-                  child: e.toFilterWidget(),
-                )
-              : Expanded(
-                  flex: e is InputField ? 3 : 1,
-                  child: e.toFilterWidget(),
-                ))
+          ? SizedBox(
+        width: width[e.name],
+        child: e.toFilterWidget(),
+      )
+          : Expanded(
+        flex: e is InputField ? 3 : 1,
+        child: e.toFilterWidget(),
+      ))
           .toList(),
     );
   }
