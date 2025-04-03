@@ -166,7 +166,7 @@ class SelectField<T> implements SuperFormField<T> {
                 enabledBorder: (readonly || !editMode)
                     ? themeData.inputDecorationTheme.disabledBorder
                     : themeData.inputDecorationTheme.border,
-                contentPadding: const EdgeInsets.fromLTRB(15, 4, 15, 0),
+                contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
                 errorText: _errorText.value,
                 helperText:
                     isRequired ? '* ${helperText ?? ''}' : helperText ?? '',
@@ -189,7 +189,7 @@ class SelectField<T> implements SuperFormField<T> {
             isFocused: false,
             isEmpty: !hasValue,
             child: Container(
-              height: 50,
+              height: 40,
               padding: showCopyBtn
                   ? const EdgeInsets.only(right: 10)
                   : const EdgeInsets.all(0),

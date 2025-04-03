@@ -185,19 +185,20 @@ class DateField implements SuperFormField<DateTime> {
   Widget buildDateWidget([BuildContext? context]) {
     final ThemeData themeData = Theme.of(Get.context!);
     return Padding(
-        padding: const EdgeInsets.only(top: 5, bottom: 5),
+        padding: const EdgeInsets.only(top: 10, bottom: 5),
         child: Obx(
           () => InputDecorator(
             decoration: InputDecoration(
-                labelText: '$text（日期）',
-                isDense: true,
-                isCollapsed: true,
-                enabledBorder: (readonly || !editMode)
-                    ? themeData.inputDecorationTheme.disabledBorder
-                    : themeData.inputDecorationTheme.border,
-                contentPadding: const EdgeInsets.fromLTRB(15, 8, 5, 3),
-                helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
-                errorText: _errorText.value),
+              labelText: '$text（日期）',
+              isDense: true,
+              isCollapsed: true,
+              enabledBorder: (readonly || !editMode)
+                  ? themeData.inputDecorationTheme.disabledBorder
+                  : themeData.inputDecorationTheme.border,
+              contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+              helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}',
+              errorText: _errorText.value,
+            ),
             isFocused: false,
             isEmpty: false,
             child: Row(
@@ -252,12 +253,11 @@ class DateField implements SuperFormField<DateTime> {
                         spacing: 10,
                         children: [
                           if (!(readonly || !editMode))
-                            const Icon(Icons.date_range),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 15, bottom: 15),
-                            child: Obx(() =>
-                                Text(Utils.dateFormat(_value.value, true))),
-                          ),
+                            const Icon(
+                              Icons.date_range,
+                              size: 20,
+                            ),
+                          Obx(() => Text(Utils.dateFormat(_value.value, true))),
                         ],
                       )),
                 ),
@@ -266,7 +266,10 @@ class DateField implements SuperFormField<DateTime> {
                       onPressed: () {
                         _value.value = null;
                       },
-                      icon: const Icon(Icons.close))
+                      icon: const Icon(
+                        Icons.close,
+                        size: 20,
+                      ))
               ],
             ),
           ),

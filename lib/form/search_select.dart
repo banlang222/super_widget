@@ -168,7 +168,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
               enabledBorder: (readonly || !editMode)
                   ? themeData.inputDecorationTheme.disabledBorder
                   : themeData.inputDecorationTheme.border,
-              contentPadding: const EdgeInsets.fromLTRB(15, 4, 15, 0),
+              contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
               errorText: _errorText.value,
               helperText:
                   isRequired ? '* ${helperText ?? ''}' : helperText ?? '',
@@ -208,7 +208,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
                     }
                   },
             child: SizedBox(
-              height: 50,
+              height: 40,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -288,7 +288,10 @@ class SearchSelectField<T> implements SuperFormField<T> {
                           ? Colors.black54
                           : Colors.black),
                 ),
-                const Icon(Icons.arrow_drop_down_sharp)
+                const Icon(
+                  Icons.arrow_drop_down_sharp,
+                  size: 20,
+                )
               ],
             ),
           )),

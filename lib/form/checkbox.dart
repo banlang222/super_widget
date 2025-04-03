@@ -16,9 +16,15 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
       this.isRequired = false,
       this.helperText}) {
     defaultValue ??= <String, bool>{};
-    _value.value = Map<String, bool>.from(defaultValue!);
+    if (defaultValue!.isNotEmpty) {
+      _value.value = Map<String, bool>.from(defaultValue!);
+    }
+
     if (_value.isEmpty) {
       for (var element in options) {
+        if (!_value.containsKey(element.name)) {
+          _value[element.name] = false;
+        }
         _value.update(element.name, (value) => false);
       }
     }
@@ -145,7 +151,7 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
               enabledBorder: (readonly || !editMode)
                   ? themeData.inputDecorationTheme.disabledBorder
                   : themeData.inputDecorationTheme.border,
-              contentPadding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
+              contentPadding: const EdgeInsets.fromLTRB(15, 14, 15, 10),
               helperText: '${isRequired ? ' * ' : ''}${helperText ?? ''}'),
           isFocused: false,
           isEmpty: false,

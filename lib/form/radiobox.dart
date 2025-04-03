@@ -15,7 +15,7 @@ class RadioBoxField<T> implements SuperFormField<T> {
       required this.name,
       this.isRequired = false,
       this.helperText}) {
-    _value.value = defaultValue!;
+    _value.value = defaultValue;
   }
 
   RadioBoxField.fromMap(Map<String, dynamic> map) {
@@ -29,7 +29,7 @@ class RadioBoxField<T> implements SuperFormField<T> {
         .toList();
     isRequired = map['isRequired'] ?? false;
     helperText = map['helperText'];
-    _value.value = defaultValue!;
+    _value.value = defaultValue;
   }
 
   //只有一个值
@@ -115,26 +115,29 @@ class RadioBoxField<T> implements SuperFormField<T> {
   @override
   Widget toWidget() {
     final ThemeData themeData = Theme.of(Get.context!);
-    return InputDecorator(
-      decoration: InputDecoration(
-        labelText: '$text',
-        isDense: true,
-        isCollapsed: true,
-        helperText: isRequired ? ' * ${helperText ?? ''}' : helperText ?? '',
-        enabledBorder: (readonly || !editMode)
-            ? themeData.inputDecorationTheme.disabledBorder
-            : themeData.inputDecorationTheme.border,
-        contentPadding: const EdgeInsets.fromLTRB(15, 14, 15, 14),
-      ),
-      isEmpty: false,
-      child: Obx(() => Wrap(
-            children: options
-                .map((e) => e.toWidget(_value.value, (T v) {
-                      _value.value = v;
-                    }))
-                .toList(),
-          )),
-    );
+    return Padding(
+        padding: const EdgeInsets.only(top: 10, bottom: 5),
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: '$text',
+            isDense: true,
+            isCollapsed: true,
+            helperText:
+                isRequired ? ' * ${helperText ?? ''}' : helperText ?? '',
+            enabledBorder: (readonly || !editMode)
+                ? themeData.inputDecorationTheme.disabledBorder
+                : themeData.inputDecorationTheme.border,
+            contentPadding: const EdgeInsets.fromLTRB(15, 14, 15, 10),
+          ),
+          isEmpty: false,
+          child: Obx(() => Wrap(
+                children: options
+                    .map((e) => e.toWidget(_value.value, (T v) {
+                          _value.value = v;
+                        }))
+                    .toList(),
+              )),
+        ));
   }
 
   @override
