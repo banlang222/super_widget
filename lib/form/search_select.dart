@@ -168,7 +168,8 @@ class SearchSelectField<T> implements SuperFormField<T> {
               enabledBorder: (readonly || !editMode)
                   ? themeData.inputDecorationTheme.disabledBorder
                   : themeData.inputDecorationTheme.border,
-              contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+              contentPadding: const EdgeInsets.fromLTRB(
+                  15, 14, 15, 10), //当高度不一致时关注theme中的字号
               errorText: _errorText.value,
               helperText:
                   isRequired ? '* ${helperText ?? ''}' : helperText ?? '',
@@ -208,7 +209,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
                     }
                   },
             child: SizedBox(
-              height: 40,
+              height: 32,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,

@@ -22,6 +22,21 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(
+            fontSize: 16,
+            height: 2.0,
+            letterSpacing: 1,
+          ), //用于html正文
+          bodyMedium: TextStyle(fontSize: 14, letterSpacing: 1),
+          bodySmall: TextStyle(fontSize: 12, letterSpacing: 1),
+          labelLarge: TextStyle(height: 1.8, fontSize: 16, letterSpacing: 1),
+          labelMedium: TextStyle(height: 1.8, fontSize: 14, letterSpacing: 1),
+          labelSmall: TextStyle(height: 1.8, fontSize: 10, letterSpacing: 1),
+          titleLarge: TextStyle(fontSize: 18, letterSpacing: 1),
+          titleMedium: TextStyle(fontSize: 16, letterSpacing: 1),
+          titleSmall: TextStyle(fontSize: 14, letterSpacing: 1),
+        ),
         inputDecorationTheme: InputDecorationTheme(
           //默认为enable
           enabledBorder: OutlineInputBorder(
