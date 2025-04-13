@@ -79,7 +79,7 @@ class InputField<T> implements SuperFormField<T> {
     isRequired = map['isRequired'] ?? false;
     helperText = map['helperText'];
     showCopyBtn = map['showCopyBtn'] ?? true;
-    shortcutKeys = map['shortcutKeys'] ?? [];
+    shortcutKeys = List<String>.from(map['shortcutKeys'] ?? []);
     //填入初始值
     _controller.text = defaultValue?.toString() ?? '';
   }
