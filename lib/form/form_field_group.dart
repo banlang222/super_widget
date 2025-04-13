@@ -191,6 +191,7 @@ class FormFieldGroup {
                     padding: const EdgeInsets.only(right: 10),
                     child: map[e.first]!.toWidget())
                 : Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: e
                         .map((f) => Expanded(
                                 child: Padding(
