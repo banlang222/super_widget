@@ -170,24 +170,37 @@ class FormFieldGroup {
 
   ///[['aaa','bbb'],['ccc'], ['ddd', 'eee', 'fff']]
   Widget toCustomWidget(List<List<String>> rowList,
-      [EdgeInsets fieldMargin = const EdgeInsets.only(left: 5, right: 5)]) {
+      {double spacing = 10, bool showGroupTitle = true}) {
     var map = fieldMap;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: rowList
-          .map((e) => e.length == 1
-              ? Padding(padding: fieldMargin, child: map[e.first]!.toWidget())
-              : Row(
-                  children: e
-                      .map((f) => Expanded(
-                              child: Padding(
-                            padding: fieldMargin,
-                            child: map[f]!.toWidget(),
-                          )))
-                      .toList(),
-                ))
-          .toList(),
-    );
+    return Container(
+        margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+        padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            if (showGroupTitle)
+              Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                child: Text(
+                  text ?? name,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ...rowList.map((e) => e.length == 1
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: map[e.first]!.toWidget())
+                : Row(
+                    children: e
+                        .map((f) => Expanded(
+                                child: Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: map[f]!.toWidget(),
+                            )))
+                        .toList(),
+                  ))
+          ],
+        ));
   }
 
   ///width: 每个Field的宽度，key为Field.name，不设置宽度的情况下按比例分配，Input占3，其它占1
