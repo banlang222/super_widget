@@ -141,7 +141,8 @@ class FormFieldGroup {
       return Container(
         margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
         padding: const EdgeInsets.all(10),
-        child: Column(mainAxisSize: MainAxisSize.min,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -163,6 +164,32 @@ class FormFieldGroup {
     );
   }
 
+  Map<String, SuperFormField> get fieldMap {
+    return Map.fromEntries(items.map((e) => MapEntry(e.name, e)));
+  }
+
+  ///[['aaa','bbb'],['ccc'], ['ddd', 'eee', 'fff']]
+  Widget toCustomWidget(List<List<String>> rowList,
+      [EdgeInsets fieldMargin = const EdgeInsets.only(left: 5, right: 5)]) {
+    var map = fieldMap;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: rowList
+          .map((e) => e.length == 1
+              ? Padding(padding: fieldMargin, child: map[e.first]!.toWidget())
+              : Row(
+                  children: e
+                      .map((f) => Expanded(
+                              child: Padding(
+                            padding: fieldMargin,
+                            child: map[f]!.toWidget(),
+                          )))
+                      .toList(),
+                ))
+          .toList(),
+    );
+  }
+
   ///width: 每个Field的宽度，key为Field.name，不设置宽度的情况下按比例分配，Input占3，其它占1
   Widget toFilterWidget(
       {bool isVertical = false, Map<String, double> width = const {}}) {
@@ -175,14 +202,14 @@ class FormFieldGroup {
     return Row(
       children: items
           .map((e) => width.containsKey(e.name)
-          ? SizedBox(
-        width: width[e.name],
-        child: e.toFilterWidget(),
-      )
-          : Expanded(
-        flex: e is InputField ? 3 : 1,
-        child: e.toFilterWidget(),
-      ))
+              ? SizedBox(
+                  width: width[e.name],
+                  child: e.toFilterWidget(),
+                )
+              : Expanded(
+                  flex: e is InputField ? 3 : 1,
+                  child: e.toFilterWidget(),
+                ))
           .toList(),
     );
   }
