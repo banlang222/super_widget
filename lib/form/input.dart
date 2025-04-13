@@ -282,7 +282,7 @@ class InputField<T> implements SuperFormField<T> {
         children: [
           if (shortcutKeys.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+              padding: const EdgeInsets.fromLTRB(15, 0, 10, 10),
               child: Wrap(
                 spacing: 10,
                 crossAxisAlignment: WrapCrossAlignment.center,
