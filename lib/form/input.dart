@@ -57,7 +57,9 @@ class InputField<T> implements SuperFormField<T> {
       this.isRequired = false,
       this.helperText,
       this.showCopyBtn = true,
-      this.callback}) {
+      this.callback,
+      this.shortcutKeys = const [],
+      this.shortCutKeyCallback}) {
     if (defaultValue != null) {
       _controller.text = defaultValue.toString();
     }
@@ -77,6 +79,7 @@ class InputField<T> implements SuperFormField<T> {
     isRequired = map['isRequired'] ?? false;
     helperText = map['helperText'];
     showCopyBtn = map['showCopyBtn'] ?? true;
+    shortcutKeys = map['shortcutKeys'] ?? [];
     //填入初始值
     _controller.text = defaultValue?.toString() ?? '';
   }
@@ -122,6 +125,9 @@ class InputField<T> implements SuperFormField<T> {
 
   //联动回调
   Callback? callback;
+
+  List<String> shortcutKeys = [];
+  Callback? shortCutKeyCallback;
 
   final TextEditingController _controller = TextEditingController();
 
