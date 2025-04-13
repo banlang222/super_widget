@@ -277,76 +277,101 @@ class InputField<T> implements SuperFormField<T> {
     final ThemeData themeData = Theme.of(Get.context!);
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 5),
-      child: Obx(() => TextField(
-            controller: _controller,
-            readOnly: (readonly || !editMode),
-            keyboardType: valueType == ValueType.int
-                ? const TextInputType.numberWithOptions(
-                    signed: true, decimal: false)
-                : valueType == ValueType.number
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (shortcutKeys.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+              child: Wrap(
+                spacing: 10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Text('快捷键：'),
+                  ...shortcutKeys.map((e) => TextButton(
+                        onPressed: () {
+                          shortCutKeyCallback?.call(e);
+                        },
+                        child: Text(e),
+                      ))
+                ],
+              ),
+            ),
+          Obx(() => TextField(
+                controller: _controller,
+                readOnly: (readonly || !editMode),
+                keyboardType: valueType == ValueType.int
                     ? const TextInputType.numberWithOptions(
-                        signed: true, decimal: true)
-                    : valueType == ValueType.email
-                        ? TextInputType.emailAddress
-                        : TextInputType.text,
-            inputFormatters: inputFormatters.isEmpty ? null : inputFormatters,
-            maxLength: maxLength,
-            obscureText:
-                valueType == ValueType.password ? _obscureText.value : false,
-            textInputAction: TextInputAction.done,
-            onChanged: (String t) {
-              _check(t.supperTrim());
-
-              //联动回调
-              if (callback != null) {
-                callback!(valueType == ValueType.int
-                    ? t.supperTrim().toInt()
+                        signed: true, decimal: false)
                     : valueType == ValueType.number
-                        ? t.supperTrim().toNum()
-                        : t);
-              }
-            },
-            decoration: InputDecoration(
-              labelText: text,
-              isDense: true,
-              helperText: isRequired
-                  ? ' * ${helperText ?? ''} ${valueType!.info}'
-                  : helperText ?? '',
-              errorText: _errorText.value,
-              enabledBorder: (readonly || !editMode)
-                  ? themeData.inputDecorationTheme.disabledBorder
-                  : themeData.inputDecorationTheme.border,
-              contentPadding: const EdgeInsets.fromLTRB(
-                  15, 14, 15, 10), //当高度不一致时关注theme中的字号
-              suffix: valueType == ValueType.password
-                  ? InkWell(
-                      child: Icon(
-                        _obscureText.value
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: _obscureText.value
-                            ? Colors.grey
-                            : Colors.orangeAccent,
-                        size: 20,
-                      ),
-                      onTap: () async {
-                        _obscureText.value = _obscureText.value ? false : true;
-                      },
-                    )
-                  : showCopyBtn
+                        ? const TextInputType.numberWithOptions(
+                            signed: true, decimal: true)
+                        : valueType == ValueType.email
+                            ? TextInputType.emailAddress
+                            : TextInputType.text,
+                inputFormatters:
+                    inputFormatters.isEmpty ? null : inputFormatters,
+                maxLength: maxLength,
+                obscureText: valueType == ValueType.password
+                    ? _obscureText.value
+                    : false,
+                textInputAction: TextInputAction.done,
+                onChanged: (String t) {
+                  _check(t.supperTrim());
+
+                  //联动回调
+                  if (callback != null) {
+                    callback!(valueType == ValueType.int
+                        ? t.supperTrim().toInt()
+                        : valueType == ValueType.number
+                            ? t.supperTrim().toNum()
+                            : t);
+                  }
+                },
+                decoration: InputDecoration(
+                  labelText: text,
+                  isDense: true,
+                  helperText: isRequired
+                      ? ' * ${helperText ?? ''} ${valueType!.info}'
+                      : helperText ?? '',
+                  errorText: _errorText.value,
+                  enabledBorder: (readonly || !editMode)
+                      ? themeData.inputDecorationTheme.disabledBorder
+                      : themeData.inputDecorationTheme.border,
+                  contentPadding: const EdgeInsets.fromLTRB(
+                      15, 14, 15, 10), //当高度不一致时关注theme中的字号
+                  suffix: valueType == ValueType.password
                       ? InkWell(
-                          child: const Icon(
-                            Icons.copy,
-                            color: Colors.orangeAccent,
+                          child: Icon(
+                            _obscureText.value
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: _obscureText.value
+                                ? Colors.grey
+                                : Colors.orangeAccent,
                             size: 20,
                           ),
                           onTap: () async {
-                            Utils.copy('$value');
+                            _obscureText.value =
+                                _obscureText.value ? false : true;
                           },
                         )
-                      : null,
-            ),
-          )),
+                      : showCopyBtn
+                          ? InkWell(
+                              child: const Icon(
+                                Icons.copy,
+                                color: Colors.orangeAccent,
+                                size: 20,
+                              ),
+                              onTap: () async {
+                                Utils.copy('$value');
+                              },
+                            )
+                          : null,
+                ),
+              ))
+        ],
+      ),
     );
   }
 

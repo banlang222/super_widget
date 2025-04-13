@@ -63,12 +63,20 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var weight =
+        InputField(name: 'weight', text: '重量', shortcutKeys: ['25.0', '38']);
+    weight.shortCutKeyCallback = (v) {
+      if (v != null) {
+        weight.value = v;
+      }
+    };
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
       ),
       body: Column(
         children: [
+          weight.toWidget(),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
