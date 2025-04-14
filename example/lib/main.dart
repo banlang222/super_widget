@@ -65,11 +65,25 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var weight =
         InputField(name: 'weight', text: '重量', shortcutKeys: ['25.0', '38']);
-    weight.shortCutKeyCallback = (v) {
-      if (v != null) {
-        weight.value = v;
+    weight
+      ..shortCutKeyCallback = (v) {
+        if (v != null) {
+          weight.value = v;
+        }
       }
-    };
+      ..prefix = Padding(
+        padding: EdgeInsets.only(right: 10),
+        child: Tooltip(
+          message: '选择',
+          child: InkWell(
+            onTap: () {},
+            child: Icon(
+              Icons.library_books,
+              size: 20,
+            ),
+          ),
+        ),
+      );
     return Scaffold(
       appBar: AppBar(
         title: Text(title),

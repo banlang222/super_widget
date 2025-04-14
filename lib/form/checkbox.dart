@@ -39,7 +39,7 @@ class CheckBoxField implements SuperFormField<Map<String, bool>> {
         .map((e) => CheckBoxOption.fromMap(e))
         .toList();
     isRequired = map['isRequired'] ?? false;
-    defaultValue = map['defaultValue'] ?? <String, bool>{};
+    defaultValue = Map.from(map['defaultValue'] ?? {});
     _value.value = Map.from(defaultValue!);
     if (_value.isEmpty) {
       for (var element in options) {

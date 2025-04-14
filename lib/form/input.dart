@@ -59,7 +59,8 @@ class InputField<T> implements SuperFormField<T> {
       this.showCopyBtn = true,
       this.callback,
       this.shortcutKeys = const [],
-      this.shortCutKeyCallback}) {
+      this.shortCutKeyCallback,
+      this.prefix}) {
     if (defaultValue != null) {
       _controller.text = defaultValue.toString();
     }
@@ -126,8 +127,14 @@ class InputField<T> implements SuperFormField<T> {
   //联动回调
   Callback? callback;
 
+  ///快捷键名称列表，前端需提供shortCutKeyCallback
   List<String> shortcutKeys = [];
+
+  ///前端指定处理方法，会回传点击的按键名称
   Callback? shortCutKeyCallback;
+
+  ///前端构建时指定
+  Widget? prefix;
 
   final TextEditingController _controller = TextEditingController();
 
@@ -255,7 +262,8 @@ class InputField<T> implements SuperFormField<T> {
         maxValue: maxValue,
         isRequired: isRequired,
         showCopyBtn: showCopyBtn,
-        helperText: helperText);
+        helperText: helperText,
+        prefix: prefix);
   }
 
   final _errorText = Rx<String?>(null);
@@ -315,6 +323,7 @@ class InputField<T> implements SuperFormField<T> {
                 obscureText: valueType == ValueType.password
                     ? _obscureText.value
                     : false,
+                autocorrect: false,
                 textInputAction: TextInputAction.done,
                 onChanged: (String t) {
                   _check(t.supperTrim());
@@ -340,6 +349,7 @@ class InputField<T> implements SuperFormField<T> {
                       : themeData.inputDecorationTheme.border,
                   contentPadding: const EdgeInsets.fromLTRB(
                       15, 14, 15, 10), //当高度不一致时关注theme中的字号
+                  prefix: prefix,
                   suffix: valueType == ValueType.password
                       ? InkWell(
                           child: Icon(

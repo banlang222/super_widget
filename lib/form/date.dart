@@ -191,7 +191,7 @@ class DateField implements SuperFormField<DateTime> {
             decoration: InputDecoration(
               labelText: '$text（日期）',
               isDense: true,
-              isCollapsed: true,
+              isCollapsed: false,
               enabledBorder: (readonly || !editMode)
                   ? themeData.inputDecorationTheme.disabledBorder
                   : themeData.inputDecorationTheme.border,
