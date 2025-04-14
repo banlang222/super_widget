@@ -71,8 +71,7 @@ class MyHomePage extends StatelessWidget {
           weight.value = v;
         }
       }
-      ..prefix = Padding(
-        padding: EdgeInsets.only(right: 10),
+      ..prefix = Container(
         child: Tooltip(
           message: '选择',
           child: InkWell(
