@@ -348,8 +348,9 @@ class InputField<T> implements SuperFormField<T> {
                   enabledBorder: (readonly || !editMode)
                       ? themeData.inputDecorationTheme.disabledBorder
                       : themeData.inputDecorationTheme.border,
-                  contentPadding: const EdgeInsets.fromLTRB(15, 14, 15, 10),
-                  prefixIcon: prefix, //当高度不一致时关注theme中的字号
+                  contentPadding: const EdgeInsets.fromLTRB(
+                      15, 14, 15, 10), //当高度不一致时关注theme中的字号
+                  prefixIcon: prefix,
                   suffix: valueType == ValueType.password
                       ? InkWell(
                           child: Icon(
