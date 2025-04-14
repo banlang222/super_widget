@@ -168,8 +168,8 @@ class FormFieldGroup {
     return Map.fromEntries(items.map((e) => MapEntry(e.name, e)));
   }
 
-  ///[['aaa','bbb'],['ccc'], ['ddd', 'eee', 'fff']]
-  Widget toCustomWidget(List<List<String>> rowList,
+  ///根据rowList给出的组合，构建widget [['aaa','bbb'],['ccc'], ['ddd', 'eee', 'fff']]
+  Widget toWidgetWithRowList(List<List<String>> rowList,
       {double spacing = 10, bool showGroupTitle = true}) {
     var map = fieldMap;
     return Container(
@@ -202,6 +202,12 @@ class FormFieldGroup {
                   ))
           ],
         ));
+  }
+
+  ///自定义处理
+  Widget toWidgetWithHandle(
+      Function(Map<String, SuperFormField> fieldMap) handler) {
+    return handler.call(fieldMap);
   }
 
   ///width: 每个Field的宽度，key为Field.name，不设置宽度的情况下按比例分配，Input占3，其它占1
