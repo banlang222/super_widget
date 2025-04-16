@@ -353,7 +353,12 @@ class UploadField implements SuperFormField<List<String>?> {
   }
 
   Widget previewList() {
-    if (_value.length == 1) {
+    if (_value.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.only(top: 40),
+        child: Text('还没有文件'),
+      );
+    } else if (_value.length == 1) {
       var fileType = SFileType.fromUrl(_value.first['url']);
       if (fileType.isImage) {
         return Column(
