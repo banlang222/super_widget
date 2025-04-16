@@ -92,16 +92,6 @@ class MyHomePage extends StatelessWidget {
         fileListType: FileListType.preview,
         defaultValue: [
           'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
-          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
-          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
-          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
-          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
-          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
-          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
-          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
-          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
-          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
-          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
         ]);
     return Scaffold(
       appBar: AppBar(
@@ -109,10 +99,20 @@ class MyHomePage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          SizedBox(
-            width: 500,
-            height: 600,
-            child: upload.toWidget(),
+          IntrinsicHeight(
+            child: Row(
+              children: [
+                Expanded(
+                    child: SizedBox(
+                  height: 300,
+                )),
+                SizedBox(
+                  width: 500,
+                  height: 600,
+                  child: upload.toWidget(),
+                )
+              ],
+            ),
           ),
           weight.toWidget(),
           Row(

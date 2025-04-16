@@ -543,7 +543,7 @@ class ImageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('图片'),
+        title: const Text('图片浏览'),
       ),
       body: SingleChildScrollView(
         child: SizedBox(
