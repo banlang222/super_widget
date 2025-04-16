@@ -88,9 +88,19 @@ class MyHomePage extends StatelessWidget {
         name: 'sign',
         text: '签收单',
         allowedFileType: SFileType.image,
-        fileListPosition: FileListPosition.bottom,
+        fileListPosition: FileListPosition.top,
         fileListType: FileListType.preview,
         defaultValue: [
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
           'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
         ]);
     return Scaffold(
@@ -99,7 +109,11 @@ class MyHomePage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          upload.toWidget(),
+          SizedBox(
+            width: 500,
+            height: 600,
+            child: upload.toWidget(),
+          ),
           weight.toWidget(),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -24,6 +24,7 @@ enum DragStatus {
   final int value;
 }
 
+/// 上下排列时，应给UploadFile确定的高度
 enum FileListPosition {
   top,
   left,
@@ -243,7 +244,7 @@ class UploadField implements SuperFormField<List<String>?> {
                 await upload(xFile);
               },
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 20, 20, 25),
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: InkWell(
                   onTap: () async {
                     XFile? xFile = await openFile();
@@ -283,11 +284,15 @@ class UploadField implements SuperFormField<List<String>?> {
                   ? IntrinsicHeight(
                       child: Row(
                         children: [
-                          if (!readonly || editMode)
+                          if (!readonly || editMode) ...[
                             SizedBox(
                               width: 350,
                               child: dropTarget,
                             ),
+                            const SizedBox(
+                              width: 10,
+                            )
+                          ],
                           Expanded(child: fileList)
                         ],
                       ),
@@ -297,11 +302,15 @@ class UploadField implements SuperFormField<List<String>?> {
                           child: Row(
                             children: [
                               Expanded(child: fileList),
-                              if (!readonly || editMode)
+                              if (!readonly || editMode) ...[
+                                const SizedBox(
+                                  width: 10,
+                                ),
                                 SizedBox(
                                   width: 350,
                                   child: dropTarget,
                                 ),
+                              ],
                             ],
                           ),
                         )
@@ -309,7 +318,12 @@ class UploadField implements SuperFormField<List<String>?> {
                           ? IntrinsicWidth(
                               child: Column(
                                 children: [
-                                  fileList,
+                                  Expanded(
+                                      child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        15, 15, 15, 0),
+                                    child: fileList,
+                                  )),
                                   if (!readonly || editMode)
                                     SizedBox(
                                       width: double.infinity,
@@ -326,7 +340,12 @@ class UploadField implements SuperFormField<List<String>?> {
                                       width: double.infinity,
                                       child: dropTarget,
                                     ),
-                                  fileList,
+                                  Expanded(
+                                      child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        15, 15, 15, 0),
+                                    child: fileList,
+                                  )),
                                 ],
                               ),
                             ));
@@ -337,40 +356,33 @@ class UploadField implements SuperFormField<List<String>?> {
     if (_value.length == 1) {
       var fileType = SFileType.fromUrl(_value.first['url']);
       if (fileType.isImage) {
-        return Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            children: [
-              SizedBox(
-                width: double.infinity,
+        return Column(
+          children: [
+            Expanded(
                 child: InkWell(
-                  onTap: () {
-                    Get.to(() => ImageView(url: _value.first['url']));
-                  },
-                  child: ExtendedImage.network(
-                    _value.first['url'],
-                    fit: BoxFit.fitWidth,
-                  ),
-                ),
+              onTap: () {
+                Get.to(() => ImageView(url: _value.first['url']));
+              },
+              child: ExtendedImage.network(
+                _value.first['url'],
+                fit: BoxFit.fitHeight,
               ),
-              IconButton(
-                onPressed: () {
-                  _value.clear();
-                },
-                icon: const Icon(Icons.delete),
-              )
-            ],
-          ),
+            )),
+            IconButton(
+              onPressed: () {
+                _value.clear();
+              },
+              icon: const Icon(Icons.delete),
+            )
+          ],
         );
       }
     }
     return GridView.extent(
       maxCrossAxisExtent: 300,
-      padding: const EdgeInsets.all(10),
       mainAxisSpacing: 10,
       crossAxisSpacing: 10,
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
       children: _value.map((e) {
         var fileType = SFileType.fromUrl(e['url']);
         return Column(
