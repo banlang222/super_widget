@@ -1,11 +1,11 @@
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:extension/extension.dart';
-// import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:extended_image/extended_image.dart';
 
 import 'file_icon.dart';
 import 'super_form_field.dart';
@@ -343,9 +343,14 @@ class UploadField implements SuperFormField<List<String>?> {
             children: [
               SizedBox(
                 width: double.infinity,
-                child: Image.network(
-                  _value.first['url'],
-                  fit: BoxFit.fitWidth,
+                child: InkWell(
+                  onTap: () {
+                    Get.to(() => ImageView(url: _value.first['url']));
+                  },
+                  child: ExtendedImage.network(
+                    _value.first['url'],
+                    fit: BoxFit.fitWidth,
+                  ),
                 ),
               ),
               IconButton(
@@ -372,9 +377,14 @@ class UploadField implements SuperFormField<List<String>?> {
           children: [
             Expanded(
                 child: fileType.isImage
-                    ? Image.network(
-                        e['url'],
-                        fit: BoxFit.fitWidth,
+                    ? InkWell(
+                        onTap: () {
+                          Get.to(() => ImageView(url: e['url']));
+                        },
+                        child: ExtendedImage.network(
+                          e['url'],
+                          fit: BoxFit.fitWidth,
+                        ),
                       )
                     : Icon(
                         fileType.icon,
@@ -506,6 +516,28 @@ class UploadField implements SuperFormField<List<String>?> {
       _errorText.value = '不允许上传 $extension 文件';
     }
     _dragStatus.value = DragStatus.outside;
+  }
+}
+
+class ImageView extends StatelessWidget {
+  const ImageView({super.key, required this.url});
+  final String url;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('图片'),
+      ),
+      body: SingleChildScrollView(
+        child: SizedBox(
+          width: double.infinity,
+          child: ExtendedImage.network(
+            url,
+            fit: BoxFit.fitWidth,
+          ),
+        ),
+      ),
+    );
   }
 }
 

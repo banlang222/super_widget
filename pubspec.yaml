@@ -26,6 +26,7 @@ dependencies:
   flutter_cupertino_datetime_picker: ^3.0.0
   desktop_drop:
   dotted_border:
+  extended_image:
 
 dev_dependencies:
   flutter_test:
