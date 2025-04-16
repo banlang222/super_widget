@@ -7,6 +7,7 @@ import 'package:super_widget/form/radiobox.dart';
 import 'package:super_widget/form/search_select.dart';
 import 'package:super_widget/form/select.dart';
 import 'package:super_widget/form/select_option.dart';
+import 'package:super_widget/form/upload.dart';
 import 'package:super_widget/html_table.dart';
 
 void main() {
@@ -83,12 +84,22 @@ class MyHomePage extends StatelessWidget {
           ),
         ),
       );
+    var upload = UploadField(
+        name: 'sign',
+        text: '签收单',
+        allowedFileType: SFileType.image,
+        fileListPosition: FileListPosition.bottom,
+        fileListType: FileListType.preview,
+        defaultValue: [
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+        ]);
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
       ),
       body: Column(
         children: [
+          upload.toWidget(),
           weight.toWidget(),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,

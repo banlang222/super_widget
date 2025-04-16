@@ -248,7 +248,7 @@ class DateField implements SuperFormField<DateTime> {
                   child: MouseRegion(
                       cursor: (readonly || !editMode)
                           ? MouseCursor.defer
-                          : MaterialStateMouseCursor.clickable,
+                          : WidgetStateMouseCursor.clickable,
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 10,

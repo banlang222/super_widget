@@ -24,6 +24,43 @@ enum DragStatus {
   final int value;
 }
 
+enum FileListPosition {
+  top,
+  left,
+  right,
+  bottom;
+
+  static FileListPosition fromValue(int value) {
+    switch (value) {
+      case 0:
+        return FileListPosition.top;
+      case 1:
+        return FileListPosition.left;
+      case 3:
+        return FileListPosition.bottom;
+      default:
+        return FileListPosition.right;
+    }
+  }
+}
+
+enum FileListType {
+  url,
+  preview,
+  urlWithPreview;
+
+  static FileListType fromValue(int value) {
+    switch (value) {
+      case 0:
+        return FileListType.url;
+      case 1:
+        return FileListType.preview;
+      default:
+        return FileListType.urlWithPreview;
+    }
+  }
+}
+
 class UploadField implements SuperFormField<List<String>?> {
   UploadField(
       {required this.name,
@@ -36,7 +73,9 @@ class UploadField implements SuperFormField<List<String>?> {
       this.uploadUrl,
       this.doUpload,
       this.singleFile = false,
-      required this.allowedFileType}) {
+      required this.allowedFileType,
+      this.fileListPosition = FileListPosition.right,
+      this.fileListType = FileListType.urlWithPreview}) {
     _value.value = defaultValue?.map((e) => {'url': e}).toList() ?? [];
   }
 
@@ -62,6 +101,12 @@ class UploadField implements SuperFormField<List<String>?> {
           .toList();
     } else {
       allowedFileType = SFileType.all;
+    }
+    if (map['fileListType'] != null) {
+      fileListType = FileListType.fromValue(map['fileListType']);
+    }
+    if (map['fileListPosition'] != null) {
+      fileListPosition = FileListPosition.fromValue(map['fileListPosition']);
     }
   }
 
@@ -95,6 +140,10 @@ class UploadField implements SuperFormField<List<String>?> {
   DoUpload? doUpload;
 
   late List<SFileType> allowedFileType;
+
+  FileListPosition fileListPosition = FileListPosition.right;
+
+  FileListType fileListType = FileListType.urlWithPreview;
 
   @override
   List<String> get value {
@@ -181,137 +230,236 @@ class UploadField implements SuperFormField<List<String>?> {
     final ThemeData themeData = Theme.of(Get.context!);
     return Container(
         padding: const EdgeInsets.only(top: 5, bottom: 5),
-        child: Obx(
-          () => InputDecorator(
-            decoration: InputDecoration(
-                labelText: '$text',
-                isDense: true,
-                isCollapsed: true,
-                enabledBorder: (readonly || !editMode)
-                    ? themeData.inputDecorationTheme.disabledBorder
-                    : themeData.inputDecorationTheme.border,
-                contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 0),
-                helperText:
-                    '${isRequired ? ' * ' : ''}${helperText ?? '允许上传类型：${allowedFileType.map((e) => e.name).join('、')}'}',
-                errorText: _errorText.value),
-            isFocused: true,
-            isEmpty: false,
-            child: IntrinsicHeight(
-              child: Row(
-                children: [
-                  if (!readonly || editMode)
-                    DropTarget(
-                        onDragEntered: (details) {
-                          _dragStatus.value = DragStatus.uploading;
-                        },
-                        onDragExited: (details) {
-                          _dragStatus.value = DragStatus.outside;
-                        },
-                        onDragDone: (details) async {
-                          var xFile = details.files.first;
-                          await upload(xFile);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 20, 20, 25),
-                          child: SizedBox(
-                            width: 300,
-                            child: InkWell(
-                              onTap: () async {
-                                XFile? xFile = await openFile();
-                                if (xFile != null) {
-                                  upload(xFile);
-                                }
-                              },
-                              child: DottedBorder(
-                                borderType: BorderType.RRect,
-                                color: Colors.grey,
-                                radius: const Radius.circular(10),
-                                padding: const EdgeInsets.all(30),
-                                child:
-                                    Center(child: Text(_dragStatus.value.text)),
-                              ),
+        child: Obx(() {
+          var dropTarget = DropTarget(
+              onDragEntered: (details) {
+                _dragStatus.value = DragStatus.uploading;
+              },
+              onDragExited: (details) {
+                _dragStatus.value = DragStatus.outside;
+              },
+              onDragDone: (details) async {
+                var xFile = details.files.first;
+                await upload(xFile);
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 20, 20, 25),
+                child: InkWell(
+                  onTap: () async {
+                    XFile? xFile = await openFile();
+                    if (xFile != null) {
+                      upload(xFile);
+                    }
+                  },
+                  child: DottedBorder(
+                    borderType: BorderType.RRect,
+                    color: Colors.grey,
+                    radius: const Radius.circular(10),
+                    padding: const EdgeInsets.all(30),
+                    child: Center(child: Text(_dragStatus.value.text)),
+                  ),
+                ),
+              ));
+          var fileList = fileListType == FileListType.urlWithPreview
+              ? urlList(true)
+              : fileListType == FileListType.url
+                  ? urlList()
+                  : previewList();
+          return InputDecorator(
+              decoration: InputDecoration(
+                  labelText: '$text',
+                  isDense: true,
+                  isCollapsed: true,
+                  enabledBorder: (readonly || !editMode)
+                      ? themeData.inputDecorationTheme.disabledBorder
+                      : themeData.inputDecorationTheme.border,
+                  contentPadding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                  helperText:
+                      '${isRequired ? ' * ' : ''}${helperText ?? '允许上传类型：${allowedFileType.map((e) => e.name).join('、')}'}',
+                  errorText: _errorText.value),
+              isFocused: true,
+              isEmpty: false,
+              child: fileListPosition == FileListPosition.right
+                  ? IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          if (!readonly || editMode)
+                            SizedBox(
+                              width: 350,
+                              child: dropTarget,
                             ),
+                          Expanded(child: fileList)
+                        ],
+                      ),
+                    )
+                  : fileListPosition == FileListPosition.left
+                      ? IntrinsicHeight(
+                          child: Row(
+                            children: [
+                              Expanded(child: fileList),
+                              if (!readonly || editMode)
+                                SizedBox(
+                                  width: 350,
+                                  child: dropTarget,
+                                ),
+                            ],
                           ),
-                        )),
-                  Expanded(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(10),
-                          child: _value.isEmpty
-                              ? const Padding(
-                                  padding: EdgeInsets.only(top: 40),
-                                  child: Text('还没有文件'),
-                                )
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: _value.map((element) {
-                                    var url = element['url'];
-                                    var sFileType = SFileType.fromUrl(url);
-                                    return Container(
-                                      margin: const EdgeInsets.all(10),
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5)),
-                                          color: Colors.black12),
-                                      child: url.isEmpty
-                                          ? Container(
-                                              padding: const EdgeInsets.all(10),
-                                              child: LinearProgressIndicator(
-                                                backgroundColor:
-                                                    Colors.grey[100],
-                                                value: element['progress'],
-                                                minHeight: 40,
-                                              ),
-                                            )
-                                          : Wrap(
-                                              spacing: 10,
-                                              crossAxisAlignment:
-                                                  WrapCrossAlignment.center,
-                                              children: [
-                                                (sFileType.isImg)
-                                                    ? Tooltip(
-                                                        richMessage: WidgetSpan(
-                                                            child:
-                                                                Image.network(
-                                                          url,
-                                                          width: 300,
-                                                        )),
-                                                        child: Icon(
-                                                            sFileType.icon),
-                                                      )
-                                                    : Icon(
-                                                        sFileType.icon,
-                                                      ),
-                                                Text('${element['url']}'),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                TextButton.icon(
-                                                  icon: const Icon(
-                                                    Icons.cancel,
-                                                    size: 20,
-                                                  ),
-                                                  label: const Text('删除'),
-                                                  onPressed: () {
-                                                    _value.removeWhere(
-                                                        (e) => e == element);
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                    );
-                                  }).toList())),
-                    ],
-                  )),
-                ],
+                        )
+                      : fileListPosition == FileListPosition.top
+                          ? IntrinsicWidth(
+                              child: Column(
+                                children: [
+                                  fileList,
+                                  if (!readonly || editMode)
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: dropTarget,
+                                    ),
+                                ],
+                              ),
+                            )
+                          : IntrinsicWidth(
+                              child: Column(
+                                children: [
+                                  if (!readonly || editMode)
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: dropTarget,
+                                    ),
+                                  fileList,
+                                ],
+                              ),
+                            ));
+        }));
+  }
+
+  Widget previewList() {
+    if (_value.length == 1) {
+      var fileType = SFileType.fromUrl(_value.first['url']);
+      if (fileType.isImage) {
+        return Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Image.network(
+                  _value.first['url'],
+                  fit: BoxFit.fitWidth,
+                ),
               ),
-            ),
+              IconButton(
+                onPressed: () {
+                  _value.clear();
+                },
+                icon: const Icon(Icons.delete),
+              )
+            ],
           ),
-        ));
+        );
+      }
+    }
+    return GridView.extent(
+      maxCrossAxisExtent: 300,
+      padding: const EdgeInsets.all(10),
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: _value.map((e) {
+        var fileType = SFileType.fromUrl(e['url']);
+        return Column(
+          children: [
+            Expanded(
+                child: fileType.isImage
+                    ? Image.network(
+                        e['url'],
+                        fit: BoxFit.fitWidth,
+                      )
+                    : Icon(
+                        fileType.icon,
+                        size: 250,
+                      )),
+            IconButton(
+              onPressed: () {
+                _value.removeWhere((element) => element == e);
+              },
+              icon: const Icon(Icons.delete),
+            )
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  Widget urlList([bool showPreview = false]) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            child: _value.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.only(top: 40),
+                    child: Text('还没有文件'),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _value.map((element) {
+                      var url = element['url'];
+                      var sFileType = SFileType.fromUrl(url);
+                      return Container(
+                        margin: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            color: Colors.black12),
+                        child: url.isEmpty
+                            ? Container(
+                                padding: const EdgeInsets.all(10),
+                                child: LinearProgressIndicator(
+                                  backgroundColor: Colors.grey[100],
+                                  value: element['progress'],
+                                  minHeight: 40,
+                                ),
+                              )
+                            : Wrap(
+                                spacing: 10,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  (showPreview && sFileType.isImage)
+                                      ? Tooltip(
+                                          richMessage: WidgetSpan(
+                                              child: Image.network(
+                                            url,
+                                            width: 300,
+                                          )),
+                                          child: Icon(sFileType.icon),
+                                        )
+                                      : Icon(
+                                          sFileType.icon,
+                                        ),
+                                  Text('${element['url']}'),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  TextButton.icon(
+                                    icon: const Icon(
+                                      Icons.cancel,
+                                      size: 20,
+                                    ),
+                                    label: const Text('删除'),
+                                    onPressed: () {
+                                      _value.removeWhere((e) => e == element);
+                                    },
+                                  )
+                                ],
+                              ),
+                      );
+                    }).toList())),
+      ],
+    );
   }
 
   final _dragStatus = DragStatus.outside.obs;
@@ -451,7 +599,7 @@ class SFileType {
     }
   }
 
-  bool get isImg {
+  bool get isImage {
     return icon == FileIcon.file_image;
   }
 
@@ -473,6 +621,27 @@ class SFileType {
       pdf,
       txt,
       mp4
+    ];
+  }
+
+  static List<SFileType> get image {
+    return [
+      png,
+      jpg,
+      jpeg,
+      gif,
+      bmp,
+    ];
+  }
+
+  static List<SFileType> get word {
+    return [
+      doc,
+      docx,
+      xls,
+      xlsx,
+      ppt,
+      pptx,
     ];
   }
 }
