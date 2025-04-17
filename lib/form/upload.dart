@@ -202,7 +202,9 @@ class UploadField implements SuperFormField<List<String>?> {
         isRequired: isRequired,
         helperText: helperText,
         doUpload: doUpload,
-        allowedFileType: allowedFileType);
+        allowedFileType: allowedFileType,
+        fileListPosition: fileListPosition,
+        fileListType: fileListType);
   }
 
   @override
@@ -220,7 +222,10 @@ class UploadField implements SuperFormField<List<String>?> {
       'readonly': readonly,
       'editMode': editMode,
       'isRequired': isRequired,
-      'helperText': helperText
+      'helperText': helperText,
+      'allowedFileType': allowedFileType,
+      'fileListPosition': fileListPosition,
+      'fileListType': fileListType
     };
   }
 
