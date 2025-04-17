@@ -142,6 +142,7 @@ class UploadField implements SuperFormField<List<String>?> {
 
   late List<SFileType> allowedFileType;
 
+  ///竖排时如果没有确定高度可能会导致问题，不能给出确定高度时可以参照example中例子通过Table以及TableCell的竖排撑满给出一个高度
   FileListPosition fileListPosition = FileListPosition.right;
 
   FileListType fileListType = FileListType.urlWithPreview;
@@ -232,35 +233,6 @@ class UploadField implements SuperFormField<List<String>?> {
     return Container(
         padding: const EdgeInsets.only(top: 5, bottom: 5),
         child: Obx(() {
-          var dropTarget = DropTarget(
-              onDragEntered: (details) {
-                _dragStatus.value = DragStatus.uploading;
-              },
-              onDragExited: (details) {
-                _dragStatus.value = DragStatus.outside;
-              },
-              onDragDone: (details) async {
-                var xFile = details.files.first;
-                await upload(xFile);
-              },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: InkWell(
-                  onTap: () async {
-                    XFile? xFile = await openFile();
-                    if (xFile != null) {
-                      upload(xFile);
-                    }
-                  },
-                  child: DottedBorder(
-                    borderType: BorderType.RRect,
-                    color: Colors.grey,
-                    radius: const Radius.circular(10),
-                    padding: const EdgeInsets.all(30),
-                    child: Center(child: Text(_dragStatus.value.text)),
-                  ),
-                ),
-              ));
           var fileList = fileListType == FileListType.urlWithPreview
               ? urlList(true)
               : fileListType == FileListType.url
@@ -287,7 +259,7 @@ class UploadField implements SuperFormField<List<String>?> {
                           if (!readonly || editMode) ...[
                             SizedBox(
                               width: 350,
-                              child: dropTarget,
+                              child: dropTarget(),
                             ),
                             const SizedBox(
                               width: 10,
@@ -308,48 +280,76 @@ class UploadField implements SuperFormField<List<String>?> {
                                 ),
                                 SizedBox(
                                   width: 350,
-                                  child: dropTarget,
+                                  child: dropTarget(),
                                 ),
                               ],
                             ],
                           ),
                         )
                       : fileListPosition == FileListPosition.top
-                          ? IntrinsicWidth(
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                      child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        15, 15, 15, 0),
-                                    child: fileList,
-                                  )),
-                                  if (!readonly || editMode)
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: dropTarget,
-                                    ),
-                                ],
-                              ),
+                          ? Column(
+                              children: [
+                                Expanded(
+                                    child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                                  child: fileList,
+                                )),
+                                if (!readonly || editMode)
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: dropTarget(),
+                                  ),
+                              ],
                             )
-                          : IntrinsicWidth(
-                              child: Column(
-                                children: [
-                                  if (!readonly || editMode)
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: dropTarget,
-                                    ),
-                                  Expanded(
-                                      child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        15, 15, 15, 0),
-                                    child: fileList,
-                                  )),
-                                ],
-                              ),
+                          : Column(
+                              children: [
+                                if (!readonly || editMode)
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: dropTarget(),
+                                  ),
+                                Expanded(
+                                    child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                                  child: fileList,
+                                )),
+                              ],
                             ));
         }));
+  }
+
+  Widget dropTarget() {
+    return DropTarget(
+        onDragEntered: (details) {
+          _dragStatus.value = DragStatus.uploading;
+        },
+        onDragExited: (details) {
+          _dragStatus.value = DragStatus.outside;
+        },
+        onDragDone: (details) async {
+          var xFile = details.files.first;
+          await upload(xFile);
+        },
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: InkWell(
+            onTap: () async {
+              XFile? xFile = await openFile();
+              if (xFile != null) {
+                upload(xFile);
+              }
+            },
+            child: DottedBorder(
+              borderType: BorderType.RRect,
+              color: Colors.grey,
+              radius: const Radius.circular(10),
+              padding: const EdgeInsets.all(30),
+              child: Center(child: Text(_dragStatus.value.text)),
+            ),
+          ),
+        ));
   }
 
   Widget previewList() {
@@ -368,9 +368,11 @@ class UploadField implements SuperFormField<List<String>?> {
               onTap: () {
                 Get.to(() => ImageView(url: _value.first['url']));
               },
-              child: ExtendedImage.network(
-                _value.first['url'],
-                fit: BoxFit.fitHeight,
+              child: Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.contain,
+                        image: NetworkImage(_value.first['url']))),
               ),
             )),
             IconButton(
@@ -396,11 +398,13 @@ class UploadField implements SuperFormField<List<String>?> {
                 child: fileType.isImage
                     ? InkWell(
                         onTap: () {
-                          Get.to(() => ImageView(url: e['url']));
+                          Get.to(() => ImageView(url: _value.first['url']));
                         },
-                        child: ExtendedImage.network(
-                          e['url'],
-                          fit: BoxFit.fitWidth,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  fit: BoxFit.contain,
+                                  image: NetworkImage(_value.first['url']))),
                         ),
                       )
                     : Icon(

@@ -92,6 +92,12 @@ class MyHomePage extends StatelessWidget {
         fileListType: FileListType.preview,
         defaultValue: [
           'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif',
+          'https://www.wiki8.cn/statics/images/ChinaAni/%E8%9B%87.gif'
         ]);
     return Scaffold(
       appBar: AppBar(
@@ -99,20 +105,54 @@ class MyHomePage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          IntrinsicHeight(
-            child: Row(
-              children: [
-                Expanded(
-                    child: SizedBox(
-                  height: 300,
-                )),
-                SizedBox(
-                  width: 500,
-                  height: 600,
-                  child: upload.toWidget(),
+          Table(
+            columnWidths: {0: FlexColumnWidth(2), 1: FlexColumnWidth(1)},
+            children: [
+              TableRow(children: [
+                Table(
+                  border: TableBorder.all(),
+                  children: [
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                    TableRow(children: [Text('111'), Text('222')]),
+                  ],
+                ),
+                TableCell(
+                  verticalAlignment: TableCellVerticalAlignment.fill,
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: upload.toWidget(),
+                  ),
                 )
-              ],
-            ),
+              ])
+            ],
           ),
           weight.toWidget(),
           Row(
