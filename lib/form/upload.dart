@@ -77,7 +77,10 @@ class UploadField implements SuperFormField<List<String>?> {
       required this.allowedFileType,
       this.fileListPosition = FileListPosition.right,
       this.fileListType = FileListType.urlWithPreview}) {
-    _value.value = defaultValue?.map((e) => {'url': e}).toList() ?? [];
+    _value.clear();
+    if (defaultValue != null && defaultValue!.isNotEmpty) {
+      _value.addAll(defaultValue!.map((e) => <String, dynamic>{'url': e}));
+    }
   }
 
   UploadField.fromMap(Map<String, dynamic> map) {
@@ -87,7 +90,7 @@ class UploadField implements SuperFormField<List<String>?> {
       } else {
         defaultValue = map['defaultValue'];
       }
-      _value.addAll(defaultValue!.map((e) => {'url': e}));
+      _value.addAll(defaultValue!.map((e) => <String, dynamic>{'url': e}));
     }
     name = map['name'];
     readonly = map['readonly'] ?? false;
@@ -159,14 +162,14 @@ class UploadField implements SuperFormField<List<String>?> {
       _value.clear();
     } else {
       if (v is String) {
-        _value.value = [
+        _value.value = <Map<String, dynamic>>[
           {'url': v}
         ];
       } else if (v is List<String>) {
         _value.clear();
         for (var element in v) {
           if (_value.where((e) => e['url'] == element).isEmpty) {
-            _value.add({'url': element});
+            _value.add(<String, dynamic>{'url': element});
           }
         }
       }
