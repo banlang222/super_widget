@@ -76,7 +76,8 @@ class UploadField implements SuperFormField<List<String>?> {
       this.singleFile = false,
       required this.allowedFileType,
       this.fileListPosition = FileListPosition.right,
-      this.fileListType = FileListType.urlWithPreview}) {
+      this.fileListType = FileListType.urlWithPreview,
+      this.deleteCallback}) {
     _value.clear();
     if (defaultValue != null && defaultValue!.isNotEmpty) {
       _value.addAll(defaultValue!.map((e) => <String, dynamic>{'url': e}));
@@ -149,6 +150,8 @@ class UploadField implements SuperFormField<List<String>?> {
   FileListPosition fileListPosition = FileListPosition.right;
 
   FileListType fileListType = FileListType.urlWithPreview;
+
+  Function(String url)? deleteCallback;
 
   @override
   List<String> get value {
@@ -385,6 +388,7 @@ class UploadField implements SuperFormField<List<String>?> {
             )),
             IconButton(
               onPressed: () {
+                deleteCallback?.call(_value.first['url']);
                 _value.clear();
               },
               icon: const Icon(Icons.delete),
@@ -406,13 +410,13 @@ class UploadField implements SuperFormField<List<String>?> {
                 child: fileType.isImage
                     ? InkWell(
                         onTap: () {
-                          Get.to(() => ImageView(url: _value.first['url']));
+                          Get.to(() => ImageView(url: e['url']));
                         },
                         child: Container(
                           decoration: BoxDecoration(
                               image: DecorationImage(
                                   fit: BoxFit.contain,
-                                  image: NetworkImage(_value.first['url']))),
+                                  image: NetworkImage(e['url']))),
                         ),
                       )
                     : Icon(
@@ -422,6 +426,7 @@ class UploadField implements SuperFormField<List<String>?> {
             IconButton(
               onPressed: () {
                 _value.removeWhere((element) => element == e);
+                deleteCallback?.call(e['url']);
               },
               icon: const Icon(Icons.delete),
             )
@@ -445,8 +450,8 @@ class UploadField implements SuperFormField<List<String>?> {
                   )
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _value.map((element) {
-                      var url = element['url'];
+                    children: _value.map((e) {
+                      var url = e['url'];
                       var sFileType = SFileType.fromUrl(url);
                       return Container(
                         margin: const EdgeInsets.all(10),
@@ -459,7 +464,7 @@ class UploadField implements SuperFormField<List<String>?> {
                                 padding: const EdgeInsets.all(10),
                                 child: LinearProgressIndicator(
                                   backgroundColor: Colors.grey[100],
-                                  value: element['progress'],
+                                  value: e['progress'],
                                   minHeight: 40,
                                 ),
                               )
@@ -479,7 +484,7 @@ class UploadField implements SuperFormField<List<String>?> {
                                       : Icon(
                                           sFileType.icon,
                                         ),
-                                  Text('${element['url']}'),
+                                  Text('${e['url']}'),
                                   const SizedBox(
                                     width: 10,
                                   ),
@@ -490,7 +495,9 @@ class UploadField implements SuperFormField<List<String>?> {
                                     ),
                                     label: const Text('删除'),
                                     onPressed: () {
-                                      _value.removeWhere((e) => e == element);
+                                      _value.removeWhere(
+                                          (element) => element == e);
+                                      deleteCallback?.call(e['url']);
                                     },
                                   )
                                 ],
