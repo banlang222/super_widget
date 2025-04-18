@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:extension/extension.dart';
@@ -151,7 +153,7 @@ class UploadField implements SuperFormField<List<String>?> {
 
   FileListType fileListType = FileListType.urlWithPreview;
 
-  Function(String url)? deleteCallback;
+  FutureOr<bool> Function(String url)? deleteCallback;
 
   @override
   List<String> get value {
@@ -387,9 +389,10 @@ class UploadField implements SuperFormField<List<String>?> {
               ),
             )),
             IconButton(
-              onPressed: () {
-                deleteCallback?.call(_value.first['url']);
-                _value.clear();
+              onPressed: () async {
+                if (await deleteCallback?.call(_value.first['url']) == true) {
+                  _value.clear();
+                }
               },
               icon: const Icon(Icons.delete),
             )
@@ -424,9 +427,10 @@ class UploadField implements SuperFormField<List<String>?> {
                         size: 250,
                       )),
             IconButton(
-              onPressed: () {
-                _value.removeWhere((element) => element == e);
-                deleteCallback?.call(e['url']);
+              onPressed: () async {
+                if (await deleteCallback?.call(e['url']) == true) {
+                  _value.removeWhere((element) => element == e);
+                }
               },
               icon: const Icon(Icons.delete),
             )
@@ -494,10 +498,13 @@ class UploadField implements SuperFormField<List<String>?> {
                                       size: 20,
                                     ),
                                     label: const Text('删除'),
-                                    onPressed: () {
-                                      _value.removeWhere(
-                                          (element) => element == e);
-                                      deleteCallback?.call(e['url']);
+                                    onPressed: () async {
+                                      if (await deleteCallback
+                                              ?.call(e['url']) ==
+                                          true) {
+                                        _value.removeWhere(
+                                            (element) => element == e);
+                                      }
                                     },
                                   )
                                 ],
