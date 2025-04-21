@@ -390,7 +390,9 @@ class UploadField implements SuperFormField<List<String>?> {
             )),
             IconButton(
               onPressed: () async {
-                if (await deleteCallback?.call(_value.first['url']) == true) {
+                if (deleteCallback == null) {
+                  _value.clear();
+                } else if (await deleteCallback!.call(_value.first['url'])) {
                   _value.clear();
                 }
               },
@@ -428,7 +430,9 @@ class UploadField implements SuperFormField<List<String>?> {
                       )),
             IconButton(
               onPressed: () async {
-                if (await deleteCallback?.call(e['url']) == true) {
+                if (deleteCallback == null) {
+                  _value.removeWhere((element) => element == e);
+                } else if (await deleteCallback!.call(e['url'])) {
                   _value.removeWhere((element) => element == e);
                 }
               },
@@ -499,8 +503,11 @@ class UploadField implements SuperFormField<List<String>?> {
                                     ),
                                     label: const Text('删除'),
                                     onPressed: () async {
-                                      if (await deleteCallback
-                                              ?.call(e['url']) ==
+                                      if (deleteCallback == null) {
+                                        _value.removeWhere(
+                                            (element) => element == e);
+                                      } else if (await deleteCallback!
+                                              .call(e['url']) ==
                                           true) {
                                         _value.removeWhere(
                                             (element) => element == e);
