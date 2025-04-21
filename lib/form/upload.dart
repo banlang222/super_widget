@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:super_widget/dialog.dart';
 
 import 'file_icon.dart';
 import 'super_form_field.dart';
@@ -389,12 +390,16 @@ class UploadField implements SuperFormField<List<String>?> {
               ),
             )),
             IconButton(
-              onPressed: () async {
-                if (deleteCallback == null) {
-                  _value.clear();
-                } else if (await deleteCallback!.call(_value.first['url'])) {
-                  _value.clear();
-                }
+              tooltip: '删除',
+              onPressed: () {
+                confirm('危险操作', '确定要删除吗？将不可恢复', () async {
+                  Get.back();
+                  if (deleteCallback == null) {
+                    _value.clear();
+                  } else if (await deleteCallback!.call(_value.first['url'])) {
+                    _value.clear();
+                  }
+                });
               },
               icon: const Icon(Icons.delete),
             )
@@ -429,12 +434,16 @@ class UploadField implements SuperFormField<List<String>?> {
                         size: 250,
                       )),
             IconButton(
+              tooltip: '删除',
               onPressed: () async {
-                if (deleteCallback == null) {
-                  _value.removeWhere((element) => element == e);
-                } else if (await deleteCallback!.call(e['url'])) {
-                  _value.removeWhere((element) => element == e);
-                }
+                confirm('危险操作', '确定要删除吗？将不可恢复', () async {
+                  Get.back();
+                  if (deleteCallback == null) {
+                    _value.removeWhere((element) => element == e);
+                  } else if (await deleteCallback!.call(e['url'])) {
+                    _value.removeWhere((element) => element == e);
+                  }
+                });
               },
               icon: const Icon(Icons.delete),
             )
@@ -503,15 +512,18 @@ class UploadField implements SuperFormField<List<String>?> {
                                     ),
                                     label: const Text('删除'),
                                     onPressed: () async {
-                                      if (deleteCallback == null) {
-                                        _value.removeWhere(
-                                            (element) => element == e);
-                                      } else if (await deleteCallback!
-                                              .call(e['url']) ==
-                                          true) {
-                                        _value.removeWhere(
-                                            (element) => element == e);
-                                      }
+                                      confirm('危险操作', '确定要删除吗？将不可恢复', () async {
+                                        Get.back();
+                                        if (deleteCallback == null) {
+                                          _value.removeWhere(
+                                              (element) => element == e);
+                                        } else if (await deleteCallback!
+                                                .call(e['url']) ==
+                                            true) {
+                                          _value.removeWhere(
+                                              (element) => element == e);
+                                        }
+                                      });
                                     },
                                   )
                                 ],
