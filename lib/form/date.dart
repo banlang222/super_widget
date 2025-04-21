@@ -205,62 +205,67 @@ class DateField implements SuperFormField<DateTime> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                GestureDetector(
-                  onTap: (readonly || !editMode)
-                      ? null
-                      : () async {
-                          if (GetPlatform.isDesktop || kIsWeb) {
-                            final dates = await showCalendarDatePicker2Dialog(
-                                context: context ?? Get.context!,
-                                config:
-                                    CalendarDatePicker2WithActionButtonsConfig(),
-                                dialogSize: const Size(400, 400));
-                            if (dates != null && dates.isNotEmpty) {
-                              _value.value = DateTime(
-                                  dates.first!.year,
-                                  dates.first!.month,
-                                  dates.first!.day,
-                                  0,
-                                  0,
-                                  0);
-                              _errorText.value = null;
+                Tooltip(
+                  message: '选择日期',
+                  child: GestureDetector(
+                    onTap: (readonly || !editMode)
+                        ? null
+                        : () async {
+                            if (GetPlatform.isDesktop || kIsWeb) {
+                              final dates = await showCalendarDatePicker2Dialog(
+                                  context: context ?? Get.context!,
+                                  config:
+                                      CalendarDatePicker2WithActionButtonsConfig(),
+                                  dialogSize: const Size(400, 400));
+                              if (dates != null && dates.isNotEmpty) {
+                                _value.value = DateTime(
+                                    dates.first!.year,
+                                    dates.first!.month,
+                                    dates.first!.day,
+                                    0,
+                                    0,
+                                    0);
+                                _errorText.value = null;
+                              }
+                            } else {
+                              DatePicker.showDatePicker(Get.context!,
+                                  initialDateTime: _value.value,
+                                  locale: DateTimePickerLocale.zh_cn,
+                                  pickerMode: DateTimePickerMode.date,
+                                  pickerTheme: DateTimePickerTheme(
+                                      backgroundColor: Colors.grey[100]!,
+                                      confirmTextStyle:
+                                          const TextStyle(color: Colors.green),
+                                      cancelTextStyle:
+                                          const TextStyle(color: Colors.blue),
+                                      itemTextStyle:
+                                          const TextStyle(color: Colors.black)),
+                                  onConfirm:
+                                      (DateTime date, List<int> selected) {
+                                _value.value = DateTime(
+                                    date.year, date.month, date.day, 0, 0, 0);
+                                _errorText.value = null;
+                              });
                             }
-                          } else {
-                            DatePicker.showDatePicker(Get.context!,
-                                initialDateTime: _value.value,
-                                locale: DateTimePickerLocale.zh_cn,
-                                pickerMode: DateTimePickerMode.date,
-                                pickerTheme: DateTimePickerTheme(
-                                    backgroundColor: Colors.grey[100]!,
-                                    confirmTextStyle:
-                                        const TextStyle(color: Colors.green),
-                                    cancelTextStyle:
-                                        const TextStyle(color: Colors.blue),
-                                    itemTextStyle:
-                                        const TextStyle(color: Colors.black)),
-                                onConfirm: (DateTime date, List<int> selected) {
-                              _value.value = DateTime(
-                                  date.year, date.month, date.day, 0, 0, 0);
-                              _errorText.value = null;
-                            });
-                          }
-                        },
-                  child: MouseRegion(
-                      cursor: (readonly || !editMode)
-                          ? MouseCursor.defer
-                          : WidgetStateMouseCursor.clickable,
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 10,
-                        children: [
-                          if (!(readonly || !editMode))
-                            const Icon(
-                              Icons.date_range,
-                              size: 20,
-                            ),
-                          Obx(() => Text(Utils.dateFormat(_value.value, true))),
-                        ],
-                      )),
+                          },
+                    child: MouseRegion(
+                        cursor: (readonly || !editMode)
+                            ? MouseCursor.defer
+                            : WidgetStateMouseCursor.clickable,
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 10,
+                          children: [
+                            if (!(readonly || !editMode))
+                              const Icon(
+                                Icons.date_range,
+                                size: 20,
+                              ),
+                            Obx(() =>
+                                Text(Utils.dateFormat(_value.value, true))),
+                          ],
+                        )),
+                  ),
                 ),
                 if (!(readonly || !editMode))
                   IconButton(
@@ -294,36 +299,39 @@ class DateField implements SuperFormField<DateTime> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                GestureDetector(
-                    onTap: () async {
-                      DatePicker.showDatePicker(Get.context!,
-                          initialDateTime: _value.value ?? DateTime.now(),
-                          locale: DateTimePickerLocale.zh_cn,
-                          pickerMode: DateTimePickerMode.time,
-                          pickerTheme: DateTimePickerTheme(
-                              backgroundColor:
-                                  context?.theme.cardColor ?? Colors.white),
-                          onConfirm: (DateTime date, List<int> selected) {
-                        _value.value = DateTime(
-                            1970, 1, 1, date.hour, date.minute, date.second);
-                        _errorText.value = null;
-                      });
-                    },
-                    child: MouseRegion(
-                      cursor: MaterialStateMouseCursor.clickable,
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 10,
-                        children: [
-                          if (!(readonly || !editMode))
-                            const Icon(Icons.access_time),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 15, bottom: 15),
-                            child: Text(Utils.timeFormat(_value.value)),
+                Tooltip(
+                    message: '选择时间',
+                    child: GestureDetector(
+                        onTap: () async {
+                          DatePicker.showDatePicker(Get.context!,
+                              initialDateTime: _value.value ?? DateTime.now(),
+                              locale: DateTimePickerLocale.zh_cn,
+                              pickerMode: DateTimePickerMode.time,
+                              pickerTheme: DateTimePickerTheme(
+                                  backgroundColor:
+                                      context?.theme.cardColor ?? Colors.white),
+                              onConfirm: (DateTime date, List<int> selected) {
+                            _value.value = DateTime(1970, 1, 1, date.hour,
+                                date.minute, date.second);
+                            _errorText.value = null;
+                          });
+                        },
+                        child: MouseRegion(
+                          cursor: MaterialStateMouseCursor.clickable,
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 10,
+                            children: [
+                              if (!(readonly || !editMode))
+                                const Icon(Icons.access_time),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 15, bottom: 15),
+                                child: Text(Utils.timeFormat(_value.value)),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    )),
+                        ))),
                 if (!(readonly || !editMode))
                   IconButton(
                       onPressed: () {
