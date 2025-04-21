@@ -206,7 +206,7 @@ class FormFieldGroup {
 
   ///自定义处理
   Widget toWidgetWithHandler(
-      Function(Map<String, SuperFormField> fieldMap) handler) {
+      Widget Function(Map<String, SuperFormField> fieldMap) handler) {
     return handler.call(fieldMap);
   }
 
