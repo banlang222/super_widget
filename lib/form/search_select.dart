@@ -265,6 +265,10 @@ class SearchSelectField<T> implements SuperFormField<T> {
               if (_selected != null) {
                 _value.value = _selected.value;
               }
+              //联动回调
+              if (callback != null) {
+                callback!(_value.value);
+              }
             },
       child: Obx(() => InputDecorator(
             expands: false,
