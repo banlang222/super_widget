@@ -33,7 +33,7 @@ class BottomSheetContainer extends StatefulWidget {
   /// 需要配合isScrollControlled=true 使用
   final ContainerSize containerSize;
 
-  ///
+  ///是否按照窗口大小撑开。如果false，并且bottomSheet.isScrollControlled==true时，bottomSheet将自适应大小
   final bool expanded;
   final Color? backGroundColor;
 
