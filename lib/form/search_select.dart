@@ -235,7 +235,7 @@ class SearchSelectField<T> implements SuperFormField<T> {
                               : '',
                         ),
                       ),
-                      Icon(
+                      const Icon(
                         Icons.arrow_drop_down_sharp,
                       ),
                     ],

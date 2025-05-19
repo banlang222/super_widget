@@ -15,7 +15,7 @@ class TextareaField implements SuperFormField<String> {
       this.editMode = true,
       this.defaultValue,
       this.maxLength = 500,
-      this.maxLines = 10,
+      this.maxLines = 3,
       this.isRequired = false,
       this.showCopyBtn = true,
       this.helperText});
@@ -28,7 +28,7 @@ class TextareaField implements SuperFormField<String> {
     text = map['text'];
     _controller.text = defaultValue ?? '';
     maxLength = map['maxLength'] ?? 500;
-    maxLines = map['maxLines'] ?? 10;
+    maxLines = map['maxLines'] ?? 3;
     isRequired = map['isRequired'] ?? false;
     showCopyBtn = map['showCopyBtn'] ?? true;
     helperText = map['helperText'];
